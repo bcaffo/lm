@@ -1,18 +1,141 @@
 \chapter{Background}
 
 Before we begin we need a few matrix prerequisites. Let
-
 $$
-f: \mathbb{R}^p \rightarrow \mathbb{R}
+f: \real^p \rightarrow \real
 $$
-
 be a function from the $p$ dimensional real line to the real line.
 Assume that $f$ is linear in the sense that
-
 $$
-f(\mathfb{x}) = \mathbf{a x}
+f(\bx) = \ba^t \bx
 $$
+Then $ \nabla f = \ba.$ That is, the function that
+contains the elementwise derivatives of $f$ is constant
+with respect to $x$. 
 
-Then $$ \nabla f = \mathbf{a}.$$
+Consider now the matrix $\bA$
+($p\times p$) and the quadratic form:
+$$
+f(\bx) =  \bx^t \bA \bx.
+$$
+Then  $ \nabla f = 2 \bA^t \bx.$ The second derivative matrix
+(where the $i, j$ element is the derivative
+with respect to the $i$ and $j$ elements of this vector)
+is then $2 \bA $. This matrix is typically called the
+Hessian matrix. 
+
+\section{Example}
+
+Consider an example that we will become very familiar with, {\bf least squares}.
+Let $\by$ be an array of dimension $n\times 1$ and 
+$\bX$ be an $n\times p$ full rank matrix. Let $\bbeta$ be a
+$p$ vector of unknowns. Consider trying to minimize the function:
+$$
+f(\bbeta) = (\by - \bbeta \bX)^t (\by - \bbeta \bX)
+= \by^t \by - 2 \by^t \bX^t \bbeta + \bbeta^t \bX^t \bX \bbeta.
+$$
+The gradient of $f$ (with respect to $\bbeta$) is:
+\begin{equation}
+\label{eq:deriv}
+\nabla f(\beta) = -2 \bX \by + \bX^t\bX \bbeta.
+\end{equation}
+A useful result is that if $\bX$ is of full column rank then
+$\bX^t \bX$ is full rank and hence invertible. Thus, we can
+solve the derivative equal to zero and obtain the solution:
+$$
+\bbeta = \xtxinv \bX^t \by. 
+$$
+We will talk about these solutions at length. Also, it remains
+necessary to show that this is a minimum and not just an
+inflection point. We can do this by checking a second derivative
+condition. Taking the second derivative of \ref{eq:deriv} we 
+get
+$$
+\bX^t\bX,
+$$
+a positive definite matrix. Thus our solution is indeed a minimum.
+
+\section{Averages}
+Consider some useful notational conventions we'll use. 
+$\bone_n$ is an  $n$ vector containing only ones while
+$\bone_{n\times p}$ is an $n\times p$ matrix containing ones.
+$\bI$ is the identity matrix, which we will subscript if a
+reminder of the dimension is necessary.
+
+We denote by $\bar y$ the average of the $n$ vector $\by$.
+Verify for yourself that $\bar y = \frac{1}{n} \by^t \bone_n = \frac{1}{n} \bone_n^t \by$.
+Furthermore, note that $(\bone_n^t \bone_n)^{-1} = \frac{1}{n}$ so that
+$$
+\bar y = (\bone_n^t \bone_n)^{-1} \bone^t_n \by.
+$$
+Consider our previous least squares problem. If $\bX = \bone_n$ and $\bbeta$ 
+is just the scalar $\beta$. The least squares function we'd like to minimize
+is:
+$$
+(\by - \beta \bone_n)^t (\by - \beta \bone_n) = ||\by - \beta \bone_n||^2.
+$$
+Or, what constant vector best approximates $\by$ it the terms of minimizing the
+squared Euclidean distance? From above, we know that the solution is of the form 
+$$
+\bbeta = \xtxinv \bX^t \by
+$$
+which in this specific case works out to be:
+$$
+\bar y = (\bone_n^t \bone_n)^{-1} \bone^t_n \by.
+$$
+That is, the average is the best scalar estimate to minimize the 
+Euclidean distance. 
+
+\section{Centering}
+
+Continuing to work with our vector of ones, note that 
+$$
+\by - \bar y \bone_n
+$$
+is the centered version of $\by$ (in that it has the mean subtracted from each element of the $\by$ vector).
+We can rewrite this as:
+$$
+\tilde \by = \by - \bar y \bone_n = \by - (\bone_n^t \bone_n)^{-1} \bone^t \bone \by
+= \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone^t \right\} \by.
+$$
+In other words, multiplication by the matrix $ \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone^t \right\}$
+centers vectors. This can be very handy for centering matrices. For example, if $\bX$ is an $n\times p$
+matrix then the matrix $\tilde \bX  = \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone^t \right\} \bX$
+is the matrix with every column centered. 
+
+To check that $\tilde \by$ is centered, consider multiplying by $\bone_n$ (which sums its elements). 
+$$
+\bone_n^t \tilde \by = \bone_n^t \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \by
+= \left\{ \bone_n^t - \bone_n^t \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} =
+\left\{ \bone_n^t - \bone_n^t \right\}\by = 0.
+$$
+Convince yourself that $\tilde \bX$ has every column mean equal to 0.
+
+\section{Variance}
+Consider the fact that the matrix $\left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\}$
+is both symmetric and idempotent. The standard sample variance is the average deviation of the
+observations from the sample mean (usually using $n-1$ rather than $n$). That is,
+$$
+S^2 = \frac{1}{n-1}|| \by - \bar y \bone_n ||^2 = \frac{1}{n-1} \tilde \by^t \tilde \by
+$$
+We can write out the norm component of this as: 
+$$
+\by^t \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\}
+\left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \by
+= \by^t \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\}\by.
+$$
+Thus, our sample variance is a fairly simple quadratic form. Similarly
+$$
+\frac{1}{n-1} \bX^t \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \bX
+= \frac{1}{n-1} \tilde \bX^t \tilde \bX
+$$
+is a matrix where each element is the empirical covariance between columns of $\bX$.
+This is called the variance/covariation matrix. 
+
+
+
+
+
+
 
 
