@@ -1,0 +1,119 @@
+\chapter{Single parameter regression}
+
+\section{Mean only regression}
+Consider least squares where we only want horizontal lines. 
+Let our outcome be
+$
+\by = (y_1,\ldots, y_n)^t
+$ and recall that $\bone_n$ is an $n$ vector of ones. We want
+to minimize 
+$f(\mu) = ||\by - \mu \bone||^2$ with respect to $\mu$. 
+
+Taking derivatives with respect to $\mu$ we obtain that
+$$
+\frac{d f}{d\mu} = - 2n \bar y  + 2 n \mu.
+$$
+This has a root at $\hat \mu = \bar y$. Note that the second
+derivative is $2n>0$. 
+Thus, the average is the least squares estimate in the
+sense of minimizing the Euclidean distance between the
+observed data and a constant vector. We can think of this
+as projecting our $n$ dimensional onto the best $1$
+dimensional subspace spanned by the vector $\bone$. We'll
+rely on this form of thinking a lot throughout the text.
+
+\section{Coding example}
+Let's use the \texttt{diamond} dataset 
+\begin{verbatim}
+> library(UsingR); data(diamond)
+> y = diamond$price; x = diamond$carat
+> mean(y)
+[1] 500.0833
+> #using least squares
+> coef(lm(y ~ 1))
+[1] 500.0833
+\end{verbatim}
+
+Thus, in this example the mean only least squares estimate obtained via \texttt{lm} 
+is the empirical mean.
+
+\section{Regression through the origin}
+
+Let $\bx = (x_1,\ldots, x_n)'$ be another vector. Consider now the
+regression through the origin problem. We want to minimize
+$f(\beta) = ||\by - \beta \bx||^2$ with respect to $\beta$.
+This is called regression through the origin for the following
+reason. First note that the pairs, $(x_i, y_i)$,
+form a scatterplot. Least squares is then finding the best
+multiple of the $\bx$ vector to approximate $\by$. That is,
+finding the best line of the form $y = \beta x$ to fit
+the scatter plot. Thus we are considering lines through the origin
+hence the name regression through the origin.
+
+Notice that
+$
+f(\beta) = \by^t \by - 2 \by^t \bx + \bx^t \bx.
+$
+Then 
+$$
+\frac{df}{d\beta} = -2\by'\bx  + 2 \bx^t \bx 
+$$
+Setting this equal to zero we obtain the famous equation:
+$$
+\hat \beta = \frac{\by^t \bx}{\bx^t \bx}
+=\frac{\ip{\by}{\bx}}{\ip{\bx}{\bx}}
+$$
+We'll leave it up to the reader to check the second derivative 
+condition. Also, we'll leave it up to you to show that the mean 
+only regression is a  special case that agrees with the result.
+
+Notice that we have shown the function
+$$
+g : \mathbb{R}^n \rightarrow \mathbb{R}
+$$
+defined by $g(\by) = \frac{\ip{\by}{\bx}}{\ip{\bx}{\bx}}\bx$ projects
+any $n$ dimensional vector $\by$ into the linear space spanned
+by the single vector $\bx$, $\{\beta \bx ~|~ \beta \in \mathbb{R}\}$.
+
+\section{Centering first}
+A line through the origin is often not useful. Consider centering the
+$\by$ and $\bx$ first. The the origin would be at the mean of the
+$\by$ vector and the mean of the $\bx$ vector. Let
+$\tilde \by = \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \by$ and $\tilde \bx = \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \bx$. Then regression through the origin (minimizing
+$||\tilde \by - \gamma \tilde \bx||^2$ for $\gamma$)
+for the centered data yields
+the solution 
+$
+\hat \gamma = \frac{\ip{\tilde \by}{\tilde \bx}}{\ip{\tilde \bx}{\tilde \bx}}.
+$
+However, from the previous chapter, we know that
+$$
+\ip{\tilde \by}{\tilde \bx} = \by^t \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \bx^t
+= (n-1)\hat{\rho}_{xy} \sigma_x \sigma_y
+$$
+and similarly $\ip{\tilde \bx}{\tilde \bx} = (n-1)\hat{\sigma}_y^2$
+where $\hat \rho_{xy}$ and $\hat{\sigma}_y^2$ are the empirical correlation and
+variance, respectively. Thus our regression through the origin estimate is
+$$
+\hat \gamma = \rho_{xy} \frac{\sigma_y}{\sigma_x}.
+$$
+Thus the best fitting line that has to go through the center of the data
+has a slope equal to the correlation times the ratio of the standard deviations.
+If we reverse the role of $\bx$ and $\by$, we simply invert the ratio of the
+standard deviations. Thus we also note, that if we center and scale our
+data first so that the resulting vectors have mean 0 and variance 1, our
+slope is exactly the correlation between the vectors.
+
+\subsection{Coding example}
+Let's continue with the diamond example. We'll center the variables first.
+\begin{verbatim}
+> yc = y - mean(y);
+> xc = x - mean(x)
+> sum(yc * xc) / sum(xc * xc)
+[1] 3721.025
+> coef(lm(yc ~ xc - 1))
+      xc 
+3721.025 
+> cor(x, y) * sd(y) / sd(x)
+[1] 3721.025
+\end{verbatim}

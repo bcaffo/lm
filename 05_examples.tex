@@ -1,0 +1,136 @@
+\chapter{Conceptual examples of least squares}
+
+\section{Mean only regression}
+If our design matrix is $\bX = \bone_n$, we see 
+that our coefficient estimate is:
+$$
+(\bone_n ^t \bone_n)^{-1} \bone_n \by = \bar y.
+$$
+
+\section{Regression through the origin}
+If our design matrix is $\bX = \bx$, we see
+that our coefficient is 
+$$
+(\bx^t\bx)^{-1}\bx^t \by
+= \frac{\ip{\by}{\bx}}{||\bx||^2}.
+$$
+
+\section{Linear regression}
+Section \ref{sec:lslin} of the last chapter showed
+that multivariable least squares was the direct
+extension of linear regression (and hence reduces
+to it).
+
+\section{ANOVA}
+Let $\by = [y_{11}, \ldots y_{JK}]$ and our design
+matrix look like
+$$
+\bX =
+\left[
+\begin{array}{cccc}
+1 & 0  & \ldots & 0 \\
+1 & 0  & \ldots & 0 \\
+\vdots & \vdots & \ldots  & \vdots \\
+1 & 0 & \ldots & 0 \\
+0  & 1 & \ldots & 0 \\
+\vdots & \vdots & \ldots  & \vdots \\
+0  & 1 & \ldots & 0 \\
+\vdots & \ldots & \ldots  & \vdots \\
+0  & 0 & \ldots & 1 \\
+\vdots & \ldots & \ldots  & \vdots \\
+0  & 0 & \ldots & 1 \\
+\end{array}
+\right] = \bI_K \otimes \bone_n,
+$$
+where $\otimes$ is the Kronecker product. 
+That is, our $\by$ arises out of $J$ groups
+where there is $K$ measurements per group. Let
+$\bar y_j$ be the mean of the $\by$ measurements
+in group $j$. 
+Then 
+$$
+\bX^t\by = 
+\left[
+\begin{array}{c}
+K \bar y_1 \\
+\vdots \\
+K \bar y_J
+\end{array}
+\right] ,
+$$
+Note also that 
+$\xtx = k \bI.$ Therefore, $\xtxinv \bX^t \by =
+(\bar y_1 \ldots, \bar y_J)^t.$ Thus, if 
+our design matrix parcels $\by$ into groups,
+the coefficients are the group means.
+
+
+
+\section{ANCOVA}
+
+Consider now an instance where
+$$
+\bX =
+\left[
+\begin{array}{ccc}
+1 & 0  & x_{11} \\
+1 & 0  & x_{12} \\
+\vdots &  \ldots  & \vdots \\
+1  & 0 & x_{1n}  \\
+0  & 1 & x_{21} \\
+0  & 1 & x_{22} \\
+\vdots & \ldots & \ldots \\
+0  & 1 & x_{2n}
+\end{array}
+\right]
+= [\bI_{2} \otimes \bone_n ~~ \bx]
+.
+$$
+That is we want to project $\by$ onto the space spanned by two groups
+and a regression variable. This is effectively fitting two parallel
+lines to the data.
+Let $\bbeta = (\mu_1 ~ \mu_2 ~ \beta)^t = (\bmu^t ~ \beta)^t$. Denote the outcome
+vector, $\by$, as comprised of $y_{ij}$ for $i=1,2$ and $j=1,\ldots,n$
+stacked in the relevant order. Imagine holding $\beta$ fixed. 
+\begin{equation}
+\label{eq:ancova}
+|| \by - \bX \bbeta ||^2 = 
+|| \by - \bx \beta - (\bI_2 \otimes \bone_n) \bmu ||^2
+\end{equation}
+Then we
+are in the case of the previous section and the best estimate
+of $\bmu$ are the group means $\frac{1}{n}(\bI_2 \otimes \bone_n)^t(y - \bx \bbeta) = (\bar y_1 ~ \bar y_2)^t - (\bar x_1 ~ \bar x_2)^t \beta$ where
+$\bar y_i$ and $\bar x_i$ are the group means of $\by$ and $\bx$ respectively.
+Then we have that \eqref{eq:ancova} satisfies:
+$$
+\eqref{eq:ancova} \geq 
+|| \by - \bx \beta - (\bI_2 \otimes \bone_n) \{(\bar y_1 ~ \bar y_2)^t - (\bar x_1 ~ \bar x_2)^t \beta\}||^2
+= || \tilde \by - \tilde \bx \beta||^2
+$$
+where $\tilde \by$ and $\tilde \bx$ are the group centered versions 
+of $\by$ and $\bx$. (That is $\tilde y_{ij} = y_{ij} - \bar y_i$, for example.)
+This is now regression through the origin yielding the solution
+$$
+\hat \beta 
+= \frac{\sum_{ij} (y_{ij} - \bar y_i) (x_{ij} - \bar x_i)}
+{\sum_{ij} (x_{ij} - \bar x_i)^2}
+= p \hat \beta_1 + (1 - p) \hat \beta_2
+$$
+where 
+$$
+p = \frac{\sum_{j} (x_{1j} - \bar x_1)^2}{\sum_{ij} (x_{ij} - \bar x_i)^2}
+$$
+and 
+$$
+\hat \beta_i =
+\frac{\sum_{j} (y_{ij} - \bar y_i) (x_{ij} - \bar x_i)}
+{\sum_{j} (x_{ij} - \bar x_i)^2}.
+$$
+That is, the estimated slope is a convex combination of the
+group-specific slopes weighted by the variability in the $\bx$'s
+in the group. Furthermore,
+$\hat \mu_i = \bar y_i - \bar x_i \hat \beta$ and thus
+$$
+\hat \mu_1 - \hat \mu_2
+= (\bar y_1 - \bar y_2) - (\bar x_1 - \bar x_2) \hat \beta.
+$$

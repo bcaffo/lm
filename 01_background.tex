@@ -1,28 +1,23 @@
 \chapter{Background}
+\label{chap:background}
 
-Before we begin we need a few matrix prerequisites. Let
-$$
-f: \real^p \rightarrow \real
-$$
+Before we begin we need a few matrix prerequisites. Let,
+$f: \real^p \rightarrow \real$,
 be a function from the $p$ dimensional real line to the real line.
-Assume that $f$ is linear in the sense that
-$$
-f(\bx) = \ba^t \bx
-$$
+Assume that $f$ is linear, i.e. $f(\bx) = \ba^t \bx$
 Then $ \nabla f = \ba.$ That is, the function that
-contains the elementwise derivatives of $f$ is constant
-with respect to $x$. 
+contains the elementwise derivatives of $f$ (the gradient)
+is constant with respect to $x$. 
 
 Consider now the matrix $\bA$
 ($p\times p$) and the quadratic form:
 $$
 f(\bx) =  \bx^t \bA \bx.
 $$
-Then  $ \nabla f = 2 \bA^t \bx.$ The second derivative matrix
+Then  $ \nabla f = 2 \bA^t \bx.$ The second derivative matrix (Hessian)
 (where the $i, j$ element is the derivative
 with respect to the $i$ and $j$ elements of this vector)
-is then $2 \bA $. This matrix is typically called the
-Hessian matrix. 
+is then $2 \bA $.
 
 \section{Example}
 
@@ -31,29 +26,52 @@ Let $\by$ be an array of dimension $n\times 1$ and
 $\bX$ be an $n\times p$ full rank matrix. Let $\bbeta$ be a
 $p$ vector of unknowns. Consider trying to minimize the function:
 $$
-f(\bbeta) = (\by - \bbeta \bX)^t (\by - \bbeta \bX)
+f(\bbeta) = ||\by - \bbeta \bX||^2 = (\by - \bbeta \bX)^t (\by - \bbeta \bX)
 = \by^t \by - 2 \by^t \bX^t \bbeta + \bbeta^t \bX^t \bX \bbeta.
 $$
 The gradient of $f$ (with respect to $\bbeta$) is:
 \begin{equation}
 \label{eq:deriv}
-\nabla f(\beta) = -2 \bX \by + \bX^t\bX \bbeta.
+\nabla f(\bbeta) = -2 \bX \by + \bX^t\bX \bbeta.
 \end{equation}
 A useful result is that if $\bX$ is of full column rank then
-$\bX^t \bX$ is full rank and hence invertible. Thus, we can
-solve the derivative equal to zero and obtain the solution:
+$\bX^t \bX$ is square and full rank and hence invertible. Thus, we can
+calculate the root of the gradient \eqref{eq:deriv} and obtain the solution:
 $$
 \bbeta = \xtxinv \bX^t \by. 
 $$
 We will talk about these solutions at length. Also, it remains
 necessary to show that this is a minimum and not just an
 inflection point. We can do this by checking a second derivative
-condition. Taking the second derivative of \ref{eq:deriv} we 
+condition. Taking the second derivative of \eqref{eq:deriv} we 
 get
 $$
 \bX^t\bX,
 $$
 a positive definite matrix. Thus our solution is indeed a minimum.
+
+\subsection{Coding example}
+Load the \texttt{mtcars} dataset in R with \texttt{data(mtcars)}.
+Let's set our $\by$ vector as \texttt{y = mtcars\$mpg} and our
+$\bX$ matrix as a vector of ones, horsepower and weight:
+\texttt{x = cbind(1, mtcars\$hp, mtcars\$wt)}. Let's find the
+value of $\bbeta$ that minimizes $|| \by - \bX \bbeta||^2$. 
+
+\begin{verbatim}
+> y = mtcars$mpg
+> x = cbind(1, mtcars$hp, mtcars$wt)
+> solve(t(x) %*% x) %*% t(x) %*% y
+           [,1]
+[1,] 37.22727012
+[2,] -0.03177295
+[3,] -3.87783074
+> # Compare with the estimate obtained via lm
+> coef(lm(mpg ~ hp + wt, data = mtcars))
+(Intercept)          hp          wt 
+37.22727012 -0.03177295 -3.87783074 
+\end{verbatim}
+
+
 
 \section{Averages}
 Consider some useful notational conventions we'll use. 
@@ -111,6 +129,25 @@ $$
 $$
 Convince yourself that $\tilde \bX$ has every column mean equal to 0.
 
+\subsection{Coding example}
+Let's take our $\bX$ matrix defined previously from the \texttt{mtcars} dataset and
+mean center it. We'll contrast using matrix manipulations versus (preferable)
+R functions. 
+
+\begin{verbatim}
+> n = nrow(x)
+> I = diag(rep(1, n))
+> H = matrix(1, n, n) / n
+> xt = (I - H) %*% x 
+> apply(xt, 2, mean)
+[1] 0.000000e+00 0.000000e+00 2.168404e-16
+> ## Doing it using sweep
+> xt2 = sweep(x, 2, apply(x, 2, mean))
+> apply(xt2, 2, mean)
+[1] 0.000000e+00 0.000000e+00 3.469447e-17
+\end{verbatim}
+
+
 \section{Variance}
 Consider the fact that the matrix $\left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\}$
 is both symmetric and idempotent. The standard sample variance is the average deviation of the
@@ -124,7 +161,11 @@ $$
 \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \by
 = \by^t \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\}\by.
 $$
-Thus, our sample variance is a fairly simple quadratic form. Similarly
+Thus, our sample variance is a fairly simple quadratic form. 
+
+Similarly, if we have two vectors, $\by$ and $\bz$ then $\frac{1}{n-1}\by \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \bz$ is the
+empirical correlation between them.
+This is then useful for matrices. Consider that
 $$
 \frac{1}{n-1} \bX^t \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \bX
 = \frac{1}{n-1} \tilde \bX^t \tilde \bX
@@ -132,8 +173,25 @@ $$
 is a matrix where each element is the empirical covariance between columns of $\bX$.
 This is called the variance/covariation matrix. 
 
+\subsection{Coding example}
+Let's manually calculate the covariance of the \texttt{x} matrix from before.
 
-
+\begin{verbatim}
+> n = nrow(x)
+> I = diag(rep(1, n))
+> H = matrix(1, n, n) / n
+> round(t(x) %*% (I - H) %*% x / (n - 1), 6)
+     [,1]       [,2]      [,3]
+[1,]    0    0.00000  0.000000
+[2,]    0 4700.86694 44.192661
+[3,]    0   44.19266  0.957379
+> var(x)
+     [,1]       [,2]      [,3]
+[1,]    0    0.00000  0.000000
+[2,]    0 4700.86694 44.192661
+[3,]    0   44.19266  0.957379
+\end{verbatim}
+Recall, the first column was all ones; thus the row and column of zeros in the variance.
 
 
 

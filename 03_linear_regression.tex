@@ -1,0 +1,201 @@
+\chapter{Linear regression}
+
+Now let's consider upping the ante to two parameters. Consider the minimizing
+\begin{equation}
+\label{eq:line}
+|| \by - (\beta_0 \bone_n + \beta_1 \bx) ||^2
+\end{equation}
+over $\beta_1$ and $\beta_2$. Let's think about this in two ways. 
+First, the space $$\Gamma = \{\beta_0 \bone_n + \beta_1 \bx ~|~ \beta_0, \beta_1 \in \mathbb{R}\}$$
+is a two dimensional subspace of $\mathbb{R}^n$. Therefore, the least squares
+equation finds the projection of the observed data point 
+onto two dimensional subspace spanned by the two vectors $\bone_n$ and $\bx$.
+
+The second way to think about the fit is to consider the scatterplot
+of points $(x_i, y_i)$. The goal is to find the best fitting line
+of the form $y = \beta_0 + \beta_1 x$ by minimizing the sum of the
+squared vertical distances between the points and the fitted line. 
+
+Given what we've done already, it's surprisingly easy to minimize
+\eqref{eq:line}. Consider fixing $\beta_1$ and minimizing
+with respect to $\beta_0$.
+$$
+|| \by - \beta_1 \bx  - \beta_0 \bone_n ||^2
+$$
+Let $\hat \beta_0 (\beta_1)$ be the least squares minimum for $\beta_0$
+for a given $\beta_1$. 
+By our results from mean only regression we know that
+\begin{equation*}
+\label{eq:intercept}
+\hat \beta_0 (\beta_1) = \frac{1}{n}(\by - \beta_1 \bx) = \bar y - \beta_1 \bar x.
+\end{equation*}
+Therefore, plugging this into the least squares equation, we know that
+\begin{equation}
+\label{eq:ls2}
+\eqref{eq:line} \geq 
+|| \by -  \bar y \bone_n + \beta_1 (\bx  - \bar x \bone_n) ||^2= || \tilde \by - \beta_1 \tilde \bx||^2,
+\end{equation}
+where $\tilde \by$ and $\tilde \bx$ are the centered versions of $\by$ and
+$\bx$, respectively. We know from the last chapter \eqref{eq:ls2} is minimized 
+by 
+$$\hat \beta_1 = \hat \rho_{xy} \frac{\hat \sigma_y}{\hat \sigma_x}.$$
+Plugging this into $\hat \beta_0(\hat \beta_1)$ we get that
+$$
+\hat \beta_0 = \bar y - \beta_1 \bar x.
+$$
+
+Therefore, the slope estimate from including an intercept is identical to that of
+regression through  the origin after centering the data. The intercept simply
+forces the line through the average of the Y's and X's.
+
+\subsection{Coding example}
+\begin{verbatim}
+> library(UsingR)
+> data(diamond)
+> x = diamond$carat
+> y = diamond$price
+> beta1 = cor(x, y) * sd(y) / sd(x)
+> beta0 = mean(y) - beta1 * mean(x)
+> c(beta0, beta1)
+[1] -259.6259 3721.0249
+> # versus estimate with lm
+> coef(lm(y ~ x))
+(Intercept)           x 
+  -259.6259   3721.0249 
+ > #Centered regression through the origin
+ > sum(yc * xc) / sum(xc^2)
+[1] 3721.025
+\end{verbatim}
+
+\section{Fitted values}
+We define $\hat \by = (\hat y_1, \ldots, \hat y_n)^t$ to be the vector of fitted values.
+Whereas $\by$ lives in $\mathbb{R}^n$, $\hat \by$ lives in $\Gamma$, the two dimensional
+linear subspace of $\mathbb{R}^n$ spanned by the two vectors, $\bone_n$ and $\bx$. We
+define $\hat \by$ as $\hat \beta_0 + \hat \beta_1 \bx$. We can think of our
+least squares as minmizing 
+$$
+|| \by - \hat \by|| 
+$$
+over all $\hat \by \in \Gamma$. The fitted values are the orthogonal projection
+of the observed data onto this linear subspace.
+
+\subsection{Coding example}
+Getting the predicted value for $x=0.20$ (refer to the previous section \texttt{diamond} example). 
+\begin{verbatim}
+> beta0 + beta1 * .20
+[1] 484.5791
+> predict(lm(y ~ x), newdata = data.frame(x = .2))
+       1 
+484.5791 
+\end{verbatim}
+
+\section{Residuals}
+Define $\be = \by - \hat \by$ to be the vector of residuals. Each residual
+is the vertical distance between $\by$ and the fitted regression line. 
+Thinking geometrically, the residuals are the orthogonal vector pointing
+to $\by$ from $\hat \by$. Least squares can be thought of as minimizing
+the sum of the squared residuals. The quantity
+$||\be||^2 $
+is called the sum of the squared errors while $\frac{1}{n-2}||\be||^2$ is
+called the mean squared error or the residual variance.
+
+\begin{verbatim}
+> yhat = beta0 + beta1 * x 
+> e = y - yhat
+> max(abs(e - resid(lm(y ~ x))))
+\end{verbatim}
+
+
+\section{Extension to other spaces}
+
+It is interesting to note that nothing we've discussed is intrinsic
+to $\mathbb{R}^n$. Any space with a norm and inner product and
+absent of extraordinary mathematical pathologies would suffice.  Hilbert spaces are perhaps the most directly extendable. 
+
+As an example, let's develop linear regression for
+a space of (Lebesgue) square integrable functions. That is, let $y$ be in the space
+of functions from $[0,1] \rightarrow \mathbb{R}$ with finite squared itegral.
+Define the inner product as $\ip{f}{g} = \int_0^1 f(t)g(t)dt$. Consider
+finding the best multple approximation to $y$ from the function $x$ (also in that space). 
+
+Thus, we want to minimize:
+$$
+|| y - \beta_1 x ||^2 = 
+\int_0^1 \{y(t) - \beta_1 x(t)\}^2 dt.
+$$
+You might have guessed that the solution will be $\hat \beta = \frac{\ip{y}{x}}{\ip{x}{x}} = \frac{\ip{y}{x}}{||x||^2}.$
+Let's show it (knowing that this is the solution):
+\begin{eqnarray*}
+|| y - \beta_1 x ||^2 & = & 
+|| y - \hat \beta_1 x + \hat \beta_1 x  - \beta_1 x ||^2 \\
+& = & || y - \hat \beta_1 \bar x ||^2
+- 2 \ip{ y - \hat \beta_1 x }{\hat \beta_1 x - \beta_1 x}
++ ||\hat \beta_1 x - \beta_1 x||^2 \\
+& \geq & 
+|| y - \hat \beta_1 \bar x ||^2
+- 2 \ip{ y - \hat \beta_1 x}{\hat \beta_1 x - \beta_1 x}\\
+& = & || y - \hat \beta_1 \bar x ||^2
+- 2 \hat \beta_1 \ip{y}{x} + 2 \beta_1 \ip{y}{x} + 2
+\hat \beta_1^2 ||x||^2 - 2 \hat \beta_1 \beta_1 ||X||^2 \\
+& = & || y - \hat \beta_1 \bar x ||^2 %
+-  2 \frac{\ip{y}{x}^2}{||x||^2} + 2 \beta_1 \ip{y}{x} %
++ 2 \frac{\ip{y}{x}^2}{||x||^2} %
+- 2 \beta_1 \ip{y}{x} \\
+& = & || y - \hat \beta_1  x ||^2
+\end{eqnarray*}
+Therefore, $\hat \beta_1$ is the least squares estimate.
+
+We can extend this to include an intercept. Let $j$ be a function
+that is constant at 1. 
+Let $\bar y = \int_0^1 y(t)dt$ be the average of $y$ over
+the domain and define $\bar x$ similarly.
+Then consider minimizing (over $\beta_0$ and $\beta_1$)
+$$
+|| y - \beta_0 j - \beta_1 x ||^2
+$$
+First, hold $\beta_1$ fixed. By our previous result, we
+have that the minimizer must satisfy:
+$$
+\beta_0 = <y - \beta_1 x, j> / ||j||^2 = 
+\bar y - \beta_1 \bar x.
+$$
+Plugging this back into our least squares equation we
+obtain that:
+\begin{eqnarray*}
+|| y - \beta_0 j - \beta_1 x ||^2 & \geq &
+|| y - \bar y - \beta_1 (x - \bar x)||^2 \\
+& = & || \tilde y - \beta_1 \tilde x||^2
+\end{eqnarray*}
+where $\tilde y$ and $\tilde x$ are the centered functions.  
+We know that this is minimized by
+$$
+\hat \beta_1 = \frac{\ip{\tilde y}{\tilde x}}{||\tilde x||^2} = \rho_{xy}\frac{\sigma_y}{\sigma_x}.
+$$
+where $\rho_{xy} = \int_0^1 \{y(t) - \bar y\} \{x(t) - \bar x\} dt$ is the
+functional correlation between $x$ and $y$ and $\sigma_y^2 =
+\int_0^1 \{y(t) - \bar y\}^2 dt$ (and $\sigma_x^2$ is defined similarly) is the functional variance.
+Further, we have that $\hat \beta_0 = \bar y - \hat \beta_1 \bar x$.
+
+Several take-home points are in order. First, we see that defining
+empirical means, covariances and variances for functional data is
+fairly straightforward. Secondly, we see that a version of linear
+regression applied to functional data is identical in all salient
+respects to ordinary linear regression. Thirdly, I hope that you
+can start to see a pattern that multivariate regression (in vector
+and more general spaces) can be built up easily by regression through
+the origin. It's an interesting, though tedious, 
+exercise to derive multivariate regression only allowing
+oneself access to regression through the origin. 
+We'll find a more convenient derivation in the next
+chapter. However, it's oddly pleasant that so much of multivariable
+regression relies on this simple result.
+
+ 
+
+
+
+
+
+
+
+

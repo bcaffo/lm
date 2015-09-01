@@ -1,8 +1,9 @@
-\documentclass[12pt]{book}
+\documentclass[12pt,oneside]{book}
 \usepackage[utf8]{inputenc}
 \usepackage[colorlinks=true,urlcolor=blue]{hyperref}
 \usepackage{amsmath,amssymb}
 \usepackage{helvet}
+\usepackage[margin=1in]{geometry}
 
 \renewcommand{\familydefault}{\sfdefault}
 
@@ -15,12 +16,34 @@
 
 \maketitle
 
+\tableofcontents
+
+\frontmatter
+
 \input{preface.tex}
 
-\input{0_introduction.tex}
+\mainmatter
 
-\input{1_background.tex}
+\input{00_introduction.tex}
 
+\input{01_background.tex}
 
+\input{02_single_parameter.tex}
+
+\input{03_linear_regression.tex}
+
+\input{04_least_squares.tex}
+
+\input{05_examples.tex}
+
+\input{06_bases.tex}
+
+\input{07_residuals.tex}
+
+\input{08_expectations.tex}
+
+\input{09_normal.tex}
+
+\input{10_distro.tex}
 
 \end{document}

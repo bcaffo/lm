@@ -1,0 +1,84 @@
+\chapter{Residuals and variability}
+
+\section{Residuals}
+The residuals are the variability left unexplained by the projection 
+onto the linear space spanned by the design matrix. The residuals
+are othogonal to the space spanned by the design matrix and thus
+are othogonal to the design matrix itself.
+
+We define the residuals as
+$$
+\be = \by - \hat \by.
+$$
+Thus, our least squares solution can be though of as minimizing
+the squared norm of the residuals. Notice further that by
+expanding the column space of $\bX$ by adding any new
+linearly indpendent variables, the normal of the residuals
+must decrease. In other words, if we add any non-redundant
+regressors, we necessarily remove residual variability. Furthermore,
+as we already know, $\bX$ is of full column rank, then our residuals
+are all zero, since $\by = \hat \by$. 
+
+Notice that the residuals are equal to:
+$$
+\be = \by - \hat \by = \by - \hatmat \by = \{\bI - \hatmat\} \by.
+$$
+Thus multiplication by the matrix $\bI - \hatmat$ transforms a
+vector to the residual. This matrix is interesting for several reasons.
+First, note that $\{\bI - \hatmat\} \bX = 0$ thus making the residuals
+orthogonal to any vector, $\bX \bgamma$, in the space spanned by the
+columns of $\bX$. Secondly, it is both symmetric and idempotent. 
+
+A consequence of the orthogonality is that if an intercept is
+included in the model, the residuals sum to 0. Specifically,
+since the residuals are orthogonal to any column of $\bX$, 
+$\be^t \bone = 0$.
+
+\section{Partitioning variability}
+
+For convenience, define $\bH_{\bX}= \hatmat$. Note that
+the variability in a vector $\by$ is estimated by 
+$$
+\frac{1}{n-1} \by^t (\bI - \bH_{\bone}) \by.
+$$
+Omitting the $n-1$ term define the total sums of squares as
+$$
+\mbox{SS}_{Tot} = ||\by - \bar y \bone ||^2 = \by^t (\bI - \bH_{\bone}) \by.
+$$
+This is an unscaled measure of the total variability in the
+sample. Given a design matrix, $\bX$, define the residual 
+sums of squares as
+$$
+\mbox{SS}_{Res} = ||\by - \hat \by||^2 = \by^t (\bI - \bH_{\bX}) \by
+$$
+and the regression sums of squares as 
+$$
+\mbox{SS}_{Reg} = ||\bar Y \bone - \hat \by||^2 = \by^t (\bH_{\bX} - \bH_{\bone}) \by.
+$$
+The latter equality is obtained by the following. First note that since
+$(\bI - \bH_{\bX})\bone = 0$ (since $\bX$ contains an intercept) we have that
+$\bH_{\bX} \bone = \bone$ and then $\bH_{\bX} \bH_{\bone} = \bH_{\bone}$
+and $\bH_{\bone} = \bH_{\bone} \bH_{\bX}$.
+Also, note that $\bH_{\bX}$ is symmetric and idempotent. 
+Now we can perform the following manipulation
+\begin{eqnarray*}
+||\bar Y \bone - \hat \by||^2 & = & 
+\by^t (\bH_{\bX} - \bH_{\bone})^t (\bH_{\bX} - \bH_{\bone})\by \\
+& = & \by^t (\bH_{\bX} - \bH_{\bone}) (\bH_{\bX} - \bH_{\bone})\by \\ 
+& = & \by^t (\bH_{\bX} - \bH_{\bone}\bH_{\bX} - \bH_{\bX} \bH_{\bone} + \bH_{\bone}) \by \\
+& = & \by^t (\bH_{\bX} - \bH_{\bone}) \by.
+\end{eqnarray*}
+Using this identity we can now show that
+\begin{eqnarray*}
+\mbox{SS}_{Tot} & = & \by^t (\bI - \bH_{\bone}) \by \\
+& = & \by^t (\bI - \bH_{\bX} + \bH_{\bX} - \bH_{\bone}) \by \\
+& = & \by^t (\bI - \bH_{\bX}) \by + \by^t (\bH_{\bX} - \bH_{\bone}) \by \\
+& = & \mbox{SS}_{Res} + \mbox{SS}_{Reg}
+\end{eqnarray*}
+Thus our total sum of squares partitions into the residual and regression sums of squares.
+We define
+$$
+R^2 = \frac{\mbox{SS}_{Reg}}{\mbox{SS}_{Tot}}.
+$$
+as the percentage of our total variability explained by our model. Via our equality above,
+this is guaranteed to be between 0 and 1. 

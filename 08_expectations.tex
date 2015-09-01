@@ -1,0 +1,125 @@
+\chapter{Expectations}
+Up to this point, our exploration of linear models only relied on least squares
+and projections. We begin now discussing the statistical properties of our
+estimators. We start by defining expected values. We assume that the reader
+has basic univariate mathematical statistics.
+
+\section{Expected values}
+If $X$ is a random variable having density funciton $f$, 
+the $k^{th}$ moment is defined as 
+$$
+E[X] = \int_{-\infty}^{\infty} x^k f(x) dx.
+$$
+In the multivariate case where $\bX$ is a random vector
+then the $k^th$ moment of element $i$ of the vector is 
+given by 
+$$
+E[X_i^k] = \int_{-\infty}^{\infty} \ldots \int_{-\infty}^{\infty} x_i^k f(x_1, \ldots, x_n) dx_1, \ldots, dx_n.
+$$
+It is worth asking if this definition is consistent with all
+of the subdistributions defined by the subvectors of $\bX$. 
+Let $i_1, \ldots, i_p$ is any subset of indices of $1,\ldots, n$ and
+$i_{p+1}, \ldots, i_{n}$ are the remaining, then the 
+joint distribution of $(X_{i_1},\ldots, X_{i_p})^t$ is 
+$$
+g(x_{i_1}, \ldots, x_{i_p}) = \int_{-\infty}^{\infty} \ldots \int_{-\infty}^{\infty}
+f(x_1, \ldots, x_n) dx_{i_{p+1}}, \ldots, dx_{i_{n}}.
+$$
+The $k^{th}$ moment of $X_{i_j}$ for $j \in \{1,\ldots, p\}$ is equivalently:
+\begin{eqnarray*}
+E[X_{i_j}] & = & \int_{-\infty}^{\infty} \ldots \int_{-\infty}^{\infty}
+x_{i_j}^k g(x_{i_1}, \ldots, x_{i_p}) dx_{i_1}, \ldots, d_{x_{ip}} \\
+& = & \int_{-\infty}^{\infty} \ldots \int_{-\infty}^{\infty}
+x_{i_j}^k f(x_1, \ldots, x_n) dx_1, \ldots, dx_n.
+\end{eqnarray*}
+(HW, prove this.) Thus, if we know only the marginal distribution 
+of $X_{i_j}$ or any level of joint information, the expected value is the same.
+
+
+If $\bX$ is any random vector or matrix, the $E[\bX]$ is 
+simply the elementwise expected value defined above. Often
+we will write $E[\bX] = \bmu$, or some other Greek letter,
+adopting the notation that population parameters are Greek.
+Standard notation is hindered somewhat in that uppercase letters
+are typically used for random values, though are also used
+for matrices. We hope that the context will eliminate confusion.
+
+Expected value rules translate well in the multivariate settings.
+If $\bA$, $\bB$, $\bC$ are vectors or matrices that satisfy the operations then 
+$$
+E[\bA \bX + \bB \bY + \bC] = \bA E[\bX] + \bB E[\bY] + \bC.
+$$
+Further, expected values commute with transposes and traces
+$$
+E[\bX^t] = E[\bX]^t
+$$
+and 
+$$
+E[\mbox{tr}(\bX)] = \mbox{tr}(E[\bX]).
+$$
+
+\section{Variance}
+The multivariate variance of random vector $\bX$ is defined as 
+$$
+\Var(\bX) = \bSigma = E[(\bX - \bmu)(\bX - \bmu)^t].
+$$
+Direct use of our matrix rules for expected values gives us the
+analog of the univariate shortcut formula
+$$
+\bSigma = E[\bX\bX^t] - \bmu \bmu^t.
+$$
+Variance satisfy the properties 
+$$
+\Var(\bA \bX + \bB) = \bA \Var(\bX) \bA^t.
+$$
+
+\section{Multivariate covariances}
+The multivariate covariance is given by 
+$$
+\Cov(\bX, \bY) = E[(\bX - \bmu_x)(\bY - \bmu_y)^t]
+= E[\bX \bY^t] - \bmu_x \bmu_y^t.
+$$
+This definition applies even if $\bX$ and $\bY$ are of different length.
+Notice the multivariate covariance is not symmetric in its arguments. 
+Moreover, 
+$$
+\Cov(\bX, \bX) = \Var(\bX).
+$$
+
+Covariances satisfy some useful rules in that
+$$
+\Cov(\bA \bX, \bB \bY) = \bA \Cov(\bX, \bY) \bB^t
+$$
+and
+$$
+\Cov(\bX + \bY, \bZ) = \Cov(\bX, \bY) + \Cov(\bX, \bZ)
+$$
+
+Multivariate covariances are useful for sums of random vectors. 
+$$
+\Var(\bX + \bY) = \Var(\bX) + \Var(\bY) + \Cov(\bX, \bY) + \Cov(\bY, \bX).
+$$
+
+A nifty fact from covariances is that the covariance of $\bA \bX$ and
+$\bB \bX$ is $\bA \bSigma \bB^t$. Thus $\bA \bX$ and $\bB \bX$ 
+are uncorrelated iff $\bA \bSigma \bB^t = \bzero.$
+
+\section{Quadratic form moments}
+\label{sec:qfm}
+Let $\bX$ be from a distribution with mean $\bmu$ and variance
+$\bSigma$. Then 
+$$
+E[\bX^t \bA \bX] = \bmu^t \bA \bmu + \mbox{tr}(\bA \bSigma).
+$$
+Proof
+\begin{eqnarray*}
+E[\bX^t \bA \bX] & = & E[\mbox{tr}(\bX^t \bA \bX)]\\
+& = & E[\mbox{tr}(\bA \bX \bX^t )]\\
+& = &  \mbox{tr}(E[\bA  \bX \bX^t])\\
+& = & \mbox{tr}(\bA E[\bX \bX^t])\\
+& = & \mbox{tr}\{\bA [\Var(\bX) + \bmu \bmu^t]\}\\
+& = & \mbox{tr}\{\bA\bSigma + \bA \bmu \bmu^t\}\\
+& = & \mbox{tr}(\bA\bSigma) + \mbox{tr}(\bA \bmu \bmu^t)\\
+& = & \mbox{tr}(\bA\bSigma) + \mbox{tr}(\bmu^t \bA \bmu )\\
+& = & \mbox{tr}(\bA\bSigma) + \bmu^t \bA \bmu \\
+\end{eqnarray*}

@@ -1,0 +1,100 @@
+\chapter{Distributional results}
+In this chapter we assume that $\bY \sim N(\bX \bbeta, \sigma^2 \bI)$. 
+
+
+\section{Quadratic forms}
+\label{sec:qf}
+Let $\bA$ be a symmetric matrix (not necessarily full rank)
+and let $\bX \sim N(\bmu, \bSigma)$. Then
+$(\bX - \bmu)^t \bA (\bX - \bmu) \sim \chi^2_{p}$ if 
+$\bA \bSigma$ is idempotent and $p=\mbox{Rank}(\bA)$. 
+
+As an example, note that $(\bX - \bmu)^t \bSigma^{-1} (\bX - \bmu)$
+is clearly Chi-squared($n$). This is most easily seen by the fact that
+$(\bX - \bmu)\bSigma^{-1/2} = Z$ is a vector of iid standard normals
+and thus the quadratic form is the sum of their squares. Using
+our result, $\bA = \bSigma^{-1}$ in this case and  
+$\bA \bSigma = \bI$, which is idempotent. The rank of $\bSigma^{-1}$ is $n$.
+
+
+Let's prove our result. Let $\bA = \bV \bD^2 \bV^t$ where $\bD$ is diagonal (with $p$ non zero entries)
+and $\bV \bV^t = \bI$. The assumption of idempotency gives us that
+$\bA \bSigma \bA \bSigma = \bA \bSigma$. Pluggging in our decomposition for $\bA$
+and using the orthonormality of the columns of $\bV$ we get that
+$\bD \bV^t \bSigma \bV \bD = \bI$. Then note that
+\begin{equation}
+\label{eq:quad}
+(\bX - \bmu)^t \bA (\bX - \bmu) = (\bX - \bmu)^t \bV \bD  \bD \bV^t (\bX - \bmu).
+\end{equation}
+But $\bD \bV^t (\bX - \bmu) \sim N(\bzero, \bD \bV^t \bSigma \bV \bD)$, 
+which has variance equal to $\bI$. Thus in Equation \eqref{eq:quad} we have
+the sum of $p$ squared iid standard normals and is thus Chi-squared $p$. 
+
+\section{Statistical properties}
+For homework, show that $\hat \bbeta$ is normally distributed with moments: 
+
+$$
+E[\hat \bbeta] = \bbeta ~~~\mbox{and}~~~ \Var(\hat \bbeta) = \xtxinv \sigma^2.
+$$
+
+The residual variance estimate is $S^2 = \frac{1}{n-p}\be^t \be$. Using Section
+\ref{sec:qfm} we see that it is unbiased, $E[S^2] = \sigma^2$.  
+Note also that:
+\begin{eqnarray*}
+\frac{n-p}{\sigma^2} S^2 & = & \frac{1}{\sigma^2}\by^t (\bI - \hatmat) \by \\
+& = & \frac{1}{\sigma^2}(\by - \bX \bbeta)^t \{\bI - \hatmat\} (\by - \bX \bbeta)
+\end{eqnarray*}
+is a quadratic form of as discussed in Section \eqref{sec:qf}.  
+Furthermore
+$$
+\frac{1}{\sigma^2}\{\bI - \hatmat\} \Var(Y) = \{\bI - \hatmat\},
+$$
+which is idempotent. For symmetric idempotent matrices, the rank equals
+the trace; the latter of which is easily calculated as
+$$
+\mbox{tr}\{\bI - \hatmat\} = \mbox{tr}\{\bI\} - \mbox{tr}\{\hatmat\}
+= n - \mbox{tr}\{\xtxinv \xtx\} = n - p.
+$$
+Thus, $\frac{n-p}{\sigma^2} S^2$ is Chi-squared $n-p$. The special
+case of this where $\bX$ has only an intercept yields the usual
+empirical variance estimate.
+
+
+\section{T statistics}
+We can now develop T statistics.
+Consider the linear contrast $\hat \bbeta^t \bt$. First note that
+$\hat \bbeta^t \bt$ is $N(\bbeta^t \bt, \bt^t \xtxinv \bt \sigma^2)$. 
+Furthermore,
+$\Cov(\hat \bbeta, \be) = \Cov(\xtxinv \bX^t \bY, \{\bI - \hatmat\} \bY) = 0$
+since $\xtxinv \bX^t \{\bI - \hatmat\} = \bzero$. Thus the residuals
+and estimated coefficients are independent, implying that $\hat \bbeta^t \bt$
+and $S^2$ are independent.
+Therefore,
+$$
+\frac{\hat \bbeta \bt - \bbeta \bt}{\sqrt{\bt^t \xtxinv \bt \sigma^2}}
+/ \sqrt{\frac{n-p}{\sigma^2} S^2 / (n-p)}
+=\frac{\hat \bbeta \bt - \bbeta \bt}{\sqrt{\bt^t \xtxinv \bt S^2}}
+$$
+is a standard normal divided by the square root of an independent Chi-squared
+over its degrees of freedom, thus is $T$ distributed with $n-p$ degrees of freedom.
+
+\section{F tests}
+Consider testing the hypothesis that $H_0:\bK \bbeta = 0$ versus not equal for $\bK$
+of full row rank (say $v$). 
+Notice that $\bK \hat \bbeta \sim N(\bK \bbeta, \bK \xtxinv \bK^t \sigma^20$ and thus
+$$
+(\bK \hat \bbeta - \bK \bbeta)^t  \{\bK \xtxinv \bK^t \sigma^2 \}^{-1} (\bK \hat \bbeta - \bK \bbeta)
+$$
+is Chi-squared with $v$ degrees of freedom. Furthermore, it is independent of
+$\be$ being a function of $\hat \bbeta$. Thus:
+$$
+(\bK \hat \bbeta - \bK \bbeta)^t  \{\bK \xtxinv \bK^t\}^{-1} (\bK \hat \bbeta - \bK \bbeta) / v S^2
+$$
+forms the ratio of two independent Chi-squared random variables over their degrees of freedom, which is an F distribution.
+
+
+
+
+
+
+
