@@ -261,8 +261,8 @@ regressors and the outcome. Then we can repeat this
 process again holding $\beta_3, \ldots, \beta_p$
 fixed and obtain
 $$
-\eqref{eq:itresid2}\geq ||e\{e(\by, \bx_1), \bx_2\} - 
-e\{e(\bx_3, \bx_1), \bx_2\} \beta_3, \ldots, e\{e(\bx_p, \bx_1), \bx_3\} \beta_p||^2.
+\eqref{eq:itresid2}\geq ||e\{e(\by, \bx_1), e(\bx_2, \bx_1)\} - 
+e\{e(\bx_3, \bx_1), e(\bx_2, \bx_1)\} \beta_3, \ldots, e\{e(\bx_p, \bx_1), e(\bx_{2}, \bx_1)\} \beta_p||^2.
 $$
 This could then be iterated to the $p^{th}$ regressor.
 Moreover, because we know the same inequalities will be
