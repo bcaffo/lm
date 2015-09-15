@@ -44,6 +44,28 @@ $\bX^t \ba$ is non-zero since $\bX$ is full rank and then
 $\ba^t \bX^t \bX \ba = ||\bX \ba||^2 > 0$.) Thus, the root of
 our derivative is indeed a minimum. 
 
+\subsection{Coding example}
+\begin{verbatim}
+> y = swiss$Fertility
+> x = as.matrix(swiss[,-1])
+> solve(t(x) %*% x, t(x) %*% y)
+                       [,1]
+1                66.9151817
+Agriculture      -0.1721140
+Examination      -0.2580082
+Education        -0.8709401
+Catholic          0.1041153
+Infant.Mortality  1.0770481
+> summary(lm(y ~ x - 1))$coef
+                    Estimate  Std. Error   t value     Pr(>|t|)
+x1                66.9151817 10.70603759  6.250229 1.906051e-07
+xAgriculture      -0.1721140  0.07030392 -2.448142 1.872715e-02
+xExamination      -0.2580082  0.25387820 -1.016268 3.154617e-01
+xEducation        -0.8709401  0.18302860 -4.758492 2.430605e-05
+xCatholic          0.1041153  0.03525785  2.952969 5.190079e-03
+xInfant.Mortality  1.0770481  0.38171965  2.821568 7.335715e-03
+\end{verbatim}
+
 \section{A second derivation}
 If you know the answer first, it's possible to derive the 
 minimum to the least squares equation without taking any derivatives.
@@ -74,7 +96,7 @@ useful in general, $\bI - \hatmat$ is orthogonal to any linear combination
 of the columns of $\bX$. This is try since if $\bX \ba$ is such a combination,
 then
 $$
-(\bI - \hatmat)\bX \ba = (\bX - \hatmat \bX)\ba = (\bX - \bX) \ba = 0.
+\{\bI - \hatmat)\}bX \ba = \{\bX - \hatmat \bX\}\ba = (\bX - \bX) \ba = 0.
 $$
 This fact is extremely handy in working with linear models. 
 
@@ -83,9 +105,10 @@ This fact is extremely handy in working with linear models.
 Recall that the slope from linear regression worked out to be
 $$
 \ip{\bx - \bar x \bone_n}{\bx - \bar x \bone_n}^{-1}\ip{\bx - \bar x\bone_n}{\by - \bar y \bone_n} 
-= \hat \sigma^{-2}_{X} \hat \rho_{XY}
+= \hat \sigma^{-2}_{X} \hat \sigma^2_{XY}
 $$
-which we conveniently rewrote using the correlation. In this form it is the
+where $\hat \sigma^2_{XY}$ is the empirical covariance between X and Y. 
+(We rewrote this formula using the more convenient correlation.) In this form it is the
 covariance between x and y divided by the variance of the x's. Let's consider
 extending this in our matrix results.
 
@@ -216,20 +239,20 @@ is obtained by taking successive residuals, in the following sense. Consider the
 equation holding $\beta_2, \ldots, \beta_p$ fixed:
 \begin{equation}
 \label{eq:itresid}
-|| \by - \bx_1 \bbeta_1 - \ldots, \bx_p \bbeta_p||^2.
+|| \by - \bx_1 \bbeta_1 - \ldots - \bx_p \bbeta_p||^2.
 \end{equation}
 This is greater than or equal to
 if we replace $\beta_1$ by it's
 estimate with the remainder fixed. That estimate
 being:
 $$
-c(\by - \bx_1 \bbeta_1 - \ldots, \bx_p \bbeta_p, \bx_2).
+c(\by - \bx_2 \bbeta_2 - \ldots, \bx_p \bbeta_p, \bx_1).
 $$
 Plugging that back into the least squares equation we
 get
 \begin{equation}
 \label{eq:itresid2}
-\eqref{eq:itresid}\leq ||e(\by, \bx_1) - 
+\eqref{eq:itresid}\geq ||e(\by, \bx_1) - 
 e(\bx_2, \bx_1) \beta_2, \ldots, e(\bx_p, \bx_1) \beta_p||^2.
 \end{equation}
 Thus we have a new least squares equation with 
@@ -238,7 +261,7 @@ regressors and the outcome. Then we can repeat this
 process again holding $\beta_3, \ldots, \beta_p$
 fixed and obtain
 $$
-\eqref{eq:itresid2}\leq ||e\{e(\by, \bx_1), \bx_2\} - 
+\eqref{eq:itresid2}\geq ||e\{e(\by, \bx_1), \bx_2\} - 
 e\{e(\bx_3, \bx_1), \bx_2\} \beta_3, \ldots, e\{e(\bx_p, \bx_1), \bx_3\} \beta_p||^2.
 $$
 This could then be iterated to the $p^{th}$ regressor.
@@ -288,7 +311,28 @@ have been orthogonalized to the space spanned
 by the columns of $\bX_1$!
 
 
-
+\subsection{Coding example}
+\begin{verbatim}
+> y = swiss$Fertility
+> x = as.matrix(swiss[,-1])
+> x1 = x[,1 : 3]
+> x2 = x[,4 : 6]
+> solve(t(x) %*% x, t(x) %*% y)
+                       [,1]
+1                66.9151817
+Agriculture      -0.1721140
+Examination      -0.2580082
+Education        -0.8709401
+Catholic          0.1041153
+Infant.Mortality  1.0770481
+> ey = y - x1 %*% solve(t(x1) %*% x1, t(x1) %*% y)
+> ex2 = x2 - x1 %*% solve(t(x1) %*% x1) %*% t(x1) %*% x2
+> solve(t(ex2) %*% ex2, t(ex2) %*% ey)
+                       [,1]
+Education        -0.8709401
+Catholic          0.1041153
+Infant.Mortality  1.0770481
+\end{verbatim}
 
 
 
