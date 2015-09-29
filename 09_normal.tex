@@ -92,11 +92,14 @@ Since this doesn't depend on $\sigma$ it is the MLE.
 Taking derivatives and setting equal to zero we
 see that 
 $$
-\hat \sigma^2 = ||e^2||^2 / n
+\hat \sigma^2 = ||e||^2 / n
 $$
 (i.e. the average of the squared residuals). We'll
 find that there's a potentially preferable unbiased
-estimate. 
+estimate given by
+$$
+S^2 = ||e||^2 / (n - p).
+$$
 
 This model can be written in a  likelihood equivalent fashion
 of  
@@ -128,6 +131,7 @@ and the following for $\bSigma$
 $$
 \hat \bSigma = \frac{1}{n} \sum_{i=1}^n (\bY_i - \bar \bY) (\bY_i -\bar \bY)^t
 $$
+
 
 Consider yet another case $\bY \sim N(\bX\bbeta, \bSigma)$ with known $\bSigma$.
 Minus twice the log-likelihood is:
@@ -183,14 +187,14 @@ $$
 
 \subsection{Important example}
 Consider an example. Consider the vector 
-$(Y ~ \bX^t)^t$ where $Y$ is $1\times 1$ and $\bX$ is $p\times 1$. Assume that 
-the vector is normal with $E[Y] = \mu_y$, $E[\bX] = \bmu_x$ and the variances
+$(\bY ~ \bX^t)^t$ where $\bY$ is $1\times 1$ and $\bX$ is $p\times 1$. Assume that 
+the vector is normal with $E[\bY] = \mu_y$, $E[\bX] = \bmu_x$ and the variances
 as $\sigma^2_y$ ($1\times 1$) and $\bSigma_x$ ($p\times p$) 
 and covariance $\brho_{xy}$ ($p \times 1$).
 
-Consider now predicting $Y$ given $\bX = \bx$. Clearly the a good estimate
-for this would be $E[Y ~|~ \bX = \bx]$. Our results
-suggest that $Y ~|~ \bX = \bx]$ is normal with mean:
+Consider now predicting $\bY$ given $\bX = \bx$. Clearly the a good estimate
+for this would be $E[\bY ~|~ \bX = \bx]$. Our results
+suggest that $\bY ~|~ \bX = \bx$ is normal with mean:
 $$
 \mu_y + \brho_{xy}^t\bSigma_x^{-1} (\bx - \bmu_x)
 = \mu_y - \bmu_x \bSigma_x^{-1}\brho_{xy} + \bx^t \bSigma_x^{-1} \brho_{xy}
@@ -233,7 +237,62 @@ which elements of $\bSigma^{-1}$ are zero is called a conditional independence g
 
 
 
+\subsection{Bayes calculations}
+We assume a slight familiarity of Bayesian calculations and inference for this section.
+In a Bayesian analysis, one multiplies the likelihood times a prior distribution
+on the parameters to obtain a posterior. The posterior distribution is then used for
+inference. Let's go through a simple example.
+Suppose that $\by ~|~ \mu \sim N(\bmu \bone_n, \sigma^2 I)$ and
+$\mu ~|~ N(\mu_0, \tau^2)$ where $\by$ is $n \times 1$ and $\mu$ is a scalar. The
+normal distribution placed on $\mu$ is called the "prior" and $\mu_0$ and $\tau^2$ 
+are assumed to be known. For this example, let's assume that $\sigma^2$ is also
+known. The goal is to calculate
+$\mu ~|~ \by$, the posterior distribution. This is done by multiplying prior times
+likelihood. Since, operarting generically,
+$$
+f(\mbox{Param} | \mbox{Data}) = \frac{f(\mbox{Param}, \mbox{Data})}{f(\mbox{Data})} 
+\propto f(\mbox{Data} | \mbox{Param}) f(\mbox{Param}) = \mbox{Likelihood} \times \mbox{Prior}.
+$$
+Here, the proportional symbol, $\propto$, is with respect to the parameter.
 
-
-
+Consider our problem, retaining only terms involving $\mu$ we have that minus twice the natural log of the
+distribution of  $\mu ~|~ \by$ is given by
+\begin{eqnarray*}
+&   & -2 \log(f(\by ~|~ \mu)) - 2 \log(f(\mu)) \\
+& = & ||\by - \mu \bone_n||^2 / \sigma^2  + (\mu - \mu_0)^2 / \tau^2 \\
+& = & -2 \mu n \bar y / \sigma^2 + \mu^2 n / \sigma^2 + \mu^2 / \tau^2 - 2 \mu \mu_0 / \tau^2 \\
+& = & -2 \mu \left(
+\frac{\bar y}{\sigma^2 / n} + \frac{\mu_0}{\tau^2}\right)
++ \mu^2 \left(
+\frac{1}{\sigma^2 / n} + \frac{1}{\tau^2}
+\right)
+\end{eqnarray*}
+This is recognized as minus twice the log density of a normal distribution for $\mu$ with variance
+of 
+$$
+\Var(\mu ~|~ \by) =
+\left(
+\frac{1}{\sigma^2 / n} + \frac{1}{\tau^2}
+\right)^{-1}
+=\frac{\tau^2 \sigma^2 / n}{\sigma^2 / n + \tau^2}
+$$
+and mean of
+$$
+E[\mu ~|~ \by] = \left(
+\frac{1}{\sigma^2 / n} + \frac{1}{\tau^2}
+\right)^{-1}
+\left(
+\frac{\bar y}{\sigma^2 / n} + \frac{\mu_0}{\tau^2}\right)
+= p \bar y + (1 - p) \mu_0
+$$
+where 
+$$
+p = \frac{\tau^2}{\tau^2 + \sigma^2 /n }.
+$$
+Thus $E[\mu ~|~ \by]$ is a mixture of the empirical mean and the prior mean. How much 
+the means are weighted depends on the ratio of the variance of the mean ($\sigma^2/n$)
+and the prior variance ($\tau^2$). As we collect more data ($n \rightarrow \infty$), or if the
+data is not noisy
+($\sigma \rightarrow 0$) or we have a lot of prior uncertainty ($\tau \rightarrow \infty$) the empirical mean dominates. In contrast as we become more certain a priori
+($\tau \rightarrow 0$) the prior mean dominates.
 

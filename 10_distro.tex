@@ -1,5 +1,7 @@
 \chapter{Distributional results}
-In this chapter we assume that $\bY \sim N(\bX \bbeta, \sigma^2 \bI)$. 
+In this chapter we assume that $\bY \sim N(\bX \bbeta, \sigma^2 \bI)$. This is the
+standard normal linear model. We saw in the previous chapter that the maximum
+likelihood estimate for 
 
 
 \section{Quadratic forms}
@@ -11,7 +13,7 @@ $\bA \bSigma$ is idempotent and $p=\mbox{Rank}(\bA)$.
 
 As an example, note that $(\bX - \bmu)^t \bSigma^{-1} (\bX - \bmu)$
 is clearly Chi-squared($n$). This is most easily seen by the fact that
-$(\bX - \bmu)\bSigma^{-1/2} = Z$ is a vector of iid standard normals
+$\bSigma^{-1/2}(\bX - \bmu) = \bZ$ is a vector of iid standard normals
 and thus the quadratic form is the sum of their squares. Using
 our result, $\bA = \bSigma^{-1}$ in this case and  
 $\bA \bSigma = \bI$, which is idempotent. The rank of $\bSigma^{-1}$ is $n$.
@@ -19,7 +21,7 @@ $\bA \bSigma = \bI$, which is idempotent. The rank of $\bSigma^{-1}$ is $n$.
 
 Let's prove our result. Let $\bA = \bV \bD^2 \bV^t$ where $\bD$ is diagonal (with $p$ non zero entries)
 and $\bV \bV^t = \bI$. The assumption of idempotency gives us that
-$\bA \bSigma \bA \bSigma = \bA \bSigma$. Pluggging in our decomposition for $\bA$
+$\bA \bSigma \bA \bSigma = \bA \bSigma$. Plugging in our decomposition for $\bA$
 and using the orthonormality of the columns of $\bV$ we get that
 $\bD \bV^t \bSigma \bV \bD = \bI$. Then note that
 \begin{equation}
@@ -32,11 +34,9 @@ the sum of $p$ squared iid standard normals and is thus Chi-squared $p$.
 
 \section{Statistical properties}
 For homework, show that $\hat \bbeta$ is normally distributed with moments: 
-
 $$
 E[\hat \bbeta] = \bbeta ~~~\mbox{and}~~~ \Var(\hat \bbeta) = \xtxinv \sigma^2.
 $$
-
 The residual variance estimate is $S^2 = \frac{1}{n-p}\be^t \be$. Using Section
 \ref{sec:qfm} we see that it is unbiased, $E[S^2] = \sigma^2$.  
 Note also that:
@@ -58,6 +58,22 @@ $$
 Thus, $\frac{n-p}{\sigma^2} S^2$ is Chi-squared $n-p$. The special
 case of this where $\bX$ has only an intercept yields the usual
 empirical variance estimate.
+
+
+\subsection{Confidence interval for the variance}
+We can use the Chi-squared result to develop a confidence interval
+for the variance. Let $\chi^2_{n-p, \alpha}$ be the $\alpha$ quantile
+from the chi squared distribution with $n-p$ degrees of freedom.
+Then inverting the probability statement
+$$
+1 - \alpha = 
+P\left(
+\chi^2_{n-p, \alpha/2}
+\leq \frac{\be' \be}{n-p}
+\leq 
+\chi^2_{n-p,1 - \alpha_2}
+\right)
+$$
 
 
 \section{T statistics}
@@ -94,7 +110,75 @@ forms the ratio of two independent Chi-squared random variables over their degre
 
 
 
-
+\section{Coding example}
+Consider the \texttt{swiss} dataset. Let's first make sure that we can replicate
+the coefficient table obtained by R.
+\begin{verbatim}
+> ## First let's see the coeficient table
+> fit = lm(Fertility ~ ., data = swiss)
+> round(summary(fit)$coef, 3)
+                 Estimate Std. Error t value Pr(>|t|)
+(Intercept)        66.915     10.706   6.250    0.000
+Agriculture        -0.172      0.070  -2.448    0.019
+Examination        -0.258      0.254  -1.016    0.315
+Education          -0.871      0.183  -4.758    0.000
+Catholic            0.104      0.035   2.953    0.005
+Infant.Mortality    1.077      0.382   2.822    0.007
+> # Now let's do it more manually
+> x = cbind(1, as.matrix(swiss[,-1]))
+> y = swiss$Fertility
+> beta = solve(t(x) %*% x, t(x) %*% y)
+> e = y - x %*% beta
+> n = nrow(x); p = ncol(x)
+> s = sqrt(sum(e^2) / (n - p))
+> #Compare with lm
+> c(s, summary(fit)$sigma)
+[1] 7.165369 7.165369
+> #calculate the t statistics
+> betaVar = solve(t(x) %*% x) * s ^ 2 
+> ## Show that standard errors agree with lm
+> cbind(summary(fit)$coef[,2], sqrt(diag(betaVar)))
+                        [,1]        [,2]
+(Intercept)      10.70603759 10.70603759
+Agriculture       0.07030392  0.07030392
+Examination       0.25387820  0.25387820
+Education         0.18302860  0.18302860
+Catholic          0.03525785  0.03525785
+Infant.Mortality  0.38171965  0.38171965
+> # Show that the tstats agree
+> tstat = beta / sqrt(diag(betaVar))
+> cbind(summary(fit)$coef[,3],  tstat)
+                     [,1]      [,2]
+(Intercept)       6.250229  6.250229
+Agriculture      -2.448142 -2.448142
+Examination      -1.016268 -1.016268
+Education        -4.758492 -4.758492
+Catholic          2.952969  2.952969
+Infant.Mortality  2.821568  2.821568
+> # Show that the P-values agree
+> cbind(summary(fit)$coef[,4],  2 * pt(- abs(tstat), n - p)
+                         [,1]         [,2]
+(Intercept)      1.906051e-07 1.906051e-07
+Agriculture      1.872715e-02 1.872715e-02
+Examination      3.154617e-01 3.154617e-01
+Education        2.430605e-05 2.430605e-05
+Catholic         5.190079e-03 5.190079e-03
+Infant.Mortality 7.335715e-03 7.335715e-03
+> # Get the F statistic
+> # Set K to grab everything except the intercept
+> k = cbind(0, diag(rep(1, p - 1)))
+> kvar = k %*% solve(t(x) %*% x) %*% t(k)
+> fstat = t(k %*% beta) %*% solve(kvar) %*% (k %*% beta) / (p - 1) / s ^ 2
+> #Show that it's equal to what lm is giving
+> cbind(summary(fit)$fstat, fstat)
+> #Calculate the p-value
+> pf(fstat, p - 1, n - p, lower.tail = FALSE)
+             [,1]
+[1,] 5.593799e-10
+> summary(fit)
+## ... only showing the one relevant line ...
+F-statistic: 19.76 on 5 and 41 DF,  p-value: 5.594e-10
+\end{verbatim}
 
 
 

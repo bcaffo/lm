@@ -1,0 +1,142 @@
+\section{Residuals}
+
+For a good treatment of residuals and the other topics in this chapter, 
+see the book by Myers \citep{myers1990classical}.
+
+Now with some distributional results under our belt, we can discuss distributional
+properties of residuals. Note that, as a non-full rank linear transformation of
+normals, the residuals are singular normal. When $\by \sim N(\bX \bbeta, \sigma^2 \bI)$, the mean of the residuals is $\bzero$, variance of the residuals is:
+given by
+$$
+\Var(\be) = \Var\{(\bI - \bH_\bX)\by\} = \sigma^2 (\bI - \bH_\bX).
+$$
+As a consequence, we see that the diagonal elements of $\bI - \bH_\bX \geq 0$
+and thus the diagonal elements of $\bH_\bX$ must be less than one. (A fact that
+we'll use later). 
+
+A problem with the residuals is that they have the units of $\bY$ and thus are
+not comparable across experiments. Taking 
+$$\mbox{Diag}\{S^2(I - \bH_x)\}^{-1/2}\be,$$ 
+i.e., standardizing the residuals by their estimated standard deviation, does
+get rid of the units. However, the resulting quantities are not comparable to
+T-statistics since the numerator elements (the residuals) are not independent of $S^2$.
+The residuals standardized in this way are called ``studentized'' residuals. 
+Studentized residuals are a standard part of most statistical software.
+
+\subsection{Coding example}
+\begin{verbatim}
+> data(mtcars)
+> y = mtcars$mpg
+> x = cbind(1, mtcars$hp, mtcars$wt)
+> n = nrow(x); p = ncol(x)
+> hatmat =  x %*% solve(t(x) %*% x) %*% t(x)
+> residmat =  diag(rep(1, n)) - hatmat
+> e = residmat %*% y
+> s = sqrt(sum(e^2) / (n - p))
+> rstd = e / s / sqrt(diag(residmat))
+> # compare with rstandard, r's function
+> # for calculating standarized residuals
+> cbind(rstd, rstandard(lm(y ~ x - 1)))
+          [,1]        [,2]
+1  -1.01458647 -1.01458647
+2  -0.62332752 -0.62332752
+3  -0.98475880 -0.98475880
+4   0.05332850  0.05332850
+5   0.14644776  0.14644776
+6  -0.94769800 -0.94769800
+...
+\end{verbatim}
+
+\section{Press residuals}
+\label{sec:press}
+
+Consider the model $\by \sim N(\bW \bgamma, \sigma^2 \bI)$
+where $\gamma = [\bbeta^t ~ \Delta_i]$, 
+$\bW = [\bX ~ \bdelta_i]$ where $\bdelta_i$ is a vector of all zeros
+except a 1 for row $i$. This model has a shift in position $i$, for 
+example if there is an outlier at that position. 
+The least squares criterion can be written as
+\begin{equation}
+\label{rstud}
+\sum_{k\neq i} \left(y_k - \sum_{j = 1}^p x_{kj} \beta_j \right)^2
++ \left(y_i - \sum_{j=1}^p x_{ij} \beta_j - \delta_i\right)^2.
+\end{equation}
+Consider holding $\bbeta$ fixed, then we get that the estimate of
+$\Delta_i$ must satisfy
+$$
+\Delta_i = y_i - \sum_{j=1}^p x_{ij} \beta_j
+$$
+and thus the right hand term of \eqref{rstud} is 0. Then we obtain $\bbeta$ by minimizing
+$$
+\sum_{k\neq i} \left(y_k - \sum_{j = 1}^p x_{kj} \beta_j \right)^2.
+$$
+Therefore $\hat \bbeta$ is exactly the least squares estimate having
+deleted the $i^{th}$ data point; notationally, $\hat\bbeta^{(-i)}$. Thus, $\hat \delta_i$ 
+is a form of residual obtained when deleting
+the $i^{th}$ point from the fitting then comparing it to the fitted value, 
+$$
+\hat \Delta_i = y_i - \sum_{j=1}^p x_{ij} \hat \beta^{(-i)}_{k}.
+$$
+Notice that the fitted value at the $i^{th}$ data point is then 
+$\sum_{j=1}^p x_{ij} \hat \beta^{(-i)}_{k} + \hat \Delta_i = \ y_i$ and thus
+the residual is zero. The term $\hat \Delta_i$ is called the PRESS residual, the
+difference between the observed value and the fitted value with that point deleted.
+
+Since the residual at the $i^{th}$ data point is zero, the estimated variance from
+thsi model is exactly equal to the variance estimate having removed the
+$i^{th}$ data point. The $t$ test for $\delta_i$ is then a form of 
+standardized residual, that exactly follows a t distribution under the null
+hypothesis that $\delta_i = 0$. 
+
+\subsection{Computing PRESS residuals}
+
+It is interesting to note that PRESS residuals don't actually require recalculating the
+model with the $i^{th}$ datapoint deleted. Let $\bX^t = [\bz_1 ~ \ldots ~ \bz_n]$
+so that $\bz_i$ is the $i^{th}$ row of the matrix $\bz$ (hence column $i$ of $\bz^t$). 
+We use $\bz$ for the rows, since we've already reserved $\bx$ for the columns of $\bX$. 
+Notice, then that 
+$$
+\bX^t \bX = \sum_{i=1}^n \bz_i \bz_i^t.
+$$
+Thus, $\bX^{(-i), t} \bX^{(-i)}$, the x transpose x matrix with the $i^{th}$ data
+point deleted is simply
+$$
+\bX^{(-i), t} \bX^{(-i)} = \bX^t \bX - \bz_i \bz_i^t.
+$$
+We can appeal to the Sherman, Morrison, Woodbury theorem for the inverse
+(\href{https://en.wikipedia.org/wiki/Sherman%E2%80%93Morrison_formula}{Wikipedia})
+$$
+(\bX^{(-i), t} \bX^{(-i)})^{-1}
+= \xtxinv + \frac{\xtxinv \bz_i \bz_i^t \xtxinv}{1 - \bz_i^t \xtxinv \bz_i}
+$$
+Define $h_{ii}$ as diagonal element $i$ of $\hatmat$ which is equal to
+$\bz_i^t \xtxinv \bz_i$. (To see this, pre and post multiply this matrix by a 
+vector of zeros with a one in the position $i$, an operation which grabs the $i^{th}$ diagonal entry.)
+Furthermore, note that $\bX^t \by = \sum_{i=1}^n \bz_i y_i$ so that
+$$
+\bX^{(-i),t} \by^{(-i)} = \bX^t \by - \bz_i y_i.
+$$
+Then we have that the predicted value for the $i^{th}$ data point where it was not used in the fitting is:
+\begin{eqnarray*}
+\hat y^{(-i)}_i & = & \bz_i^t (\bX^{(-i), t} \bX^{(-i)})^{-1} \bX^{(-i),t} \by^{(-i)}\\
+& = & \bz_i^t \left(\xtxinv + \frac{\xtxinv \bz_i \bz_i^t \xtxinv}{1 - h_{ii}} \right)(\bX^t \by - \bz_i y_i) \\
+& = & \hat y_i + \frac{h_{ii}}{1 - h_{ii}} \hat y_i - h_{ii} y_i - \frac{h_{ii}^2 y_i}{1 - h_{ii}} \\
+& = & \frac{\hat y_i}{1 - h_{ii}} + y_i - \frac{y_i}{1 - h_{ii}}
+\end{eqnarray*}
+So that we wind up with the equality: 
+$$
+y_i - \hat y^{(-i)}_i = \frac{y_i - \hat y_i}{1 - h_{ii}} = \frac{e_i}{1 - h_{ii}}
+$$
+In other words, the PRESS residuals are exactly the ordinary residuals divided by $1 - h_{ii}$. 
+
+\section{Externally studentized residuals}
+It's often useful to have standardized residuals where a data point in question didn't
+influence the residual variance. The normalized
+PRESS residuals are, as seen in \ref{sec:press}.  However, the PRESS residuals are 
+leave one out residuals, and thus the $i^{th}$ point was deleted for the fitted value. An alternative
+strategy is to normalize the ordinary residuals by dividing by a standard deviation estimate
+calculated with the $i^{th}$ data point deleted. That is,
+$$
+\frac{e_i}{s^{(-i)}}\sqrt{1 - h_{ii}}.
+$$
+In this statistic, observation $i$ hasn't had the opportunity to impact the variance estimate.
