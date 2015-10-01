@@ -1,4 +1,4 @@
-\section{Residuals}
+\chapter{Residuals revisited}
 
 For a good treatment of residuals and the other topics in this chapter, 
 see the book by Myers \citep{myers1990classical}.
@@ -137,6 +137,93 @@ leave one out residuals, and thus the $i^{th}$ point was deleted for the fitted 
 strategy is to normalize the ordinary residuals by dividing by a standard deviation estimate
 calculated with the $i^{th}$ data point deleted. That is,
 $$
-\frac{e_i}{s^{(-i)}}\sqrt{1 - h_{ii}}.
+\frac{e_i}{s^{(-i)}\sqrt{1 - h_{ii}}}.
 $$
 In this statistic, observation $i$ hasn't had the opportunity to impact the variance estimate.
+
+Given that the PRESS residuals are $\frac{e_i}{1 - h_{ii}}$, their variance is
+$\sigma^2 / \sqrt{1 - h_{ii}}$. Then we have that the press residuals normalized (divided
+by their standard deviations) are 
+$$
+\frac{e_i}{\sigma \sqrt{1 - h_{ii}}}
+$$
+If we use the natural variance estimate for the press residuals, the estimated variance calculated with
+the $i^{th}$ data point deleted, then the estimated normalized PRESS residuals are the same as the
+externally standardized residuals. As we know that these also arise out of the T-test for the
+mean shift outlier model from Section \ref{sec:press}. 
+
+\section{Coding example}
+First let's use the \texttt{swiss} dataset to show how to calculate
+the ordinary residuals and show that they are the same as those
+output by \texttt{resid}.
+\begin{verbatim}
+> y = swiss$Fertility
+> x = cbind(1, as.matrix(swiss[,-1]))
+> n = nrow(x); p = ncol(x)
+> hatmat = x %*% solve(t(x) %*% x) %*% t(x)
+> ## ordinary residuals
+> e = (diag(rep(1, n)) - hatmat) %*% y
+> fit = lm(y ~ x)
+> ## show that they're equal by taking the max absolute difference
+> max(abs(e - resid(fit)))
+[1] 4.058975e-12
+\end{verbatim}
+Next, we calculate the standardized residuals and show how to get
+them automatically with \texttt{rstandard}
+\begin{verbatim}
+> ## standardized residuals
+> s = sqrt(sum(e ^ 2) / (n - p))
+> rstd = e / s / sqrt(1 - diag(hatmat))
+> ## show that they're equal by taking the max absolute difference
+> max(abs(rstd - rstandard(fit)))
+[1] 6.638023e-13
+\end{verbatim}
+Next, let's calculate the PRESS residuals both by
+leaving out the ith observation (in this case observation 6)
+and by the shortcut formula
+\begin{verbatim}
+> i = 6
+> yi = y[i]
+> yihat = predict(fit)[i]
+> hii = diag(hatmat)[i]
+> ## fitted model without the ith data point
+> y.minus.i = y[-i]
+> x.minus.i = x[-i,]
+> beta.minus.i = solve(t(x.minus.i) %*% (x.minus.i)) %*% t(x.minus.i) %*% y.minus.i
+> yhat.i.minus.i = sum(x[i,] * beta.minus.i)
+> pressi = yi - yhat.i.minus.i
+> c(pressi, e[i] / (1 - hii))
+           Porrentruy 
+ -17.96269  -17.96269 
+\end{verbatim}
+Now show that the \texttt{rstudent} (externally studentized) residuals and normalized
+PRESS residuals are the same
+\begin{verbatim}
+> ## variance estimate with i deleted
+> e.minus.i = y.minus.i - x.minus.i %*% beta.minus.i
+> s.minus.i = sqrt(sum(e.minus.i ^ 2) / (n - p  - 1))
+> ## show that the studentized residual is the PRESS residual standardized
+> ei / s.minus.i / sqrt(1 - hii)
+Porrentruy 
+ -2.367218 
+> rstudent(fit)[i]
+        6 
+-2.367218 
+\end{verbatim}
+Finally, show that the mean shift outlier model residuals give the PRESS and
+the rstudent residuals.
+\begin{verbatim}
+> delta = rep(0, n); delta[i] = 1
+> w = cbind(x, delta)
+> round(summary(lm(y ~ w - 1))$coef, 3)
+                  Estimate Std. Error t value Pr(>|t|)
+w                   65.456     10.170   6.436    0.000
+wAgriculture        -0.210      0.069  -3.067    0.004
+wExamination        -0.323      0.242  -1.332    0.190
+wEducation          -0.895      0.174  -5.149    0.000
+wCatholic            0.113      0.034   3.351    0.002
+wInfant.Mortality    1.316      0.376   3.502    0.001
+wdelta             -17.963      7.588  -2.367    0.023
+\end{verbatim}
+So notice that the the estimate for \texttt{wdelta} is the PRESS residual
+while the \texttt{t value} is the externally studentized residual.

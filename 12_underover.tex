@@ -1,0 +1,156 @@
+\chapter{Under and overfitting}
+
+In linear models, we can characterize forms of under and overfitting. For this chapter consider the following: \\ \ \\
+\noindent
+Model 1: $\bY = \bX_1 \bbeta_1 + \beps$ \\ \ \\ 
+\noindent
+Model 2: $\bY = \bX_1 \bbeta_1 + \bX_2 \bbeta_2 + \beps$ \\ \ \\
+where the $\beps$ are assumed iid normals with variance $\sigma^2$. 
+We further differentiate between the assumed model and the true model. 
+If we assume Model 1 and Model 2 is true, we have underfit the model (omitted variables that were necessary). 
+In contrast, if we assume Model 2 and Model 1 is true, we have overfit the model (included variables that were
+unnecessary). 
+
+\section{Impact of underfitting}
+Consider underfitting the model. That is we errantly act as if Model 1 is true, but in fact model 2 is true.
+Such a situation would arise if there were unmeasured or unknown confounders. Then consider the
+bias of our estimate of $\bbeta1$. 
+
+$$
+E[\hat \bbeta_1] = E[(\bX_1^t \bX_1)^{-1} \bX_1^t \bY]
+= (\bX_1^t \bX_1)^{-1} \bX_1^t (\bX_1 \bbeta_1 + \bX_2 \bbeta_2)
+= \bbeta_1 + (\bX_1^t \bX_1)^{-1} \bX_1^t \bX_2 \bbeta_2.
+$$
+
+Thus, $(\bX_1^t \bX_1)^{-1} \bX_1^t \bX_2 \bbeta_2$ is the bias in estimating $\bbeta_1$. Notice
+that there is no bias if $\bX_1^t \bX_2 = \bzero$. Consider the case where both design matrices
+are centered. Then $\frac{1}{n-1}\bX_1^t \bX_2$ is the empirical 
+variance/covariance matrix between the columns of $\bX_1$ and $\bX_2$. Thus, if our omitted
+variables are uncorrelated with our included variables, then no bias exists. One way
+to try to force this in practice is to randomize the levels of the variables in $\bX_1$.
+Then, the empirical correlation will be low with high probability. This is very commonly
+done when $\bX_1$ contains only a single treatment indicator.
+
+Our theoretical standard errors for the $\hat \bbeta_1$ are still correct in that
+$$
+\Var(\hat \bbeta_1) = (\bX_1^t \bX_1)^{-1} \sigma^2.
+$$
+However, we still have to estimate $\sigma^2$. 
+
+We can also see the  impact of underfitting on the bias of residual variance estimation.
+\begin{eqnarray*}
+E[(n- p_1) S^2] & = & E[\bY^t (\bI -  \bX_1 (\bX_1^t \bX_1)^{-1} \bX_1^t \bY] \\
+& = &(\bX_1\bbeta_1 + \bX_2 \bbeta_2)^t\{\bI -  \bX_1 (\bX_1^t \bX_1)^{-1} \bX_1^t\} (\bX_1\bbeta_1 + \bX_2 \bbeta_2) \\
+& + & \mathrm{trace}[\{\bI -  \bX_1 (\bX_1^t \bX_1)^{-1} \bX_1^t \} \sigma^2] \\
+& = & \bbeta_2^t \bX_2^t \{\bI -  \bX_1 (\bX_1^t \bX_1)^{-1} \bX_1^t\} \bX_2 \bbeta_2 + (n - p_1) \sigma^2
+\end{eqnarray*}
+Therefore $S^2$ is biased upward. It makes sense that we would tend to overestimate the residual
+variance if we've attributed to the error structure variation that is actually structured and
+due to unmodeled systematic variation.
+
+\section{Impact of overfitting}
+Consider now fitting Model 2 when, in fact, Model 1 is true. There
+is no bias in our estimate of $\bbeta_1$, since we have fit the correct model;
+it's just $\bbeta_2 = \bzero$.  
+
+\subsection{Variance inflation}
+However, now consider $\mbox{Var}(\hat \bbeta_1) = \xtxinv \sigma^2$, where
+$\bX = [\bX_1 ~ \bX_2]$. Recall, that the estimate for $\hat \bbeta_1$ can be
+obtained by regression of $\be_{\bX_1 | \bX_{2}}$ on $\be_{\by | \bX_{2}}$. Thus,
+$$
+\hat \bbeta_1
+= (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \be_{\bX_1 | \bX_2}^t \be_{\by | \bX_2}
+$$
+Let $\bH_{\bX_2}$ be the hat matrix for $\bX_2$. Thus,
+\begin{eqnarray*}
+\Var(\hat \bbeta_1) & = &
+(\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \be_{\bX_1 | \bX_2}^t (\bI - \bH_{\bX_2}) \be_{\bX_1 | \bX_2} (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \sigma^2 \\
+& = & (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \sigma^2 + 
+(\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \be_{\bX_1 | \bX_2}^t \bH_{\bX_2} (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \sigma^2 \\
+& =  &  (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \sigma^2.
+\end{eqnarray*}
+The latter term drops out since 
+$$
+\be_{\bX_1 | \bX_2}^t \bH_{\bX_2} = \bX_1^t (\bI - \bH_{X_2}) \bH_{\bX_2} = 0.
+$$
+Consider any linear contrast $\bq^t \bbeta_1$ then
+\begin{eqnarray*}
+\Var(\bq^t \hat \bbeta_1)& = &\bq^t (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \bq \sigma^2 \\
+& = & \bq^t  (\bX_1^t\bX_1 - \bX_1 \bH_{\bX_2} \bX_1)^{-1} \bq \sigma^2 \\
+& = &\bq^t \{(\bX_1^t\bX_1)^{-1} + \bW\}\bq \sigma^2
+\end{eqnarray*}
+where $\bW$ is a symmetric matrix. This latter identity can be obtained via the Woodbury theorem
+\href{https://en.wikipedia.org/wiki/Woodbury_matrix_identity}{Wikipedia}.
+Thus we can say that
+$$
+\Var(\bq^t \hat \bbeta_1) = \bq^t \{(\bX_1^t\bX_1)^{-1} + \bW\}\bq \sigma^2 
+\geq \bq^t(\bX_1^t\bX_1)^{-1} \bq \sigma^2
+$$
+Therefore, the variance assuming Model 2 will always be greater than the variance assuming Model 1.
+Note that at no point did we utilize which model was actually true. Thus we arrive at an
+essential point, adding more regressors into a linear model necessarily increases the
+standard error of the ones already included. This is called ``variation inflation''. The
+estimated variances need not go up, since $\sigma^2$ will go down as we include variables. 
+However, the central point is that one concern with including unnecessary regressors
+is inflating a component of the standard error needlessly. 
+
+Further note that $\sigma^2$ drops out in the ratio of the variances. We can thus
+exactly calculate the percentage increase in variance caused by including regressors.
+A particularly useful such summary is the variance inflation factor (VIF). 
+
+\subsection{Variance inflation factors}
+Assume that $\bX_1$ is a vector and that the intercept has been regressed out of 
+both of $\bX_1$ and $\bX_2$. Recall from above that the variance for $\beta1$ assuming
+Model 2 is (note $\beta_1$ is a scalar since we're assuming $\bX_1$ is a vector)
+\begin{eqnarray*}
+\Var(\beta_1) & = & (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \sigma^2.\\
+& = & \frac{\sigma^2}{\bX_1^t (\bI - \bH_{\bX_2}) \bX_1} \\
+& = & \frac{\sigma^2}{\bX_1^t \bX_1^t} \times \frac{\bX_1^t \bX_1}{\bX_1^t (\bI - \bH_{\bX_2}) \bX_1}
+\end{eqnarray*}
+Recall from partitioning sums of squares (remember that we've removed the intercept from both)
+$$
+\bX_1^t\bX_1 = \bX_1^t \bH_{\bX_2} \bX_1 + \bX_1^t (\bI - \bH_{\bX_2}) \bX_1
+$$
+and that $\frac{\bX_1^t \bH_{\bX_2} \bX_1}{\bX_1^t\bX_1}$ is the $R^2$ value for $\bX_1$
+as an outcome and $\bX_2$ as a predictor. Let's call it $R^2_1$ so as not to confuse
+it with the $R^2$ calcualted with $\bY$ as an outcome. Then we can write
+$$
+\Var(\beta_1) =  \frac{\sigma^2}{\bX_1^t \bX_1^t} \frac{1}{1 - R^2_1}.
+$$
+Note that $R^2 = 1$ if $\bX_2$ is orthogonal $\bX_1$. Thus,
+$$
+\frac{1}{1 - R^2_1}
+$$
+Is the relative increase in variability in estimating $\beta_1$
+comparing the data as it is to the ideal case where $\bX_1$ is orthogonal to $\bX_2$. 
+Similarly, since $\frac{\sigma^2}{\bX_1^t \bX_1^t}$ is the variance if $\bX_2$ is omitted
+from the model. So $1 / (1 - R^2_1)$ is also the increase in the variance by adding the
+other regressors in $\bX_2$.
+
+This calculation can be performed for each regressor in turn. The $1 / (1 - R^2)$ value
+for each regressor as an outcome with the remainder as predictors are the so-called
+Variance Inflation Factors (VIFs). They give information about how much addition
+variance is incurred by multicolinearity among the regressors.
+
+\section{Variance under an overfit model}
+If we fit Model 2, but Model 1 is correct, then our variance estimate is 
+unbiased. We've fit the correct model, we just allowed the possibility that
+$\bbeta_2$ was non-zero when it is exactly zero. Therefore $S^2$ is unbiased
+for $\sigma^2$. Recall too that
+$$
+\frac{(n-p_1 - p_2)S^2_2}{\sigma^2} \sim \chi^2_{n-p_1 - p_2},
+$$
+where the subscript 2 on $S^2_2$ is used to denote the fitting where Model 2 was asssumed.
+Similarly,
+$$
+ \frac{(n-p_1)S^2_1}{\sigma^2} \sim \chi^2_{n-p_1},
+$$
+where $S_1^2$ is the variance assuming Model 1 is true. Using the fact that the variance
+of a Chi squared is twice the degrees of freedom, we get that
+$$
+\frac{\Var(S_2^2)}{\Var(S_1^2)} = \frac{(n - p_1)^2}{(n - p_1 - p_2)^2}.
+$$
+Thus, despite both estimates being unbiased, the variance of the estimated variance
+under Model 2 is higher.
+
+

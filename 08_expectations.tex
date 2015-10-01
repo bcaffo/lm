@@ -123,3 +123,62 @@ E[\bX^t \bA \bX] & = & E[\mbox{tr}(\bX^t \bA \bX)]\\
 & = & \mbox{tr}(\bA\bSigma) + \mbox{tr}(\bmu^t \bA \bmu )\\
 & = & \mbox{tr}(\bA\bSigma) + \bmu^t \bA \bmu \\
 \end{eqnarray*}
+
+\section{BLUE} 
+
+Now that we have moments, we can discuss mean and variance properties of the 
+least squares estimators. Particularly, note that if $Y$ satisfies
+$E[\bY] = \bX \bbeta$ and $\Var(Y) = \sigma^2 \bI$ then, $\hat \bbeta$ 
+satisfies: 
+$$E[\hat \bbeta] = \xtxinv \bX^t E[\bY] = \xtxinv \xtx \bbeta = \bbeta.$$
+Thus, under these conditions $\hat \bbeta$ is unbiased. In addition, we have
+that 
+$$
+\Var(\hat \bbeta) = \Var\{\xtxinv \bX^t \bY\} = \xtxinv \bX^t \Var(\bY) \bX \xtxinv
+= \xtxinv \sigma^2. 
+$$
+
+We can extend these results to linear contrasts of $\bbeta$ 
+to say that $\bq^t \hat \bbeta$ is the {\it best}
+estimator of $\bq^t \bbeta$ in the sense of minimizing the variance among
+linear (in $\bY$) unbiased estimators. It is important to consider
+unbiased estimators, since we could always minimize the variance
+by defining an estimator to be constant (hence variance 0). If one
+removes the restriction of unbiasedness, then minimum variance cannot
+be the definition of ``best''. Often one then looks to mean squared
+error, the squared bias plust the variance, instead. In what follows
+we only consider linear unbiased estimators.
+
+We give Best Linear Unbiased Estimators the acronym
+BLUE. It is remarkable easy to prove the result. 
+
+Consider estimating $\bq^t \bbeta$.
+Clearly, $\bq^t \hat \bbeta$ is both unbiased and linear in $\bY$. 
+Also note that $\Var(\bq^t \hat \bbeta) = \bq^t \xtxinv \bq \sigma^2$. 
+Let $\bk^t \bY$ be another linear unbiased estimator, so that
+$E[\bk^t \bY] = \bq^t \bbeta$. But, $E[\bk^t \bY] = \bk^t \bX \bbeta$. 
+It follows that since  $\bq^t \bbeta = \bk^t \bX \bbeta$ must hold for all possible $\bbeta$, we have that
+$\bk^t \bX = \bq^t$. Finally note that
+$$
+\Cov(\bq^t \hat \bbeta, \bk^t \bY)
+= \bq^t \xtxinv \bX^t \bk^t \sigma^2.
+$$
+Since $\bk^t \bX = \bq^t$, we have that
+$$
+\Cov(\bq^t \hat \bbeta, \bk^t \bY) = \Var(\bq^t \bbeta).
+$$
+Now we can execute the proof easily. 
+\begin{eqnarray*}
+\Var(\bq^t \hat \bbeta - \bk^t \bY) & = & 
+\Var(\bq^t \hat \bbeta) + \Var(\bk^t \bY) - 2 \Cov(\bq^t \hat \bbeta, \bk^t \bY) \\
+& = & \Var(\bk^t \bY) - \Var(\bq^t \hat \bbeta) \\ 
+& \geq & 0.
+\end{eqnarray*}
+Here the final inequality arises as variances have to be non-negative. Then we have
+that $\Var(\bk^t \bY) \geq \Var(\bq^t \hat \bbeta)$ proving the result.
+
+Notice, normality was not required at any point in the proof, only restrictions
+on the first two moments. In what follows, we'll see the consequences of
+assuming normality.
+
+
