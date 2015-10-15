@@ -1,0 +1,239 @@
+\chapter{Parameter estimability and penalties}
+
+In this section we consider parameter estimability and penalties. 
+
+\section{Estimability}
+
+This section draws heavily from the wonderful book by \cite{searle2012linear}.
+
+We define a linear combination of the slope parameters, $\bq^t \bbeta$, as being estimable
+if it is equal to a linear combination of the expected value of $\bY$. In other words,
+$\bq^t \bbeta$ is estimable if it is equal to $\bt^t E[\bY]$ for some value of $\bt$.
+
+I find estimability most useful when $\bX$ is over-specified (not full rank). For example,
+consider an ANOVA model
+$$
+Y_{ij} = \mu + \beta_i + \epsilon_{ij}.
+$$
+Verify for yourself that the $\bX$ matrix from this model is not full rank. 
+
+Because $\bt^t E[\bY] = \bt^t \bX \bbeta$ for all possible $\bbeta$, $\bq = \bt^t \bX$ and
+we obtain that estimable contrasts are necessarily linear combinations of the rows
+of the design matrix. 
+
+The most useful result in estimability is the invariance properties of estimable contrasts. Consider an not full rank design matrix.
+Then any solution to the normal equations:
+$$
+\bX^t \bX \bbeta = \bX^t \bY
+$$
+will minimize the least squares criteria (or equivalently maximize the likelihood
+under spherical Gaussian assumptions). (If you don't see this, verify it yourself using
+the tools from the first few chapters.) Since $\bX$ is not full rank, this will
+have infinite solutions. Let $\hat \bbeta$ and $\tilde \bbeta$ be any two such
+solutions. For estimable quantities, $q^t \hat \bbeta = q^t \tilde \bbeta$. 
+That is, the particular solution to the normal doesn't matter for estimable quantities. This should be
+clear given the definition of estimability. Recall that least squares projects
+onto the plane defined by linear combinations of the columns of $\bX$. The projection,
+$\hat \bY$, is unique, while the particular linear combination is not in this case.
+
+To discuss further. Suppose $\bq^t \hat \bbeta \neq \bq^t \tilde \bbeta$
+for two solutions to the normal equations, $\hat \bbeta$ and $\tilde \bbeta$
+and estimable $\bq^t \bbeta$. Then $\bt^t \bX \hat \bbeta \neq \bt^t \bX \tilde \bbeta$. Let
+$\hat \bY$ be the projection of $\bY$ on the space of linear combinations of the columns of $\bX$.
+However, since both are projections, $\hat \bY = \bX \hat \bbeta = \bX \tilde \bbeta$. 
+Multiplying by $\bt^t$ then yields a contradiction.
+
+\subsection{Why it's useful}
+
+Consider the one way ANOVA setting again. 
+$$
+Y_{ij} = \mu + \beta_i + \epsilon_{ij}.
+$$
+For $i = 1, 2$, $j = 1, \ldots, J$. 
+One can obtain parameter identifiability by setting $\beta_2 = 0$, $\beta_1 = 0$, $\mu = 0$ or $\beta_1 + \beta_2 = 0$ (or one of infinitely many other linear contrasts). 
+These constraints don't change the column space of the $\bX$ matrix. (Thus the projection stays the same.)
+Recall that $\hat y_{ij} = \bar y_i$. Estimable functions are linear combinations of $E[Y_{ij}] = \mu + \beta_i$. So, note that
+$$
+E[Y_{21}] - E[Y_{11}] = \beta_2 - \beta_1
+$$
+is estimable and it will always be estimated by $\bar y_2 - \bar y_1$. Thus, regardless of which linear constraints one points on the
+model to achieve identifiability, the difference in the means will have the same estimate. 
+
+This also gives us a way to go between estimates with different constraints without refitting the models. Since for two sets
+of constraints we have:
+$$
+\bar y_i  = \hat \mu + \hat \beta_i = \tilde \mu + \tilde \beta_i,
+$$
+yielding a simple system of equations to convert between estimates with different constraints.
+
+
+\section{Linear constraints}
+Consider performing least squares under the full row rank linear constraints 
+$$
+\bK^t \bbeta = \bz.
+$$
+One could obtain these estimates using Lagrange multipliers
+$$
+||\by - \bX \bbeta||^2 + 2 \blambda^t (\bk^t \bbeta - \bZ)
+= \by^t \by - 2\bbeta^2 \bX^t \by + \bbeta^t \bX^t \bX \bbeta + 2 \blambda^t (\bK^t \bbeta - \bz).
+$$
+Taking a derivative with respect to lambda yields
+\begin{equation}
+\label{eq:cls1}
+2 (\bK^t \bbeta - \bz) = 0
+\end{equation}
+Taking a derivative with respect to $\bbeta$ we have:
+$$
+-2 \bX^t \by + 2 \bX^t \bX \bbeta + 2 \bK \blambda   = 0
+$$
+which has a solution in $\bbeta$ as
+\begin{equation}
+\label{eq:cls2}
+\bbeta = \xtxinv (\bX^t \by  -   \bK \blambda) = \hat \bbeta - \xtxinv \bK \blambda,
+\end{equation}
+where $\hat \bbeta$ is the OLS (unconstrained) estimate.
+Multiplying by $\bK^t$ and using \eqref{eq:cls1} we have that
+$$
+\bz = \bK^t \hat \bbeta - \bK^t \xtxinv \bK \blambda
+$$
+yielding a solution for $\blambda$ as
+$$
+\blambda = \{\bK^t \xtxinv \bK\}^{-1} (\bK^t \hat \bbeta - \bz). 
+$$
+Plugging this back into \eqref{eq:cls2} yields the solution:
+$$
+\bbeta = \hat \bbeta -  \xtxinv \bK \{\bK^t \xtxinv \bK\}^{-1} (\bK^t \hat \bbeta - \bz).
+$$
+Thus, one can fit constrained least squares estimates without actually refitting the model.
+Notice, in particular, that if one where to multiply this estimate by $\bK^t$, the result would be
+$\bz$.
+
+\subsection{Likelihood ratio tests}
+One can use this result to derive likelihood ratio tests of $H_0: \bK \bbeta = \bz$ versus
+the general alternative. From the previous section, under the null hypothesis, the
+estimate under the null hypothesis, 
+$$\hat \bbeta_{H_0} = \hat \bbeta -  \xtxinv \bK \{\bK^t \xtxinv \bK\}^{-1} (\bK^t \hat \bbeta - \bz).$$
+Of course, under the alternative, the estimate is $\hat \bbeta = \xtxinv \bX^t \bY$. In both
+cases, the maximum likelihood variance estimate is $\frac{1}{n}||\bY - \bX \bbeta||^2$ with 
+$\bbeta$ as the estimate under either the null or alternative hypothesis. Let $\hat \sigma^2_{H_0}$
+and $\hat \sigma^2$ be the two estimates.
+
+The likelihood ratio statistic is
+$$
+\frac{{\cal L}(\hat \bbeta_{H_0}, \hat \sigma^2_{H_0})}{{\cal L}(\hat \bbeta,\hat \sigma^2)}
+= \left(\frac{\hat \sigma^2_{H_0}}{\hat \sigma^2} \right)^{-n/2}.
+$$
+This is monotonically equivalent to $n \hat \sigma^2 / n \hat \sigma^2_{H_0}$. However, we reject
+if the null is less supported than the alternative, i.e. this statistic is small,
+so we could equivalently reject if $n \hat \sigma^2_{H_0} / n \hat \sigma^2$ is large.
+Further note
+that 
+\begin{eqnarray*}
+n\hat \sigma^2_{H_0}
+& = &||\bY - \bX \hat \bbeta_{H_0}||^2 \\
+& = & ||\bY - \bX \hat \bbeta + \bX \hat \bbeta - \bX \hat \bbeta_{H_0}||^2 \\
+& = & ||\bY - \bX \hat\bbeta||^2 + ||\bX \hat \bbeta - \bX \hat \bbeta_{H_0}||^2 \\
+& = & n \hat \sigma^2 + ||\bX \hat \bbeta - \bX \hat \bbeta_{H_0}||^2
+\end{eqnarray*}
+Notationally, let $$SS_{reg} = ||\bX \hat \bbeta - \bX \hat \bbeta_{H_0}||^2
+= ||\hat \bY - \hat \bY_{H_0}||^2$$ and
+$SS_{res} = n \hat \sigma^2$. 
+The note that the inverse of our likelihood ratio is monotonically equivalent to 
+$\frac{SS_{reg}}{SS_{res}}$
+
+However, $SS_{reg} / \sigma^2$ and $SS_{res} / \sigma^2$ are both independent 
+Chi-squared random variables with degrees of freedom $Rank(\bK)$ and $n - p$
+under the null. (Prove this for homework.) Thus, our likelihood ratio statistic can
+exactly be converted into the $F$ statistic of section \ref{sec:ftest}. We leave
+the demonstration that the two are identical as a homework exercise.
+
+This line of thinking can be extended. Consider the sequence of hypotheses:
+\begin{align*}
+ & H_1 :\bK_1 \bbeta = \bz \\
+ & H_2 :\bK_2 \bK_1 \bbeta = \bK_2 \bz \\
+ & H_3 :\bK_3 \bK_2 \bK_1 \bbeta = \bK_3 \bK_2 \bz \\
+ & \vdots 
+\end{align*}
+Each $\bK_i$ is assumed full row rank and of fewer rows than $\bK_{i-1}$. 
+These hypotheses are nested with $H_1$ being the most restrictive, $H_2$ being the
+second most, and so on. (Note, if $H_1$ holds then $H_2$ holds but not vice versa.)
+Consider
+testing $H_{1}$ (null) versus $H_{2}$ (alternative). Note that under our
+general specification, discussing this problem will apply to testing $H_i$ versus $H_j$. 
+Under the arguments
+above, our statistic will work out to be inversely related to
+the statistic: $n\hat \sigma^2_{H_1} / n\hat \sigma^2_{H_2}$. 
+
+
+Further note that
+\begin{eqnarray*}
+n\hat \sigma^2_{H_1}
+& = &||\bY - \hat \bY_{H_1}|| \\
+& = & ||\bY - \hat \bY_{H_2}||^2  + ||\hat \bY_{H_2} - \hat \bY_{H_1}||^2
++ 2 (\bY - \hat \bY_{H_2})^t (\hat \bY_{H_2} - \hat \bY_{H_1}) \\
+& = & ||\bY - \hat \bY_{H_2}||^2  + ||\hat \bY_{H_2} - \hat \bY_{H_1}||^2 \\
+& = & SS_{RES}(H_2) + SS_{REG}(H_1 ~|~ H_2)
+\end{eqnarray*}
+Here the cross product term in the second line is zero by (tedious yet straightforward) algebra
+and the facts that:
+$\bK_2 \bK_1 \hat \bbeta_{H_1} = \bK_1 \hat \bbeta_{H_1} = \bzero$ , 
+$\bK_2 \bK_1 \hat \bbeta_{H_2} = \bzero$ and $\be^t \bX = \bzero$. 
+
+Thus, our likelihood ratio statistic is monotically equivalent to
+$$SS_{REG}(H_1 ~|~ H_2) / SS_{RES}(H2).$$
+Furthermore,
+Using the developed methods in the class the numerator is Chi-Squared with
+$Rank(\bK_1)$ degrees of freedom, while the denominator has $n - \{Rank(\bK_1) - Rank(\bK_2)\}$ 
+degrees of freedom, and they are independent. Thus we can construct an F test for nested
+linear hypotheses.
+
+This process can be iterated so that:
+$$
+n\hat \sigma^2_{H_1}
+= SS_{REG}(H_1 ~|~ H_2) + SS_{REG}(H_2 ~|~ H_3) + \ldots SS_{RES}
+$$
+where $SS_{RES}$ is the residual sums of squares under no restrictions.
+The sums of squares add so that, for example,
+$$
+SS_{REG}(H_1 ~|~ H_3) = SS_{REG}(H_1 ~|~ H_2) + SS_{REG}(H_2 ~|~ H_3)
+$$
+and
+$$
+SS_{RES}(H_3) = SS(H_3 ~|~ H_4) + SS(H_4 ~|~ H_4) + \ldots + SS_{RES}.
+$$
+Thus, one could test any subset of the nested hypotheses by appropriately adding the sums of
+squares.
+
+\subsection{Example use}
+The most popular use of the general linear hypothesis is to consider nested hypotheses. 
+
+
+
+\subsection{Ridge regression}
+
+Consider quadratic constraints to least squares.
+$$
+||\bY - \bX \bbeta||^2 + \bbeta^t \bGamma \bbeta.
+$$
+In this case we consider instances where $\bX$ is not necessarily full rank. The
+addition of the penalty is called ``Tikhonov regularization'' for the mathematician of
+that name. The specific instance of this regularization in regression is called ridge
+regression. The matrix $\bGamma$ is typically assumed known or set to $\gamma \bI$. 
+
+Another way to envision ridge regression is to think in the terms of a posterior mode 
+on a regression model. Specifically, $\bSigma^{-1} = \bGamma / \sigma^2$ and consider the model
+where $\by ~|~ \bbeta \sim N(\bX \bbeta, \sigma^2 \bI)$ and $\bbeta \sim N(\bzero, \bSigma)$. 
+Then one obtains the posterior for $\bbeta$ and $\sigma$ by multiplying the two densities. The
+posterior mode would be obtained by minimizing minus twice the log of this product
+$$
+||\bY - \bX \bbeta||^2 / \sigma^2 + \bbeta^t \bGamma \bbeta / \sigma^2.
+$$
+which is equivalent to above in the terms of maximization for $\bbeta$.
+
+We'll leave it as an exercise to obtain that the estimate actually obtained is
+$$
+(\xtx + \bGamma)^{-1} \bX^t \bY.
+$$
+To see how this regularization helps with invertibility of $\xtx$, consider the case where
+$\bGamma = \gamma \bI$. Consider if $\gamma$ is very large then $\xtx + \gamma \bI$ is simply
+small numbers added around an identity matrix, which is clearly invertible. 

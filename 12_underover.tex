@@ -53,8 +53,29 @@ Consider now fitting Model 2 when, in fact, Model 1 is true. There
 is no bias in our estimate of $\bbeta_1$, since we have fit the correct model;
 it's just $\bbeta_2 = \bzero$.  
 
+\section{Variance under an overfit model}
+If we fit Model 2, but Model 1 is correct, then our variance estimate is 
+unbiased. We've fit the correct model, we just allowed the possibility that
+$\bbeta_2$ was non-zero when it is exactly zero. Therefore $S^2$ is unbiased
+for $\sigma^2$. Recall too that
+$$
+\frac{(n-p_1 - p_2)S^2_2}{\sigma^2} \sim \chi^2_{n-p_1 - p_2},
+$$
+where the subscript 2 on $S^2_2$ is used to denote the fitting where Model 2 was asssumed.
+Similarly,
+$$
+ \frac{(n-p_1)S^2_1}{\sigma^2} \sim \chi^2_{n-p_1},
+$$
+where $S_1^2$ is the variance assuming Model 1 is true. Using the fact that the variance
+of a Chi squared is twice the degrees of freedom, we get that
+$$
+\frac{\Var(S_2^2)}{\Var(S_1^2)} = \frac{(n - p_1)^2}{(n - p_1 - p_2)^2}.
+$$
+Thus, despite both estimates being unbiased, the variance of the estimated variance
+under Model 2 is higher.
+
 \subsection{Variance inflation}
-However, now consider $\mbox{Var}(\hat \bbeta_1) = \xtxinv \sigma^2$, where
+Now consider $\mbox{Var}(\hat \bbeta_1) = \xtxinv \sigma^2$, where
 $\bX = [\bX_1 ~ \bX_2]$. Recall, that the estimate for $\hat \bbeta_1$ can be
 obtained by regression of $\be_{\bX_1 | \bX_{2}}$ on $\be_{\by | \bX_{2}}$. Thus,
 $$
@@ -65,8 +86,8 @@ Let $\bH_{\bX_2}$ be the hat matrix for $\bX_2$. Thus,
 \begin{eqnarray*}
 \Var(\hat \bbeta_1) & = &
 (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \be_{\bX_1 | \bX_2}^t (\bI - \bH_{\bX_2}) \be_{\bX_1 | \bX_2} (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \sigma^2 \\
-& = & (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \sigma^2 + 
-(\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \be_{\bX_1 | \bX_2}^t \bH_{\bX_2} (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \sigma^2 \\
+& = & (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \sigma^2 -
+(\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \be_{\bX_1 | \bX_2}^t \bH_{\bX_2} \be_{\bX_1 | \bx_2}(\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \sigma^2 \\
 & =  &  (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \sigma^2.
 \end{eqnarray*}
 The latter term drops out since 
@@ -76,7 +97,7 @@ $$
 Consider any linear contrast $\bq^t \bbeta_1$ then
 \begin{eqnarray*}
 \Var(\bq^t \hat \bbeta_1)& = &\bq^t (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \bq \sigma^2 \\
-& = & \bq^t  (\bX_1^t\bX_1 - \bX_1 \bH_{\bX_2} \bX_1)^{-1} \bq \sigma^2 \\
+& = & \bq^t  (\bX_1^t\bX_1 - \bX_1^t \bH_{\bX_2} \bX_1)^{-1} \bq \sigma^2 \\
 & = &\bq^t \{(\bX_1^t\bX_1)^{-1} + \bW\}\bq \sigma^2
 \end{eqnarray*}
 where $\bW$ is a symmetric matrix. This latter identity can be obtained via the Woodbury theorem
@@ -131,26 +152,5 @@ This calculation can be performed for each regressor in turn. The $1 / (1 - R^2)
 for each regressor as an outcome with the remainder as predictors are the so-called
 Variance Inflation Factors (VIFs). They give information about how much addition
 variance is incurred by multicolinearity among the regressors.
-
-\section{Variance under an overfit model}
-If we fit Model 2, but Model 1 is correct, then our variance estimate is 
-unbiased. We've fit the correct model, we just allowed the possibility that
-$\bbeta_2$ was non-zero when it is exactly zero. Therefore $S^2$ is unbiased
-for $\sigma^2$. Recall too that
-$$
-\frac{(n-p_1 - p_2)S^2_2}{\sigma^2} \sim \chi^2_{n-p_1 - p_2},
-$$
-where the subscript 2 on $S^2_2$ is used to denote the fitting where Model 2 was asssumed.
-Similarly,
-$$
- \frac{(n-p_1)S^2_1}{\sigma^2} \sim \chi^2_{n-p_1},
-$$
-where $S_1^2$ is the variance assuming Model 1 is true. Using the fact that the variance
-of a Chi squared is twice the degrees of freedom, we get that
-$$
-\frac{\Var(S_2^2)}{\Var(S_1^2)} = \frac{(n - p_1)^2}{(n - p_1 - p_2)^2}.
-$$
-Thus, despite both estimates being unbiased, the variance of the estimated variance
-under Model 2 is higher.
 
 
