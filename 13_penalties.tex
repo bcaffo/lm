@@ -161,7 +161,7 @@ Consider
 testing $H_{1}$ (null) versus $H_{2}$ (alternative). Note that under our
 general specification, discussing this problem will apply to testing $H_i$ versus $H_j$. 
 Under the arguments
-above, our statistic will work out to be inversely related to
+above, our likelihood ratio statistic will work out to be inversely equivalent to
 the statistic: $n\hat \sigma^2_{H_1} / n\hat \sigma^2_{H_2}$. 
 
 
@@ -176,8 +176,7 @@ n\hat \sigma^2_{H_1}
 \end{eqnarray*}
 Here the cross product term in the second line is zero by (tedious yet straightforward) algebra
 and the facts that:
-$\bK_2 \bK_1 \hat \bbeta_{H_1} = \bK_1 \hat \bbeta_{H_1} = \bzero$ , 
-$\bK_2 \bK_1 \hat \bbeta_{H_2} = \bzero$ and $\be^t \bX = \bzero$. 
+$\bK_2 \bK_1 \hat \bbeta_{H_1} = \bK_2 \bK_1 \hat \bbeta_{H_2} = \bK_2 \bz$ and $\be^t \bX = \bzero$. 
 
 Thus, our likelihood ratio statistic is monotically equivalent to
 $$SS_{REG}(H_1 ~|~ H_2) / SS_{RES}(H2).$$
@@ -187,7 +186,12 @@ $Rank(\bK_1)$ degrees of freedom, while the denominator has $n - \{Rank(\bK_1) -
 degrees of freedom, and they are independent. Thus we can construct an F test for nested
 linear hypotheses.
 
-This process can be iterated so that:
+This process can be iterated, decomposing $SS_{RES}(H_2)$, so that:
+$$
+n\hat \sigma^2_{H_1}
+= SS_{REG}(H_1 ~|~ H_2) + SS_{REG}(H_2 ~|~ H_3) + SS_{RES}(H_3)
+$$
+And it could be iterated again so that:
 $$
 n\hat \sigma^2_{H_1}
 = SS_{REG}(H_1 ~|~ H_2) + SS_{REG}(H_2 ~|~ H_3) + \ldots SS_{RES}
@@ -199,17 +203,30 @@ SS_{REG}(H_1 ~|~ H_3) = SS_{REG}(H_1 ~|~ H_2) + SS_{REG}(H_2 ~|~ H_3)
 $$
 and
 $$
-SS_{RES}(H_3) = SS(H_3 ~|~ H_4) + SS(H_4 ~|~ H_4) + \ldots + SS_{RES}.
+SS_{RES}(H_3) = SS_{REG}(H_3 ~|~ H_4) + SS_{REG}(H_4 ~|~ H_4) + \ldots + SS_{RES}.
 $$
 Thus, one could test any subset of the nested hypotheses by appropriately adding the sums of
 squares.
 
 \subsection{Example use}
 The most popular use of the general linear hypothesis is to consider nested hypotheses. 
+That is, consider a linear model where $\bbeta^t = [\beta_0 ~ \beta_1 ~ \ldots ~\beta_p]$
+so that the $\beta_i$ are ordered in decreasing scientific importance.
+\begin{align*}
+ & H_1 : \beta_1  = \beta_2  = \beta_3 = \ldots = \beta_p = 0 \\
+ & H_2 :            \beta_2  = \beta_3 = \ldots = \beta_p = 0 \\
+ & H_3 :                       \beta_3 = \ldots = \beta_p = 0 \\
+ & \vdots \\
+ & H_p : \beta_p = 0
+\end{align*}
+Then testing $H_1$ versus $H_2$ tests whether $\beta_1$ is zero under the assumption
+that all of the remaining coefficients (excepting the intercept) are zero. 
+Testing $H_2$ versus $H_5$ tests whether $\beta_2 = \beta_3 = \beta_4 = 0$
+under the assumption that $\beta_5$ through $\beta_p$ are 0. 
 
 
 
-\subsection{Ridge regression}
+\section{Ridge regression}
 
 Consider quadratic constraints to least squares.
 $$
@@ -232,8 +249,138 @@ which is equivalent to above in the terms of maximization for $\bbeta$.
 
 We'll leave it as an exercise to obtain that the estimate actually obtained is
 $$
-(\xtx + \bGamma)^{-1} \bX^t \bY.
+\hat \bbeta_{ridge} = (\xtx + \bGamma)^{-1} \bX^t \bY.
 $$
 To see how this regularization helps with invertibility of $\xtx$, consider the case where
-$\bGamma = \gamma \bI$. Consider if $\gamma$ is very large then $\xtx + \gamma \bI$ is simply
+$\bGamma = \gamma \bI$. If $\gamma$ is very large then $\xtx + \gamma \bI$ is simply
 small numbers added around an identity matrix, which is clearly invertible. 
+
+Consider the case where $\bX$ is column centered and is of full column rank. 
+Let $\bU \bD \bV^t$ be the SVD of $\bX$ where $\bU^t \bU = \bV ^t \bV = \bI$. 
+Note then $\xtx = \bV \bD^2 \bV^t$ and $\xtxinv = \bV \bD^{-2} \bV^t$ so that
+the ordinary least squares estimate satisfies
+$$
+\hat \bY = \bX \xtxinv \bX^t \bY = \bU \bD \bV^t \bV \bD^{-2} \bV^t \bV \bD \bU \bY = \bU \bU^t \bY.
+$$
+Consider now the fitted values under ridge regression with $\bGamma = \gamma \bI$:
+\begin{align*}
+\hat \bY_{ridge} 
+& = \bX (\xtx + \gamma \bI)^{-1} \bX^t \bY \\
+& = \bU \bD \bV^t (\bV \bD^2 \bV^t + \gamma \bI)^{-1} \bV \bD \bU^t \bY \\
+& = \bU \bD \bV^t (\bV \bD^2 \bV^t + \gamma \bV \bV^t)^{-1} \bV \bD \bU^t \bY \\
+& = \bU \bD \bV^t \{\bV (\bD^2 + \gamma \bI) \bV^t\}^{-1} \bV \bD \bU^t \bY \\
+& = \bU \bD \bV^t \bV (\bD^2 + \gamma \bI)^{-1} \bV^t \bV \bD \bU^t \bY \\
+& = \bU \bD (\bD^2 + \gamma \bI)^{-1} \bD \bU^t \bY\\
+& = \bU \bW \bU^t \bY
+\end{align*}
+where the third line follows since $\bX$ is full column rank so that $\bV$ is $p\times p$ of full rank
+and $\bV^{-1} = \bV^t$ so that $\bV^t \bV = \bV \bV^t = \bI$. Here $\bW$ is a diagonal matrix with elements
+$$
+\frac{D_i^2}{D_i^2 + \gamma}
+$$
+where $D_i^2$ are the eigenvalues. 
+
+In the not full rank case, the same identity can be found, though it takes a bit more work. Now assume
+that $\bX$ is of full row rank (i.e. that $n < p$ and there are no redundant subjects). Now note that
+$\bV$ does not have an inverse, while $\bU$ does (and $\bU^{-1} = \bU^t$. Further note via
+the Woodbury theorem (where $\theta = 1/\lambda)d$:
+\begin{align*}
+(\xtx + \gamma \bI)^{-1} & = 
+\theta \bI - \theta^2 \bX^t (\bI + \theta \bX \bX^t)^{-1} \bX \\
+& = \theta \bI - \theta^2 \bV \bD \bU^t  (\bU \bU^t + \theta \bU \bD^2 \bU^t)^{-1} \bU \bD \bV^t \\
+& = \theta \bI - \theta^2 \bV \bD \bU^t \{\bU(\bI + \theta \bD^2) \bU^t)\}^{-1} \bU \bD \bV^t \\
+& = \theta \bI - \theta^2 \bV \bD \bU^t \{\bU(\bI + \theta \bD^2)^{-1} \bU^t)\} \bU \bD \bV^t \\ 
+& = \theta \bI - \theta^2 \bV \bD (\bI + \theta \bD^2)^{-1} \bD \bV^t \\
+& = \theta \bI - \theta^2 \bV \tilde \bD \bV^t 
+\end{align*}
+where $\tilde \bD$ is diagonal with entries $D_i^2 / (1 + \theta D_i^2)$ where $D_i$ are the 
+diagonal entries of $\bD$. Then:
+\begin{align*}
+\hat \bY_{Ridge} 
+& = \bX (\xtx + \gamma \bI)^{-1} \bX^t \bY  \\
+& = \bU \bD \bV^t (\theta \bI - \theta^2 \bV \tilde \bD \bV^t) \bV \bD \bU^t \bY \\
+& = \bU \bD (\theta \bI - \theta^2 \tilde \bD)\bD \bU^t \bY \\
+& = \bU \bW \bU^t \bY
+\end{align*}
+Thus we've covered the full row and column rank cases. (Omitting the instance where $\bX$ is neither
+full row nor column rank.)
+
+%Note that the inverse necessary for ridge regression
+%can be obtained easily in the event that there are few rows but lots of columns. By the Woodbury %theorem (mentioned
+%several times in this text), we have that
+%$$
+%(\xtx + \bGamma)^{-1} = \bGamma^{-1} - \bGamma^{-1} \bX^t (\bI + \bX \bGamma^{-1} \bX^t)^{-1} \bX %\bGamma^{-1}
+%$$
+%This identity is especially convenient when $\bGamma = \gamma \bI$. Note that the inverse necessary has the dimension of
+%$\bX \bX^t$, which is the easier dimension to work with when $p$ is larger than $n$. 
+
+\subsection{Coding example}
+
+
+
+\section{Lasso regression}
+
+The Lasso has been somewhat of a revolution of sorts in statistics and biostatistics
+of late. The central idea of the lasso is to create a penalty that forces
+coefficients to be zero. For centered $\bY$ and centered and scaled $\bX$, 
+consider minimizing
+$$
+|| \bY - \bX \bbeta||^2
+$$
+subject to $\sum_{i=1}^p | \beta_i| < t$. The Lagrangian form of this minimization
+can be written as minimizing
+$$
+|| \bY - \bX \bbeta||^2 + \lambda \sum_{i=1}^n | \beta_i|.
+$$
+Here $\blambda$ is a penalty parameter. As the Lasso constrains
+$\sum_{i=1}^p | \beta_i| < t$, which has sharp corners on the axes,
+it has a tendency to set parameters exactly to zero. Thus, it is 
+thought of as doing model selection along with penalization. 
+Moreover, the Lasso handles the $p > n$ problem. Finally, it's
+a convex optimization problem, so that numerically solving 
+for the Lasso is stable. We can more generally specify the parameter
+as
+$$
+|| \bY - \bX \bbeta||^2 + \lambda \sum_{i=1}^n | \beta_i |^q.
+$$
+for $q > 0$. We obtain a case of ridge regression when $q=2$ and
+the Lasso when $q=1$. Since $(\sum_{i=1}^n | \beta_i |^q)^{1/q}$ is a norm,
+usually called the $l_q$ norm, the various forms of
+regression are often calld $l_q$ regression. For example,
+ridge regression could be called $l_2$ regression, the Lasso
+${\cal L}_1$ regression and so on. We could write the penalized regression estimate as
+$$
+|| \bY - \bX \bbeta||^2 + \lambda ||\bbeta||_q^q
+$$
+where $||\cdot||_q$ is the $l_q$ norm.
+
+
+You can visualize the parameters easily using Wolfram's alpha:
+\href{http://www.wolframalpha.com/input/?i=abs\%28x1\%29+\%2B+abs\%28x2\%29+\%3D+1}{$|x_1| + |x_2|$},
+\href{http://www.wolframalpha.com/input/?i=abs\%28x1\%29\%5E2+\%2B+abs\%28x2\%29\%5E2+\%3D+1}{$|x_1|^2 + |x_2|^2$},
+\href{http://www.wolframalpha.com/input/?i=abs\%28x1\%29\%5E0.5+\%2B+abs\%28x2\%29\%5E0.5+\%3D+1}{$|x_1|^0.5 + |x_2|^0.5$},
+and \href{http://www.wolframalpha.com/input/?i=plot+abs\%28x1\%29\%5E4+\%2B+abs\%28x2\%29\%5E4+\%3D+1}{$|x_1|^4 + |x_2|^4$}.
+Notice that as $q$ tends to zero, it tends to all of the mass on the axes where as $q$ tends to infinity, it tends
+to a square. The limit as $q$ tends to 0 is called the $l_0$ norm, which just penalizes the number
+of non-zero coefficients. 
+
+Just like with ridge regression, the Lasso has a Bayesian representation. Let
+the prior on $\beta_i$ be iid from a Laplacian distribution with mean 0, which has
+density $\frac{\theta}{2}\exp(- \theta |\beta_i|)$, and is denoted Lapplace$(0, \theta)$. 
+Then, the Lasso estimate is
+the posterior mean assuming $\by \sim N(\bX \bbeta, \sigma^2 I)$ and 
+$\beta_i \sim_{iid} \mbox{Laplace}(0, \lambda / 2\sigma^2)$. Then minus twice 
+the log of the posterior for $\bbeta$ conditioning on $\sigma$ is proportional to
+$$
+||\bY - \bX \bbeta||^2 + \lambda ||\bbeta||_{1}.
+$$
+Of course, the connection with Bayesian statistics is somewhat loose. While the Lasso is the
+posterior mode conditioning on $\sigma$ under these assumptions, Bayesian analysis usually
+take into account the full posterior, for which the parameter estimates are no longer sparse.
+
+
+
+
+
+
+
