@@ -183,3 +183,91 @@ F-statistic: 19.76 on 5 and 41 DF,  p-value: 5.594e-10
 
 
 
+\section{Prediction intervals}
+
+It's worth discussing prediction intervals. The obvious prediction
+at a new set of covariates, $\bx_0$, is $\bx_0^t \hat \bbeta$. This is 
+then just a linear contrast of the $\bbeta$ and so the interval would be
+$$
+\bx_0^t \hat \bbeta
+\pm t_{n-p, 1-\alpha/2} s \sqrt{\bx_0^t \xtxinv \bx_0}.
+$$
+
+If you've taken an introductory regression class, you it will have noted
+the difference between a prediction interval and a confidence interval
+for a mean at a new value of $\bx$. For a prediction interval, we
+want to estimate a range of possible values for $y$ at that value
+of $\bx$, a different statement than trying to estimate the average
+value of $y$ at that value of $\bx$. As we collect infinite data,
+we should get the average value exactly. However, predicting a new
+value involves intrinsic variability that can't go away no matter
+how much data we use to build our model. 
+
+As an example, imagine the difference between the following two tasks:
+guess the sale price of a diamond given its weight
+versus guess the average sale price of diamonds 
+given a particular weight. With enough data, we should get the average
+sale price exactly. However, we still won't know exactly what the sale
+price of a diamond would be. 
+
+To account for this, we develop prediction intervals. These
+are not confidence intervals, because they are trying to estimate
+something random, not a fixed parameter. 
+Consider estimating $Y_0$ at $\bx$ value $\bx_0$. 
+Note that
+$$
+\Var(Y_0 - \bx_0^t \hat \bbeta) = (1 + \bx_0^t \xtxinv \bx_0)\sigma^2
+$$
+For homework,
+show that 
+$$
+\frac{Y_0^t - \bx_0^t \hat \bbeta}{s\sqrt{1 + \bx_0^t \xtxinv \bx_0 \sigma^2}}
+$$
+follows a T distribution with $n-p$ degrees of freedom. Finish, by showing that
+$$
+P\{y_0 \in [\bx_0^t \hat \bbeta
+\pm t_{n-p, 1-\alpha/2} s \sqrt{1 + \bx_0^t \xtxinv \bx_0}]\} = 1 - \alpha.
+$$
+This is called a prediction interval. Notice the variability under consideration
+contains $\bx_0^t \xtxinv \bx_0$, which goes to 0 as we get more $\bX$ variability
+and $1$, which represents the intrinsic part of the variability that doesn't
+go away.
+
+
+\subsection{Coding example}
+
+
+\section{Confidence ellipsoids}
+
+An hyper-ellipsoid with center $\bv$ is defined as the solutions in $\bx$ of 
+$(\bx - \bv)^t \bA (\bx - \bv)=1$. The eigenvalues of $\bA$ determine the length
+of the axes of the ellipsoid. The set of points $\{\bx ~|~ (\bx - \bv)^t \bA (\bx - \bv) \leq 1\}$
+lie in the interior of the hyper-ellipsoid. 
+
+Now consider our F statistic from earlier on in the chapter:
+$$
+(\bK \hat \bbeta - \bm)^t  \{\bK \xtxinv \bK^t\}^{-1} (\bK \hat \bbeta - \bm) / v S^2
+$$
+We would fail to reject $H_0:\bK \bbeta = \bm$ is less than the appropriate cut off 
+from an $F$ distribution, say $F_{1-\alpha}$. So, the set of points
+$$
+\{\bm ~|~ 
+(\bK \hat \bbeta - \bm)^t  \{\bK \xtxinv \bK^t\}^{-1} (\bK \hat \bbeta - \bm) / v S^2 F_{1-\alpha} \leq 1
+\}
+$$
+forms a confidence set. From the discussion above, we see that this is a hyper ellipsoid.
+This multivariate form of confidence interval is called a confidence ellipse. These are
+of course most useful when the dimension is 2 or 3 so that we can visualize it as
+an actual ellipse.
+
+
+
+
+
+
+
+
+
+
+
+

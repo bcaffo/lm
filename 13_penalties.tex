@@ -316,6 +316,31 @@ full row nor column rank.)
 
 \subsection{Coding example}
 
+In the example below, we use the \texttt{swiss} data set to illustrate
+fitting ridge regression. In this example, penalization isn't really
+necessary, so the code is more used to simply show the fitting.
+Notice that \texttt{lm.ridge} and our code give slightly different
+answers. This is due to different scaling options for the design matrix.
+
+\begin{verbatim}
+data(swiss)
+y = swiss[,1]
+x = swiss[,-1]
+y = y - mean(y)
+x = apply(x, 2, function(z) (z - mean(z)) / sd(z))
+n = length(y); p = ncol(x)
+##get ridge regression estimates for varying lambda
+lambdaSeq = seq(0, 100, by = .1)
+betaSeq = sapply(lambdaSeq, function(l) solve(t(x) %*% x + l * diag(rep(1, p)), t(x) %*% y))
+plot(range(lambdaSeq), range(betaSeq), type = "n", xlab = "- lambda", ylab = "Beta")
+for (i in 1 : p) lines(lambdaSeq, betaSeq[i,])
+
+##Use R's function for Ridge regression
+library(MASS)
+fit = lm.ridge(y ~ x, lambda = lambdaSeq)
+plot(fit)
+
+\end{verbatim}
 
 
 \section{Lasso regression}
@@ -381,6 +406,17 @@ take into account the full posterior, for which the parameter estimates are no l
 
 
 
+\subsection{Coding example}
+
+Let's give an example of coding the Lasso. Here, because the optimization
+problem isn't closed form, we'll rely on the \texttt{lars} package from
+Tibshirani and Efron. Also assume the code from the ridge regression exmaple.
+
+\begin{verbatim}
+library(lars)
+fit2 = lars(x, y, type = c("lasso"))
+plot(fit2)
+\end{verbatim}
 
 
 
