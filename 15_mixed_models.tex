@@ -1,0 +1,174 @@
+\chapter{Mixed models}
+
+
+It is often the case that parameters of interest in linear
+models are naturally thought of as being random rather
+than fixed. The rational for this can come about for many reasons.
+The first occurs when the natural asymptotics have the number
+of parameters tending to infinity with the sample size. As
+an example, consider the \texttt{Rail} dataset in
+\texttt{nlme}. The measurements are echo times for sound
+traveling along railroad lines (a measure of health of the
+line). Multiple (3) measurements are collected for each rail.
+Consider a model of the form
+$$
+Y_{ij} = \mu + u_i + \epsilon_{ij},
+$$
+where $i$ is rail and $j$ is measurement within rail. 
+Treating the $u_i$ as fixed effects results in a
+circumstance where the number of parameters goes
+to infinity with the rails. This can lead to 
+inconsistent parameter estimates \citep{neyman1948consistent}
+(for a simple example, 
+\href{http://www.stat.berkeley.edu/~census/neyscpar.pdf}{see}). 
+
+A solution to this problem is to put a distribution on
+the $u_i$, say $u_i \sim_{iid} N(0, \sigma^2_u)$. This
+is highly related to ridge regression (from the penalization
+chapter). However, unlike penalization, this problem allows
+for thinking about the random effect distribution as a population
+distribution (the population of rails in our example). 
+
+Perhaps the easiest way to think about random effects is to
+consider a fixed effect treatment of the $u_i$ terms. Since
+we included an intercept, we would need to add one linear
+constraint on the $u_i$ for identifiability. Consider the
+constraint, $\sum_{i=1}^n u_i = 0$. Then, $\mu$ would be
+interpreted as and overal mean and the $u_i$ terms would
+be interpreted as the rail-specific deviation around
+that mean. The random effect model simply specifies that
+the $U_i$ are iid $N(0, \sigma^2_u)$ and mutually
+independent from $\epsilon_{ij}$. The mean of the distribution
+on the $U_i$ has to be 0 (or fixed at a number), since it would
+not be identified from $\mu$ otherwise. 
+
+A perhaps preferable
+way to specify the model is hierarchically, 
+$Y_{ij} ~|~ U_i \sim N(\mu, \sigma^2)$ and $U_i ~|~ \sim N(0, \sigma^2_U)$. 
+Consider the impications of this model. First, note that
+
+\begin{align}
+\Cov(Y_{ij}, Y_{i'j'}) & = \Cov(U_i + \epsilon_{ij}, U_{i'} + \epsilon_{i'j'})\\
+& = \Cov(U_i, U_{i'}) + \Cov(\epsilon_{ij}, \epsilon_{i'j'}) \\
+& = \left\{
+\begin{array}{cc}
+\sigma^2 + \sigma^2_U & \mbox{if}~ i=i'1 ~\mbox{and}~ j = j' \\
+\sigma^2 & \mbox{if}~ i=i' ~\mbox{and}~ j\neq j' \\
+0 & \mbox{Otherwise}
+\end{array}
+\right.
+\end{align}
+
+And thus the correlation between observations in the same cluster is
+$\sigma^2_u / (\sigma^2_u + \sigma^2)$. This is the ratio between
+the between subject variability, $\sigma^2_u$, and the total variability,
+$\sigma^2_u + \sigma^2$. 
+
+Notice that the marginal model for $\bY_i = (Y_{i1}, \ldots, Y_{in_i})^t$ is
+normally distributed with mean $\mu \times \bJ_{n_i}$ and variance 
+$
+\sigma^2 \bI_{n_i} + \bJ_{n_i} \bJ_{n_i}^t \sigma^2_{u}. 
+$
+It is by maximizing this (marginal) likelihood that we obtain the ML estimates 
+for $\mu, \sigma^2, \sigma^2_U$. 
+
+We can predict the $U_i$ by considering the estimate $E[U_i ~|~ \bY]$. To derive
+this, note that the density for $U_i ~|~ \bY$ is equal to the density 
+of $U_i ~|~ \bY_i$, since $U_i$ is independent of every $Y_{i'j}$ for $i \neq i'$. 
+Then further note that the density for $U_i ~|~ \bY_i$ is propotional to the
+joint density of $Y_i, U_i$, which is equal to the density of $Y_i ~|~ U_i$ 
+times the density for $U_i$. Omitting anything that is not proportional
+in $U_i$, and taking twice the natural logarithm of the the densities, we obtain:
+$$
+||\bY_i - \mu \bJ_{n_i} - U_i ||^2 / \sigma^2 + U_i / \sigma^2_U.
+$$
+Expanding the square, and discarding terms that are constant in $U_i$,
+we obtain that $U_i$ is normally distributed with mean 
+$$
+\frac{\sigma^2_u}{\sigma^2_u + \frac{\sigma^2}{n}} (\bar Y_i - \mu).
+$$
+Thus, if $\hat \mu = \bar Y$, our estimate of $U_i$ is the estimate that
+we would typically use shrunken toward zero. The idea of shrinking estimates
+when simultaneously estimating several quantities is generally a good one.
+This has similarities with James/Stein estimation \citep[see this review][]{efron1977stein}.
+
+Shrinkage estimation works by trading bias for lower variance. In our example, 
+the shrinkage factor is $\sigma^2_u / (\sigma^2_u + \sigma^2 /n)$. Thus, the
+better estimated the mean for that group is ($\sigma^2 / n$ is small), or the more
+variable the group is ($\sigma^2_u$ is large), the less shrinkage we have. On the
+other hand, the fewer observations that we have, the larger the residual variation
+or the smaller the inter-subject variation, the more shrinkage we have. In this
+way the estimation is optimally calibrated to weigh the contribution of the individual
+versus the contribution of the group to the estimate regarding this specific individual.
+
+
+\section{General case}
+
+In general, we might write $\bY ~|~ \bU \sim N(\bX \bbeta + \bZ \bU, \sigma^2 \bI)$ and
+$\bU \sim N(\bzero, \bSigma_U)$. This is marginally equivalent to specifying
+$$
+\bY = \bX \bbeta + \bZ \bU + \beps. 
+$$
+Here, the marginal likelihood for $\bY$ is normal with mean $\bX \bbeta$ and
+variance $\bZ \bSigma_u \bZ^t + \sigma^2 \bI$. Maximum likelihood estimates
+maximize the marginal likelihood via direct numerical maximization or 
+the EM algorithm \citep{dempster1977maximum}. Notice, for fixed variance
+components, the estimate of $\bbeta$ is a weighted least squares estimate.
+
+It should be noted the distinction between a mixed effect model and simply
+specifying a marginal variance structure. The same marginal likelihood
+could be obtained via the model:
+$$
+\bY = \bX \bbeta + \beps
+$$
+where $\beps \sim N(\bzero, \bZ \bSigma_u \bZ^t + \sigma^2 \bI)$. However,
+some differences tend to arise. Often, the natural specification of a marginal
+variance structure doesn't impose positivity constraints that random effects
+do. For example, in the previous section, we saw that the covariance between
+measurements in the same cluster was $\sigma^2_u / (\sigma^2_u + \sigma^2)$,
+which is guaranteed to be positive. However, if fitting a general marginal
+covariance structure, one would typically simply parameterize the covariance
+structure as either positive or negative. 
+
+Another difference lies in the hierarchical model itself. We can actually
+estimate the random effects if we specify them, unlike marginal models.
+This is a key (perhaps ``the'' key) defining attribute of mixed models.
+Again, our Best Linear Unbiased Predictor (BLUPs) is given by 
+$$
+E[bU ~|~ \bY]
+$$
+As a homework exercise, derive the general form of the BLUPs 
+
+
+\section{REML}
+
+Let $\bH_X$ be the hat matrix for $\bX$. Then note that
+$$
+\be=(\bI - \bH_X) \bY = (\bI - \bH_X) \bZ \bU + (\bI - \bH_X) \beps
+$$
+Then, we can calculate the marginal distribution for $\beps$ as
+singular normal with mean $(\bI - \bH_X) \bZ \bSigma_U \bZ^t (\bI - \bH_X) + \sigma^2 (\bI - \bH_X)$. 
+Taking any full rank sub-vector of the $\beps$ and maximizing the marginal likelihood
+for $\bSigma_U$ and $\sigma^2$ is called restricted maximum likelihood (REML). 
+REML estimates tend to be less biased than the ML estimates. For example, if 
+$y_i \sim_{iid} N(\mu, \sigma^2)$, maximizing the likelihood for 
+any $n-1$ of the $e_i = y_i - \bar y$ yields the unbiased variance estimate (divided by $n-1$)
+rather than the biased variance estimate obtained via maximum likelihood.
+REML estimates are often the default for linear mixed effect model programs. 
+
+An alternative way to derive the REML estimates is via Bayesian thinking. Consider a 
+model where $\bY ~|~\bbeta \sim N(\bX \bbeta, \bZ \bSigma_u \bZ^t +\sigma^2 \bI)$ 
+and $\bbeta \sim N(0, \theta \bI)$. Calculating the mode for $\bSigma_u$ and $\sigma^2$
+after having integrated out $\bbeta$ as $\theta \rightarrow \infty$ results in the REML estimates.
+While this is not terribly useful for general linear mixed effect modeling, it helps us think
+about REML as it relates to Bayesian analysis and it allows us to extend REML in settings
+where residuals are less well defined, like generalized linear mixed models.
+
+\section{Further reading}
+A great book on mixed models in R is \cite{pinheiro2006mixed}. 
+In addition, the books by Searle, McCulloch,
+Verbeke and Molenberghs are  wonderful treatments of the topic
+\citep{mcculloch2001linear,verbeke2009linear}. Finally, the
+newer package \texttt{lme4} has a series of 
+\href{https://cran.r-project.org/web/packages/lme4/index.html}{vignettes}.
+

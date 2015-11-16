@@ -6,6 +6,9 @@ likelihood estimate for
 
 \section{Quadratic forms}
 \label{sec:qf}
+
+\href{https://www.youtube.com/watch?v=Qx9_Z6khHjA&index=48&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
 Let $\bA$ be a symmetric matrix (not necessarily full rank)
 and let $\bX \sim N(\bmu, \bSigma)$. Then
 $(\bX - \bmu)^t \bA (\bX - \bmu) \sim \chi^2_{p}$ if 
@@ -77,6 +80,9 @@ $$
 
 
 \section{T statistics}
+
+\href{https://www.youtube.com/watch?v=l_DQwnvswUg&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=49}{Watch this video before beginning.}
+
 We can now develop T statistics.
 Consider the linear contrast $\hat \bbeta^t \bt$. First note that
 $\hat \bbeta^t \bt$ is $N(\bbeta^t \bt, \bt^t \xtxinv \bt \sigma^2)$. 
@@ -95,6 +101,9 @@ is a standard normal divided by the square root of an independent Chi-squared
 over its degrees of freedom, thus is $T$ distributed with $n-p$ degrees of freedom.
 
 \section{F tests}
+
+\href{https://www.youtube.com/watch?v=H9rmN7lliXE&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=50}{Watch this video before beginning.}
+
 \label{sec:ftest}
 Consider testing the hypothesis that $H_0:\bK \bbeta = 0$ versus not equal for $\bK$
 of full row rank (say $v$). 
@@ -112,6 +121,9 @@ forms the ratio of two independent Chi-squared random variables over their degre
 
 
 \section{Coding example}
+
+\href{https://www.youtube.com/watch?v=bvoV41m5TQ8&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=51}{Watch this video before beginning.}
+
 Consider the \texttt{swiss} dataset. Let's first make sure that we can replicate
 the coefficient table obtained by R.
 \begin{verbatim}
@@ -236,6 +248,41 @@ go away.
 
 \subsection{Coding example}
 
+Let's try to predict a car's MPG from other characteristics. 
+
+\begin{verbatim}
+> fit = lm(mpg ~ hp + wt, data = mtcars)
+> newcar = data.frame(hp = 90, wt = 2.2)
+> predict(fit, newdata = newcar)
+       1 
+25.83648 
+> predict(fit, newdata = newcar, interval = "confidence")
+       fit      lwr      upr
+1 25.83648 24.46083 27.21212
+> predict(fit, newdata = newcar, interval = "prediction")
+       fit      lwr      upr
+1 25.83648 20.35687 31.31609
+> #Doing it manually
+> library(dplyr)
+> y = mtcars$mpg
+> x = as.matrix(cbind(1, select(mtcars, hp, wt)))
+> n = length(y)
+> p = ncol(x)
+> xtxinv = solve(t(x) %*% x)
+> beta = xtxinv %*% t(x) %*% y
+> x0 = c(1, 90, 2.2)
+> yhat = x %*% beta
+> e = y - yhat
+> s = sqrt(sum(e^2 / (n - p)))
+> yhat0 = sum(x0 * beta)
+> # confidence interval
+> yhat0 + qt(c(0.025, .975), n - p) * s * sqrt(t(x0) %*% xtxinv %*% x0)
+[1] 24.46083 27.21212
+> # prediction interval
+> yhat0 + qt(c(0.025, .975), n - p) * s * sqrt(1 + t(x0) %*% xtxinv %*% x0)
+[1] 20.35687 31.31609
+\end{verbatim}
+
 
 \section{Confidence ellipsoids}
 
@@ -259,6 +306,35 @@ forms a confidence set. From the discussion above, we see that this is a hyper e
 This multivariate form of confidence interval is called a confidence ellipse. These are
 of course most useful when the dimension is 2 or 3 so that we can visualize it as
 an actual ellipse.
+
+
+\begin{verbatim}
+fit = lm(mpg ~ disp + hp , mtcars)
+open3d()
+plot3d(ellipse3d(fit), col = "red", alpha = .5, aspect = TRUE)
+
+## Doing it directly
+beta = coef(fit)
+Sigma = vcov(fit)
+n = nrow(mtcars); p = length(beta)
+
+A = Sigma * (3 * qf(.95, 3, n - p))
+nms = names(beta)
+
+open3d()
+## Using the definition of an elipse
+##(x - b)' A (x - b) = 1
+plot3d(ellipse3d(A, centre = beta, t = 1), 
+                 color = "blue",  alpha = .5, aspect = TRUE, 
+       xlab = nms[1], ylab = nms[2], zlab = nms[3]) 
+
+## Using the more statistical version
+## Provide ellipse3d with the variance covariance matrix
+plot3d(ellipse3d(Sigma, centre = beta, t = sqrt(3 * qf(.95, 3, n - p))), 
+                 color = "green",  alpha = .5, aspect = TRUE, 
+       xlab = nms[1], ylab = nms[2], zlab = nms[3], add = TRUE) 
+
+\end{verbatim}
 
 
 

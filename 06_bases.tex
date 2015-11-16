@@ -1,5 +1,6 @@
 \chapter{Bases}
 
+
 Recall that any set of linearly independent vectors forms a basis,
 specifically for the space spanned by linear combinations. Therefore,
 least squares is projecting our data into the space created by
@@ -12,6 +13,9 @@ functions. In problem where the study of periodicities is
 of interest, this is of tremendous use.
 
 \section{Introduction to full rank bases}
+
+\href{https://www.youtube.com/watch?v=vsm9AY6YN-Q&index=32&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
 When our $\bX$ matrix is $n\times n$ of rank $n$, then the least squares
 fitted values $\hatmat \by = \bX \bbeta = \hat \by$ is simply a linear reorganization
 of $\by$ as it's projecting it from $\mathbb{R}^n$ to $\mathbb{R}^n$. 
@@ -60,8 +64,12 @@ to the coefficients from the full model. Transforms are often then
 accomplished by getting the full transform and using a subset of the 
 coefficients to get the fitted values. 
 
+\href{https://www.youtube.com/watch?v=E-GvgGkYSoQ&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=33}{Watch this discussion of different kinds of bases.}
+
 
 \section{Principal component bases}
+
+\href{https://www.youtube.com/watch?v=mVrm4CxQ1Xs&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=34}{Watch this video before beginning.}
 
 One orthonormal basis is always at our disposal, the principal component basis. 
 Consider the case where $\bX$ has $p > n$ columns of full row rank.
@@ -115,6 +123,8 @@ one usually mean centers $\bY$ and $\bX$ first.
 
 
 \subsection{Coding example}
+
+\href{https://www.youtube.com/watch?v=sC_NiEVKvn0&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=35}{Watch this video before beginning.}
 
 The following code goes through calculation of SVD and eigenvalue 
 decompositions.

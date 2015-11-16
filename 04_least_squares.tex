@@ -2,7 +2,9 @@
 
 In this chapter we develop least squares. 
 
-\section{Notation}
+\section{Basics}
+\href{https://www.youtube.com/watch?v=tcmqwFDm-2c&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=21}{Watch this video before beginning.}
+
 Let $\bX$ be a design matrix, notationally its
 elements and column vectors are:
 $$
@@ -45,6 +47,8 @@ $\ba^t \bX^t \bX \ba = ||\bX \ba||^2 > 0$.) Thus, the root of
 our derivative is indeed a minimum. 
 
 \subsection{Coding example}
+\href{https://www.youtube.com/watch?v=walb3qHidJQ&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=22}{Watch this video before beginning.}
+
 \begin{verbatim}
 > y = swiss$Fertility
 > x = as.matrix(swiss[,-1])
@@ -67,6 +71,9 @@ xInfant.Mortality  1.0770481  0.38171965  2.821568 7.335715e-03
 \end{verbatim}
 
 \section{A second derivation}
+\href{https://www.youtube.com/watch?v=4aCJQiacet8&index=23&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
+
 If you know the answer first, it's possible to derive the 
 minimum to the least squares equation without taking any derivatives.
 \begin{eqnarray*}
@@ -101,6 +108,8 @@ $$
 This fact is extremely handy in working with linear models. 
 
 \section{Connection with linear regression}
+\href{https://www.youtube.com/watch?v=FcWYZRAHFfM&index=24&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
 \label{sec:lslin}
 Recall that the slope from linear regression worked out to be
 $$
@@ -152,6 +161,8 @@ correlation matrix between $\bX$ and $\bY$. This draws an exact
 parallel with the result from linear regression.
 
 \section{Projections}
+\href{https://www.youtube.com/watch?v=UM7OX4qihGs&index=25&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
 The vector of fitted values is 
 $$
 \hat \by = \yhat 
@@ -208,6 +219,7 @@ not full rank. Any full rank subset of the columns of $\bX$ defines
 the same column and thus the same fitted values. 
 
 \section{Full row rank case}
+
 In the case where $\bX$ is $n\times n$ of full rank,
 then the columns of $\bX$ form a basis for $\mathbb{R^n}$.
 In this case, $\hat \by = \by$, since $\by$ lives
@@ -222,6 +234,9 @@ most well known versions of transforms are Fourier and
 wavelet. 
 
 \section{A third derivation}
+
+\href{https://www.youtube.com/watch?v=7_-ztDF4cwk&index=26&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
 In this section we generate a third derivation
 of least squares. 
 For vectors $\ba$ (outcome) and $\bb$ (predictor), define the coefficient function as:
@@ -312,6 +327,9 @@ by the columns of $\bX_1$!
 
 
 \subsection{Coding example}
+
+\href{https://www.youtube.com/watch?v=qRfydAddY7M&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=27}{Watch this video before beginning.}
+
 \begin{verbatim}
 > y = swiss$Fertility
 > x = as.matrix(swiss[,-1])

@@ -1,6 +1,8 @@
 \chapter{Background}
 \label{chap:background}
 
+\href{https://www.youtube.com/watch?v=TrZdG642M4g&index=1&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
 Before we begin we need a few matrix prerequisites. Let,
 $f: \real^p \rightarrow \real$,
 be a function from the $p$ dimensional real line to the real line.
@@ -51,6 +53,9 @@ $$
 a positive definite matrix. Thus our solution is indeed a minimum.
 
 \subsection{Coding example}
+
+\href{https://www.youtube.com/watch?v=wW-4P7pl6E0&index=2&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
 Load the \texttt{mtcars} dataset in R with \texttt{data(mtcars)}.
 Let's set our $\by$ vector as \texttt{y = mtcars\$mpg} and our
 $\bX$ matrix as a vector of ones, horsepower and weight:
@@ -74,6 +79,9 @@ value of $\bbeta$ that minimizes $|| \by - \bX \bbeta||^2$.
 
 
 \section{Averages}
+
+\href{https://www.youtube.com/watch?v=GbcBLDS1VBw&index=3&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
 Consider some useful notational conventions we'll use. 
 $\bone_n$ is an  $n$ vector containing only ones while
 $\bone_{n\times p}$ is an $n\times p$ matrix containing ones.
@@ -130,6 +138,9 @@ $$
 Convince yourself that $\tilde \bX$ has every column mean equal to 0.
 
 \subsection{Coding example}
+
+\href{https://www.youtube.com/watch?v=sixe0fUr5cg&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=4}{Watch this video before beginning.}
+
 Let's take our $\bX$ matrix defined previously from the \texttt{mtcars} dataset and
 mean center it. We'll contrast using matrix manipulations versus (preferable)
 R functions. 
@@ -149,6 +160,10 @@ R functions.
 
 
 \section{Variance}
+
+\href{https://www.youtube.com/watch?v=hTVkDOojbdw&index=5&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
+
 Consider the fact that the matrix $\left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\}$
 is both symmetric and idempotent. The standard sample variance is the average deviation of the
 observations from the sample mean (usually using $n-1$ rather than $n$). That is,
@@ -174,6 +189,9 @@ is a matrix where each element is the empirical covariance between columns of $\
 This is called the variance/covariation matrix. 
 
 \subsection{Coding example}
+
+\href{https://www.youtube.com/watch?v=_AHZIy8PRmU&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=6}{Watch this video before beginning.}
+
 Let's manually calculate the covariance of the \texttt{x} matrix from before.
 
 \begin{verbatim}

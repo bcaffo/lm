@@ -395,15 +395,17 @@ density $\frac{\theta}{2}\exp(- \theta |\beta_i|)$, and is denoted Lapplace$(0, 
 Then, the Lasso estimate is
 the posterior mean assuming $\by \sim N(\bX \bbeta, \sigma^2 I)$ and 
 $\beta_i \sim_{iid} \mbox{Laplace}(0, \lambda / 2\sigma^2)$. Then minus twice 
-the log of the posterior for $\bbeta$ conditioning on $\sigma$ is proportional to
+the log of the posterior for $\bbeta$, conditioning on $\sigma$, is proportional to
 $$
 ||\bY - \bX \bbeta||^2 + \lambda ||\bbeta||_{1}.
 $$
-Of course, the connection with Bayesian statistics is somewhat loose. While the Lasso is the
-posterior mode conditioning on $\sigma$ under these assumptions, Bayesian analysis usually
-take into account the full posterior, for which the parameter estimates are no longer sparse.
-
-
+The connection with Bayesian statistics is somewhat loose for lasso regression. 
+While the Lasso is the posterior mode under a specific prior, whether or not that
+prior makes sense from a Bayesian perspective is not clear. Furthermore, the full
+posterior for a parameter in the model 
+is averaged over several sparse models, so is actually not sparse. 
+Also, the posterior mode is conditioned on $\sigma$ under these assumptions, Bayesian analysis usually
+take into account the full posterior.
 
 
 \subsection{Coding example}

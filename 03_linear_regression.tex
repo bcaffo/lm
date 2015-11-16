@@ -1,5 +1,7 @@
 \chapter{Linear regression}
 
+\href{https://www.youtube.com/watch?v=0PLufpySIcs&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=14}{Watch this video before beginning.}
+
 Now let's consider upping the ante to two parameters. Consider the minimizing
 \begin{equation}
 \label{eq:line}
@@ -49,6 +51,8 @@ regression through  the origin after centering the data. The intercept simply
 forces the line through the average of the Y's and X's.
 
 \subsection{Coding example}
+\href{https://www.youtube.com/watch?v=fLITbjrkQks&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=15}{Watch this video before beginning.}
+
 \begin{verbatim}
 > library(UsingR)
 > data(diamond)
@@ -68,6 +72,8 @@ forces the line through the average of the Y's and X's.
 \end{verbatim}
 
 \section{Fitted values}
+\href{https://www.youtube.com/watch?v=QwYzfLOAQbo&index=16&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
 We define $\hat \by = (\hat y_1, \ldots, \hat y_n)^t$ to be the vector of fitted values.
 Whereas $\by$ lives in $\mathbb{R}^n$, $\hat \by$ lives in $\Gamma$, the two dimensional
 linear subspace of $\mathbb{R}^n$ spanned by the two vectors, $\bone_n$ and $\bx$. We
@@ -80,6 +86,8 @@ over all $\hat \by \in \Gamma$. The fitted values are the orthogonal projection
 of the observed data onto this linear subspace.
 
 \subsection{Coding example}
+\href{https://www.youtube.com/watch?v=sFbhaImWA7c&index=17&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
 Getting the predicted value for $x=0.20$ (refer to the previous section \texttt{diamond} example). 
 \begin{verbatim}
 > beta0 + beta1 * .20
@@ -90,6 +98,8 @@ Getting the predicted value for $x=0.20$ (refer to the previous section \texttt{
 \end{verbatim}
 
 \section{Residuals}
+\href{https://www.youtube.com/watch?v=F5yP2GxXeaI&index=18&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
 Define $\be = \by - \hat \by$ to be the vector of residuals. Each residual
 is the vertical distance between $\by$ and the fitted regression line. 
 Thinking geometrically, the residuals are the orthogonal vector pointing
@@ -99,6 +109,7 @@ $||\be||^2 $
 is called the sum of the squared errors while $\frac{1}{n-2}||\be||^2$ is
 called the mean squared error or the residual variance.
 
+\href{https://www.youtube.com/watch?v=k8szlEkWmAg&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=19}{Watch this video before beginning.}
 \begin{verbatim}
 > yhat = beta0 + beta1 * x 
 > e = y - yhat
@@ -107,6 +118,7 @@ called the mean squared error or the residual variance.
 
 
 \section{Extension to other spaces}
+\href{https://www.youtube.com/watch?v=ax1M0bgi-6E&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=20}{Watch this video before beginning.}
 
 It is interesting to note that nothing we've discussed is intrinsic
 to $\mathbb{R}^n$. Any space with a norm and inner product and

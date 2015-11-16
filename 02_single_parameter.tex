@@ -1,6 +1,9 @@
 \chapter{Single parameter regression}
 
 \section{Mean only regression}
+
+
+
 Consider least squares where we only want horizontal lines. 
 Let our outcome be
 $
@@ -23,6 +26,8 @@ dimensional subspace spanned by the vector $\bone$. We'll
 rely on this form of thinking a lot throughout the text.
 
 \section{Coding example}
+\href{}{}
+
 Let's use the \texttt{diamond} dataset 
 \begin{verbatim}
 > library(UsingR); data(diamond)
@@ -38,6 +43,8 @@ Thus, in this example the mean only least squares estimate obtained via \texttt{
 is the empirical mean.
 
 \section{Regression through the origin}
+
+\href{https://www.youtube.com/watch?v=1ZFED8AcHWc&index=7&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
 
 Let $\bx = (x_1,\ldots, x_n)'$ be another vector. Consider now the
 regression through the origin problem. We want to minimize
@@ -76,6 +83,9 @@ any $n$ dimensional vector $\by$ into the linear space spanned
 by the single vector $\bx$, $\{\beta \bx ~|~ \beta \in \mathbb{R}\}$.
 
 \section{Centering first}
+
+\href{https://www.youtube.com/watch?v=1ss_FYtiSHo&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=8}{Watch this video before beginning.}
+
 A line through the origin is often not useful. Consider centering the
 $\by$ and $\bx$ first. The the origin would be at the mean of the
 $\by$ vector and the mean of the $\bx$ vector. Let
@@ -105,6 +115,9 @@ data first so that the resulting vectors have mean 0 and variance 1, our
 slope is exactly the correlation between the vectors.
 
 \subsection{Coding example}
+
+\href{https://www.youtube.com/watch?v=CrqNQEYF-nU&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=9}{Watch this video before beginning.}
+
 Let's continue with the diamond example. We'll center the variables first.
 \begin{verbatim}
 > yc = y - mean(y);
@@ -117,3 +130,16 @@ Let's continue with the diamond example. We'll center the variables first.
 > cor(x, y) * sd(y) / sd(x)
 [1] 3721.025
 \end{verbatim}
+
+\section{Bonus videos}
+
+\noindent
+Watch these videos before moving on. (I had created them beofre I reorganized chapters.)
+
+\href{https://www.youtube.com/watch?v=lmv88DtCNiU&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=10}{Sneak preview of projection logic.}
+
+\href{https://www.youtube.com/watch?v=0Ld7sZ8FUs0&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=11}{Coding example.}
+
+\href{https://www.youtube.com/watch?v=U5FAOdBDb90&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=12}{Sneak preview of linear regression.}
+
+\href{https://www.youtube.com/watch?v=Ir1L-STFKfA&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=13}{Sneak preview of regression generalizations.}
