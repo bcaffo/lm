@@ -164,6 +164,59 @@ While this is not terribly useful for general linear mixed effect modeling, it h
 about REML as it relates to Bayesian analysis and it allows us to extend REML in settings
 where residuals are less well defined, like generalized linear mixed models.
 
+
+\section{Prediction}
+
+Consider generally trying to predict $U$ from observed data $Y$. 
+Let $f_{uy}$, $f_u$, $f_y$, $f_{u|y}$ and $f_{y|u}$ be the
+joint, marginal and conditional densities respectively. Let
+$\theta(Y)$ be our estimator of $U$. Consider
+evaluating the prediction error via the expected squared loss
+$$
+E[(U -\theta(Y))^2]
+$$
+We now show that this is  minimized at $\theta(Y) = E[U ~|~ Y]$. 
+Note that
+\begin{align}
+E[(U -\theta(Y))^2] & = 
+E[(U - E[U ~|~ Y] + E[U ~|~ Y] - \theta(Y))^2] \\
+& = E[(U - E[U ~|~ Y])^2] - 2 E[(U - E[U~|~Y])]E[(E[U~|~Y] - \theta(Y))] + E[(E[U~|~Y] - \theta(Y))^2] \\
+& = E[(U - E[U ~|~ Y])^2] + E[(E[U~|~Y] - \theta(Y))^2] \\
+& \geq E[(U - E[U ~|~ Y])^2].
+\end{align}
+
+This argument should seem familiar. (In fact, Hilbert space results generalize these
+kinds of arguments into one theorem.) Therefore, $E[U~|~Y]$ is the best
+predictor. Note, that it is always the best predictor, regardless of the settting.
+Furthermore, in the context of linear models, this predictor is both linear (in $\bY$)
+and unbiased. We mean unbiased in the sense of:
+
+$$
+E[ U - E[U ~|~ Y]] = 0.
+$$
+
+Therefore, even in the more restricted class of linear estimators, in the
+case of mixed models, $E[U ~|~ Y]$ remains best. 
+
+A complication arises in that we do not know the variance components. As
+that is the case, we must plug in the estimates (either REML or ML). 
+The BLUPs lose their optimality properties then and are thus often called
+EBLUPs (for empirical BLUPs). 
+
+Prediction of this sort relates to so-called empirical Bayesian prediction 
+and shrinkage estimation. In your more advanced classes on decision theory,
+you'll learn about loss functions and uniform desirability of shrinkage
+estimators over the straightforward estimators. (In our case the straightforward
+estimator is the one that treats the random
+effects as if fixed.) This line of thinking yields yet another use for random effect models, where
+we might apply them merely for the benefits of shrinkage,
+but don't actually think of our random effects as if random. Consider
+settings like genomics. The genes being studied are exactly the quantities
+of interest, not a random sample from a population of genes. However, it
+remains useful to treat effects associated with genes as if random to 
+obtain the benefits of shrinkage.
+
+
 \section{Further reading}
 A great book on mixed models in R is \cite{pinheiro2006mixed}. 
 In addition, the books by Searle, McCulloch,
