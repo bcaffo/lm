@@ -140,3 +140,86 @@ so that as $t \rightarrow \infty$ the MLE dominates while the prior
 dominates as $\tau \rightarrow \infty$. 
 
 
+\section{Bayesian Linear Models}
+\subsection{Bayesian Linear Models}
+
+Recall our standard Gaussian linear model, where $\bY ~|~ \bX, \bbeta, \sigma^2
+\sim N(\bX \bbeta, \sigma^2 \bI)$. Consider three common prior specifications:
+
+\begin{enumerate}
+\item $\bbeta ~|~ \sigma^2 \sim N(\bbeta_0, \sigma^2 \bSigma_0)$ and $\sigma^{-2} \sim \mbox{Gamma}(\alpha_0, \tau^{-1}_0)$.
+\item $\bbeta \sim N(\bbeta_0, \bSigma_0)$ and $\sigma^{-2} \sim \mbox{Gamma}(\alpha_0, \tau^{-1}_0)$.
+\item $(\bbeta, \sigma^2) \sim \sigma^{-2}$.
+\end{enumerate}
+The final prior specification is not a proper density. It doesn't have a defined integral for
+the elements of $\bbeta$ from $-\infty$ to $\infty$ and for $0\leq \sigma^2 < \infty$. However,
+proceeding as if it were a proper density yields a proper distribution for the posterior. 
+Such ``improper'' priors are often used to specify putatively uninformative distributions that
+yield valid posteriors. In this case, the posterior has the property of the posterior mode
+being centered around $\hat \bbeta$. 
+
+The distinction between the first case and the second is the inclusion of $\sigma^2$ in
+the prior specification for $\bbeta$. This is useful for making all posterior distributions
+tractable, including that of $\bbeta$ integrated over $\sigma^2$. However, it may or may
+not reflect the desired prior distribution. 
+
+The second specification has tractable full conditionals. That is, we can easily figure out
+$\bbeta ~|~ \sigma^2, \by, \bX$ and $\sigma^2 ~|~ \bbeta, \by, \bX$. However, the posterior
+marginals of the parameters ($\bbeta ~|~ \by, \bX$ in particular) are not tractable. This posterior
+is often explored using Monte Carlo.
+
+The third specification is also completely tractable. 
+
+
+\section{Monte Carlo sampling}
+
+Even though many of our Bayesian models are completely tractable, we will explore the posteriors
+via Monte Carlo. The reason for this is to get students familiar with Monte Carlo so that they
+can apply it in the more complex settings that they are likely to encounter in practice. 
+Specifically, usually fully tractable posteriors are more of an exception than the rule. For the
+most part, for linear models, one should use the fully tractable results as they are much faster.
+
+We now give some strategies for Monte Carlo sampling from a posterior.
+
+\subsection{Sequential Monte Carlo}
+
+Notice for three variables, $X$, $Y$ and $Z$, sampling $f_z(z)$, $f_{y|z}(y)$ and $f_{x|y,z}(x ~|~ y, z)$ yields a multivariate draw from the joint distribution $f(x, y, z)$. So, for example, consider
+setting 3 of our prior specifications
+$$
+\bbeta ~|~ \sigma^2, \by, \bX \sim 
+N(\hat \bbeta, \bX^t\bX \sigma^2) ~~\mbox{and}~~
+\sigma^{-2} ~|~ \by, \bX \sim \mbox{Gamma}\{(n - p) / 2, 2 / (n - p) S^2\}
+$$
+Notice that $E[\sigma^{-2} ~|~ \bX, \by] = 1 / S^2$. To simualte from this distribution,
+we first simulate from $\sigma^{-2} ~|~ \bX, \by$ 
+then plug that simulation into $\bbeta ~|~ \sigma^2, \by, \bX$
+and simulate an $\bbeta$. The pair is a draw from the joint posterior 
+distribution of $\bbeta$ and $\sigma^{-2}$.
+
+\subsection{Gibbs sampling}
+
+Consider again our three random variables. Suppose that an initial value of $x$ and $y$, say $x^(1)$ and $y^{(1)}$ was obtained. Then consider simulating 
+\begin{enumerate}
+\item $z^{(1)} \sim f_{z|x,y}(z ~|~ x^{(1)}, y^{(1)})$
+\item $x^{(2)} \sim f_{x|y,z}(x ~|~ y^{(1)},z^{(2)})$
+\item $y^{(2)} \sim f_{y|x,z}(y ~|~ x^{(2)}, z^{(2)})$
+\item $z^{(2)} \sim f_{z|x,y}(z ~|~ x^{(2)}, y^{(2)})$
+\item $x^{(3)} \sim f_{x|y,z}(x ~|~ y^{(2)}, z^{(3)})$
+\end{enumerate}
+and so on. In other words, always update a simulated variable using the most recently simulated
+version of the other variables. In fact, one need not use the full conditionals. Any collection
+of conditionals would work. Moreover, any random order works, or even randomizing the order
+each iteration. However, some conditions have to be met for the asymptotics of the 
+sampler to work. For example, you have to update every variable infinitely often and the
+whole space has to be explorable by the sampler. If the conditions are met, the sampler
+is a Markov chain whose stationary distribution, i.e. the limiting distribution, is 
+$f(x, y, z)$. Moreover, there's lots of results saying that you can use the ouput of the
+sampler in much the same way one uses iid samples. For example approximating posterior
+means with the average of the simulated variables. However, the Markovian nature of the sampler
+makes using the samples a little trickier. One could try to combat this by running the chain for a while and throwing out all of the early simulations used to ``burn in'' the sampler. This throws away
+a lot of data. Our preferred method is to use good starting values (why not start at the MLE?)
+and use all of the simulated data. 
+
+Let's illustrate the sampler with prior specification 2.
+
+
