@@ -1,0 +1,142 @@
+\chapter{Bayes analysis}
+
+\section{Introduction to Bayesian analysis}
+
+Bayesian analysis is a form of statistical inference
+relying on Baye's rule. The general version of Baye's rule states
+that 
+$$
+f(y | x) = f(x | y) f(y) / f(x)
+$$
+where we're using $f$ (loosely) as the appropriate density, mass function
+or probability and $x$ and $y$ represent random variables or events. 
+
+In the context of Bayesian analysis, Baye's rule is used in the following
+way. Let ${\cal L}(\theta; y)$ be the likelihood associated with data, $y$,
+and  parameter $\theta$. We codify our prior knowledge about $\theta$ with
+a prior distribution, $\pi(\theta)$. Then, a Bayesian analysis is performed
+via the posterior distribution 
+$$
+\pi(\theta ~|~ y) = f(y ~|~ \theta) \pi(\theta) / f(y) 
+\propto_\theta f(y ~|~ \theta) \pi(\theta) \propto_\theta {\cal L}(\theta; y) \pi(\theta).
+$$
+Therefore, one obtains the posterior, up to multiplicative constants, 
+by multiplying the likelihood times the prior. 
+
+Coupled with Bayesian analysis is Bayesian interpretation of the probabilities.
+The prior is viewed a belief and the posterior is then an updated belief
+coupling the objective evidence (the likelihood) with the subjective 
+belief (the prior). By viewing probabilities as personal quantifications
+of beliefs, a Bayesian can talk about the probability of things that frequentists
+cant. So, for example, if I roll a die and don't show you the result, you as a Bayesian
+can say that the probability that this specific roll is a six is one sixth. You as a frequentist,
+in contrast, must say that in one sixth of repetitions of this experiment, the result
+will be a six. To a frequentist, this specific roll is either six or not. 
+
+This distinction in probabilistic interpretation 
+has consequences in statistical interpretations. For example in
+diagnostic tests,  a Bayesian can talk about the probability that a person has a disease, whereas
+a frequency interpretation relies on the percentage  of diseased people in a 
+population of those similar. 
+
+Personally, I've never minded either interpretation,
+but to many, the Bayesian interpretation seems more natural. In contrast, many
+practitioners dislike Bayesian analysis because of the prior specification, and
+the heavy reliance on fully specified models. 
+
+It should be noted that the discussion up to this point contrasted classical
+frequency thinking with classical subjective Bayesian thinking. In fact, most modern
+applied statisticians use hybrid approaches. They might, for example, develop a
+procedure with Bayesian tools (the manipulation of conditional distributions with 
+priors on the parameters), but evaluate the procedure using frequency error rates. 
+For all intents and purposes, such a procedure is frequentist, just developed
+with a Bayesian mindset. In contrast, many frequency statistical practitioners 
+interpret their results with an approximate Bayesian mindset. Such procedures
+are simply Bayesian without the formalism. Even between these approaches there's
+continuous shades of gray. Therefore, saying a modern
+statistician is either Bayesian or frequentist is usually misleading, unless
+that person does research or writes on statistical foundations. Nonetheless, foundational
+thinking is useful for understanding and clarifying thinking. It's worth then
+reading and internatlizing the literature on foundations for this reason alone. It's a lot like
+working on core drills to get better at a sport. That and it's quite a bit of fun! Some of my favorite modern writers on the topic include (heavily
+emphasizing people I know pretty well or have run into recently):
+Jim Berger, Nancy Reid, 
+Richard Royall, Deborah Mayo, David Cox, Charles Rohde, Andrew Gelman,
+Larry Wasserman
+and  Jeff Blume. Their work will point to many others (Basu, Birnbaum, De Finetti, Lindley all also come to mind).
+
+
+Finally, it should also be noted that Bayes versus frequency is far from the only
+schism in statistical foundations. Personally, I find the distinction between direct
+use of the design in frequency analysis to obtain robustness, like is often done is randomization testing and survey sampling,  versus fully specified 
+modeling a larger distinction than
+how one uses the model (Bayes versus frequentist). In addition, causal analysis
+versus association (non-causal) analysis forms a large distinction and one can perform Bayes or
+frequentists causal analysis and non-causal analyses. Furthermore, the likelihood
+paradigm \citep{royall1997statistical} offers a third inferential 
+technique given a model over Bayes and frequency interpretations.
+
+
+\section{Basic Bayesian models}
+\subsection{Binomial}
+We'll begin our discussion of Bayesian models by using some count outcome cases to build 
+intuition. First, consider a series of coin flips, $X_1, \ldots, X_n \sim \mbox{Bernoulli}(\theta)$.
+The likelihood associated with this experiment is
+$$
+{\cal L}(\theta) \propto \theta^{\sum_i x_i} (1 - \theta)^{n-\sum_i x_i} = \theta^x (1 - \theta)^{n-x}
+$$
+where $x = \sum_i x_i$. Notice the likelihood depends only on the total number of successes.
+Consider putting a Beta$(\alpha, \beta)$ prior on $\theta$. The the posterior is 
+$$
+\pi(\theta ~|~ x) \propto_\theta {\cal L}(\theta) \times \pi(\theta) \propto \theta^{x + \alpha - 1} (1 - \theta)^{n - x + \beta - 1}
+$$
+therefore the posterior distribution is Beta$(x + \alpha, n - x + \beta)$. The posterior mean is
+$$
+E[\theta ~|~ x] = \frac{x + \alpha}{n + \alpha + \beta} 
+= \delta \hat p + (1 - \delta) \frac{\alpha}{\alpha + \beta}
+$$
+Therefore, the posterior mean is a weighted average of the MLE ($\hat p$) and the prior
+mean $\frac{\alpha}{\alpha + \beta}$. The weight is 
+$$
+\delta = \frac{n}{n + \alpha + \beta}.
+$$
+Notice that, as $n \rightarrow \infty$ for fixed $\alpha$ and $\beta$, $\delta \rightarrow 1$ and
+the MLE
+dominates. That is, as we collect more data, the prior becomes less relevant
+and the data, in the form of the likelihood, dominates. On the other hand,
+for fixed $n$, as either $\alpha$ or $\beta$ go to infinity (or both), the prior
+dominates ($\delta \rightarrow 0$). For the Beta distribution $\alpha$ or $\beta$ going to infinity makes
+the distribution much more peaked. Thus, if we are more certain of our prior
+distribution, the data matters less. 
+
+
+\subsection{Poisson}
+Let $X \sim \mbox{Poisson}(t\lambda)$. Then 
+$$
+{\cal L}(\lambda) \propto \lambda^x e^{-t \lambda}.
+$$
+Consider putting a Gamma($\alpha, \tau^{-1}$) prior on $\lambda$. Then
+we have that
+$$
+\pi(\lambda ~|~ x) \propto \lambda^{x + \alpha - 1} e^{-\lambda (t + \tau)} 
+$$
+and thus the posterior is Gamma$(x + \alpha, (t + \tau)^{-1})$. Because of
+the inversion of the second scale parameter of the Gamma, often Bayesians
+specify it in the terms of the inverse (as in Gamma($x + \alpha, t + \tau$)). 
+Often to avoid confusion, the mean of the gamma will be given to ensure no
+confusion over the parameterization.
+
+The posterior mean is:
+$$
+E[ \lambda ~|~ x]  = \frac{x + \alpha}{t + \tau}
+= \delta \hat \lambda + (1 - \delta) \frac{\alpha}{\tau}
+$$
+where $\hat \lambda = x / t$ is the MLE (the observed rate) and
+$\alpha / \tau$ is the prior estimate. In this case 
+$$
+\delta = \frac{t}{t + \tau}
+$$
+so that as $t \rightarrow \infty$ the MLE dominates while the prior
+dominates as $\tau \rightarrow \infty$. 
+
+

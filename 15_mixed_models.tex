@@ -177,24 +177,22 @@ E[(U -\theta(Y))^2]
 $$
 We now show that this is  minimized at $\theta(Y) = E[U ~|~ Y]$. 
 Note that
-\begin{align}
-E[(U -\theta(Y))^2] & = 
-E[(U - E[U ~|~ Y] + E[U ~|~ Y] - \theta(Y))^2] \\
+\begin{align*}
+& E[(U -\theta(Y))^2] \\ 
+& = E[(U - E[U ~|~ Y] + E[U ~|~ Y] - \theta(Y))^2] \\
 & = E[(U - E[U ~|~ Y])^2] - 2 E[(U - E[U~|~Y])]E[(E[U~|~Y] - \theta(Y))] + E[(E[U~|~Y] - \theta(Y))^2] \\
 & = E[(U - E[U ~|~ Y])^2] + E[(E[U~|~Y] - \theta(Y))^2] \\
 & \geq E[(U - E[U ~|~ Y])^2].
-\end{align}
+\end{align*}
 
 This argument should seem familiar. (In fact, Hilbert space results generalize these
 kinds of arguments into one theorem.) Therefore, $E[U~|~Y]$ is the best
 predictor. Note, that it is always the best predictor, regardless of the settting.
 Furthermore, in the context of linear models, this predictor is both linear (in $\bY$)
 and unbiased. We mean unbiased in the sense of:
-
 $$
 E[ U - E[U ~|~ Y]] = 0.
 $$
-
 Therefore, even in the more restricted class of linear estimators, in the
 case of mixed models, $E[U ~|~ Y]$ remains best. 
 
@@ -215,6 +213,53 @@ settings like genomics. The genes being studied are exactly the quantities
 of interest, not a random sample from a population of genes. However, it
 remains useful to treat effects associated with genes as if random to 
 obtain the benefits of shrinkage.
+
+
+\section{P-splines}
+
+\subsection{Regression splines}
+The application to splines has been a very successful, relatively new, use of 
+mixed models. To discuss the methodology, we need to introduce splines briefly.
+We will only overview this area and focus on regression splines, while acknowledging
+that other spline bases may be preferable. 
+
+Let $(a)_+ = a$ if $a > 0$ and $0$ otherwise. Let $\xi$ be a known
+knot location. Now consider the model:
+$$
+E[Y_i] = \beta_0 + \beta_1 x_i + \gamma_1 (x_i - \xi)_+.
+$$
+For $x_i$ values less than or equal to $\xi$, we have 
+$$
+E[Y_i] = \beta_0 + \beta_1 x_i
+$$
+and for $x_i$ values above $\xi$ we have
+$$
+E[Y_i] = (\beta_0 + \gamma_1 xi) + (\beta_1 + \gamma_1) x_i.
+$$
+Thus, the response function $f(x) = \beta_0 = \beta_1 x + \gamma_1 (x - \xi)_+$
+is continuous at $\xi$ and is a line before and after. This allows us to create
+"hockey stick" models, with a line below $\xi$ and a line with a different slope
+afterwards. Furthermore, we could expand the model as 
+$$
+E[Y_i] = \beta_0 + \beta_1 x_i + \sum_{k=1}^K \gamma_k (x_i - \xi_k)_+.
+$$
+where $\xi_k$ are knot points. Not the model is a spiky, but flexible, 
+function that is linear between the knots and meets at the knots.
+
+To make the fit less spiky, we want continuous differentiability at the knot
+points. First note that the function $(x)_+^p$ has $p-1$ continuous derivatives at 0. 
+To see this, take the limit to zero 
+of the derivatives from the right and the left. Thus, the function
+$$
+f(x) = \beta_0 + \beta_1 x + \beta_2 x^2 + \sum_{k=1}^K \gamma_k (x_i - \xi_k)_+^2
+$$
+will consist of parabolas between the knot points and
+will have one continuous derivative at the knot points. This will fit 
+a smooth function that can accommodate a wide variety of data shapes. 
+
+
+\subsection{Coding example}
+
 
 
 \section{Further reading}
