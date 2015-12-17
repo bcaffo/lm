@@ -220,6 +220,60 @@ makes using the samples a little trickier. One could try to combat this by runni
 a lot of data. Our preferred method is to use good starting values (why not start at the MLE?)
 and use all of the simulated data. 
 
-Let's illustrate the sampler with prior specification 2.
+Let's illustrate the sampler with prior specification prior 2. Consider the
+simplified model:
+$$
+\bY ~|~ \bbeta, \bX, \theta \sim N(\bX \bbeta, \theta^{-1}\bI)
+~~\mbox{and}~~
+\bbeta \sim N(\bzero, \psi^{-1} \bI)
+~~\mbox{and}~~
+\theta \sim \mbox{Gamma}(\alpha / 2, \tau^{-1}.
+$$
+Under this specification, the full conditionals are:
+
+\begin{align*}
+\bbeta & ~|~  \by, \bX, \theta \sim N\{(\xtx \theta + \psi \bI)^{-1} \bX^t\by, (\xtx \theta + \psi \bI)^{-1}\} \\
+\theta & ~|~ \by, \bX, \bbeta \sim \mbox{Gamma}\{(n + \alpha) / 2, 2(||\by - \bX \bbeta||^2 + \tau)^{-1} \}
+\end{align*}
+
+
+\begin{verbatim}
+data("mtcars")
+y = mtcars$mpg - mean(mtcars$mpg)
+x = cbind(1, mtcars$wt - mean(mtcars$wt))
+
+n = length(y)
+p = ncol(x)
+
+fitML  = lm(y ~ x - 1)
+
+
+xtx = t(x) %*% x
+xty = as.vector(t(x) %*% y)
+
+nosim = 10000
+
+rmvnorm = function(mu, Sigma) as.vector(mu + chol(Sigma) %*% rnorm(length(mu)))
+
+thetaCurrent = 1 / summary(fitML)$sigma^2
+beta = NULL
+theta = thetaCurrent * 100
+psi = .01
+alpha = .01
+tau = .01 * summary(fitML)$sigma^2
+for (i in 1 : nosim){
+  V = solve(xtx * thetaCurrent + psi * diag(1, p, p))  
+  mu = V %*% xty * thetaCurrent
+  betaCurrent = rmvnorm(mu, V)
+  sumesq = sum((y - x %*% betaCurrent)^2)
+  thetaCurrent = rgamma(1, (n + alpha) / 2, rate = (sumesq + tau)/2)
+  theta = c(theta, thetaCurrent)
+  beta = rbind(beta, betaCurrent)
+}
+sigma = sqrt(1/ theta)
+quantile(beta[,1], c(.025, .975))
+quantile(beta2[,2], c(.025, .975))
+quantile(sigma, c(0.025, .975))
+\end{verbatim}
 
 
