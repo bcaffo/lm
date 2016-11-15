@@ -194,16 +194,16 @@ $$
 And it could be iterated again so that:
 $$
 n\hat \sigma^2_{H_1}
-= SS_{REG}(H_1 ~|~ H_2) + SS_{REG}(H_2 ~|~ H_3) + \ldots SS_{RES}
+= SS_{REG}(H_1 ~|~ H_2) + SS_{REG}(H_2 ~|~ H_3) + \ldots SS_{RES}(H_p)
 $$
-where $SS_{RES}$ is the residual sums of squares under no restrictions.
+where $SS_{RES}(H_p)$ is the residual sums of squares under the most elaborate model considered.
 The sums of squares add so that, for example,
 $$
 SS_{REG}(H_1 ~|~ H_3) = SS_{REG}(H_1 ~|~ H_2) + SS_{REG}(H_2 ~|~ H_3)
 $$
 and
 $$
-SS_{RES}(H_3) = SS_{REG}(H_3 ~|~ H_4) + SS_{REG}(H_4 ~|~ H_4) + \ldots + SS_{RES}.
+SS_{RES}(H_3) = SS_{REG}(H_3 ~|~ H_4) + \ldots + SS_{RES}(H_4).
 $$
 Thus, one could test any subset of the nested hypotheses by appropriately adding the sums of
 squares.
@@ -223,6 +223,48 @@ Then testing $H_1$ versus $H_2$ tests whether $\beta_1$ is zero under the assump
 that all of the remaining coefficients (excepting the intercept) are zero. 
 Testing $H_2$ versus $H_5$ tests whether $\beta_2 = \beta_3 = \beta_4 = 0$
 under the assumption that $\beta_5$ through $\beta_p$ are 0. 
+
+\subsection{Coding examples}
+Let's go through an example of fitting multiple models. We'll look
+at the \texttt{swiss} dataset.  The following code fits three models
+for the dataset. First, we model the outcome, regional fertility,
+as a function of various aspects of the region. Imagine if we
+are particularly interested in agriculture as a variable. We
+fit three models: one a linear regression with just agriculture,
+then one including educational level variables (examination and education) and
+then one including all of the previous variables plus information on religion (percent Catholic)
+and infant mortality rates.
+
+\begin{verbatim}
+data(swiss)
+fit1 = lm(Fertility ~ Agriculture, data = swiss)
+fit2 = update(fit1, Fertility ~ Agriculture + Examination + Education)
+fit3 = update(fit1, Fertility ~ Agriculture + Examination + Education + Catholic + Infant.Mortality)
+anova(fit1, fit2, fit3)
+\end{verbatim}
+
+The \texttt{anova} comand gets the relevant sums of squares for each of the models, resulting in the
+output
+
+\begin{verbatim}
+Analysis of Variance Table
+
+Model 1: Fertility ~ Agriculture
+Model 2: Fertility ~ Agriculture + Examination + Education
+Model 3: Fertility ~ Agriculture + Examination + Education + Catholic + 
+    Infant.Mortality
+  Res.Df    RSS Df Sum of Sq      F    Pr(>F)    
+1     45 6283.1                                  
+2     43 3180.9  2    3102.2 30.211 8.638e-09 ***
+3     41 2105.0  2    1075.9 10.477 0.0002111 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+\end{verbatim}
+
+Here, it would appear that inclusion of the other variables is necessary.
+However, let's see if we can create these sums of squares manually using our
+approach.
+
 
 
 
