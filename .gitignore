@@ -1,0 +1,8 @@
+main.pdf
+*.gz
+main.tex.bak
+*.out
+main.log
+*.toc
+main.aux
+*.bak
