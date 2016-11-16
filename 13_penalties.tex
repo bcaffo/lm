@@ -265,8 +265,70 @@ Here, it would appear that inclusion of the other variables is necessary.
 However, let's see if we can create these sums of squares manually using our
 approach.
 
+\begin{verbatim}
+> xtilde = as.matrix(swiss);
+> y = xtilde[,1]
+> x1 = cbind(1, xtilde[,2])
+> x2 = cbind(1, xtilde[,2:4])
+> x3 = cbind(1, xtilde[,-1])
+> makeH = function(x) x %*% solve(t(x) %*% x) %*% t(x)
+> n = length(y); I = diag(n)
+> h1 = makeH(x1)
+> h2 = makeH(x2)
+> h3 = makeH(x3)
+> ssres1 = t(y) %*% (I - h1) %*% y
+> ssres2 = t(y) %*% (I - h2) %*% y
+> ssres3 = t(y) %*% (I - h3) %*% y
+> ssreg2g1 = t(y) %*% (h2 - h1) %*% y
+>ssreg3g2 = t(y) %*% (h3 - h2) %*% y
+> out = rbind( c(n - ncol(x1), ssres1,                NA,     NA),
+               c(n - ncol(x2), ssres2, ncol(x2) - ncol(x1), ssreg2g1),
+               c(n - ncol(x3), ssres3, ncol(x3) - ncol(x2), ssreg3g2)
+  )
+> out
+     [,1]     [,2] [,3]     [,4]
+[1,]   45 6283.116   NA       NA
+[2,]   43 3180.925    2 3102.191
+[3,]   41 2105.043    2 1075.882
+\end{verbatim}
+It is interesting to note that the F test comapring Model 1 to Model 2 from the \texttt{anova} command
+is obtained by dividing \texttt{3102.191 / 2} (a chi-squared divided by its 2 degrees of freedom)
+by \texttt{2105.043 / 41} (an independent chi-squared divided by its 3 degrees of freedom). The
+denominator of the F statistic is then the residual sum of squares from Model 3, not from Model 2.
 
+This is why the following give two different answers for the F statistic:
 
+\begin{verbatim}
+> anova(fit1, fit2)
+Analysis of Variance Table
+
+Model 1: Fertility ~ Agriculture
+Model 2: Fertility ~ Agriculture + Examination + Education
+  Res.Df    RSS Df Sum of Sq      F    Pr(>F)    
+1     45 6283.1                                  
+2     43 3180.9  2    3102.2 20.968 4.407e-07 ***
+---
+> anova(fit1, fit2, fit3)
+Analysis of Variance Table
+
+Model 1: Fertility ~ Agriculture
+Model 2: Fertility ~ Agriculture + Examination + Education
+Model 3: Fertility ~ Agriculture + Examination + Education + Catholic + 
+    Infant.Mortality
+  Res.Df    RSS Df Sum of Sq      F    Pr(>F)    
+1     45 6283.1                                  
+2     43 3180.9  2    3102.2 30.211 8.638e-09 ***
+3     41 2105.0  2    1075.9 10.477 0.0002111 ***
+\end{verbatim}
+In the first case, the denominator of the F statistic is 
+\texttt{3180.9 / 43}, the residual mean squared error for Model 2,
+as opposed to the latter case where it is dividing by the residual
+mean squared error for Model 3. Of course, under the null hypothesis,
+either approach yields an independent chi squared statistic in the denominator.
+However, using the Model 3 residual mean squared error reduces the
+denominator degrees of freedom, though also necessarily reduces the
+residual sum of squared errors (since extra terms in the regression
+model always do that). 
 
 \section{Ridge regression}
 
