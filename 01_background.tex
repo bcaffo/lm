@@ -29,12 +29,12 @@ $\bX$ be an $n\times p$ full rank matrix. Let $\bbeta$ be a
 $p$ vector of unknowns. Consider trying to minimize the function:
 $$
 f(\bbeta) = ||\by - \bbeta \bX||^2 = (\by - \bbeta \bX)^t (\by - \bbeta \bX)
-= \by^t \by - 2 \by^t \bX^t \bbeta + \bbeta^t \bX^t \bX \bbeta.
+= \by^t \by - 2 \by^t \bX \bbeta + \bbeta^t \bX^t \bX \bbeta.
 $$
 The gradient of $f$ (with respect to $\bbeta$) is:
 \begin{equation}
 \label{eq:deriv}
-\nabla f(\bbeta) = -2 \bX \by + \bX^t\bX \bbeta.
+\nabla f(\bbeta) = -2 \bX^t \by + 2 \bX^t\bX \bbeta.
 \end{equation}
 A useful result is that if $\bX$ is of full column rank then
 $\bX^t \bX$ is square and full rank and hence invertible. Thus, we can
