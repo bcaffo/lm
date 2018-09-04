@@ -11,7 +11,7 @@ Then $ \nabla f = \ba.$ That is, the function that
 contains the elementwise derivatives of $f$ (the gradient)
 is constant with respect to $x$. 
 
-Consider now the matrix $\bA$
+Consider now the symmetric matrix $\bA$
 ($p\times p$) and the quadratic form:
 $$
 f(\bx) =  \bx^t \bA \bx.
@@ -28,7 +28,7 @@ Let $\by$ be an array of dimension $n\times 1$ and
 $\bX$ be an $n\times p$ full rank matrix. Let $\bbeta$ be a
 $p$ vector of unknowns. Consider trying to minimize the function:
 $$
-f(\bbeta) = ||\by - \bbeta \bX||^2 = (\by - \bbeta \bX)^t (\by - \bbeta \bX)
+f(\bbeta) = ||\by - \bX \bbeta||^2 = (\by - \bX \bbeta)^t (\by - \bX \bbeta)
 = \by^t \by - 2 \by^t \bX \bbeta + \bbeta^t \bX^t \bX \bbeta.
 $$
 The gradient of $f$ (with respect to $\bbeta$) is:
@@ -48,7 +48,7 @@ inflection point. We can do this by checking a second derivative
 condition. Taking the second derivative of \eqref{eq:deriv} we 
 get
 $$
-\bX^t\bX,
+2 \bX^t\bX,
 $$
 a positive definite matrix. Thus our solution is indeed a minimum.
 
@@ -165,7 +165,7 @@ R functions.
 
 
 Consider the fact that the matrix $\left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\}$
-is both symmetric and idempotent. The standard sample variance is the average deviation of the
+is both symmetric and idempotent. The standard sample variance is the average squared deviation of the
 observations from the sample mean (usually using $n-1$ rather than $n$). That is,
 $$
 S^2 = \frac{1}{n-1}|| \by - \bar y \bone_n ||^2 = \frac{1}{n-1} \tilde \by^t \tilde \by
@@ -178,7 +178,7 @@ $$
 $$
 Thus, our sample variance is a fairly simple quadratic form. 
 
-Similarly, if we have two vectors, $\by$ and $\bz$ then $\frac{1}{n-1}\by \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \bz$ is the
+Similarly, if we have two vectors, $\by$ and $\bz$ then $\frac{1}{n-1}\by^t \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \bz$ is the
 empirical correlation between them.
 This is then useful for matrices. Consider that
 $$
@@ -186,7 +186,7 @@ $$
 = \frac{1}{n-1} \tilde \bX^t \tilde \bX
 $$
 is a matrix where each element is the empirical covariance between columns of $\bX$.
-This is called the variance/covariation matrix. 
+This is called the variance-covariance matrix. 
 
 \subsection{Coding example}
 
