@@ -71,14 +71,16 @@ Then the residuals, defined as $\{\bI - \hatmat\} \bY = \{\bI - \hatmat\}(\bX\bb
 are a linear transformation of iid normals. Thus the residuals are singular normal. 
 
 The singular normal is such that all linear combinations and all submarginal and conditional distributions
-are also singular normal. The singular normal doesn't necessarily
+are also singular normal (prove this using the definition above!). The singular normal doesn't necessarily
 have a density function, because of the possibility of redundant
 entries. For example, the vector $(Z ~ Z)$, where $Z$ is a standard normal,
 doesn't have a joint density since the covariance matrix is $\bone_{2\times 2}$,
 which isn't invertible.
 
-The normal is the special case of the singular normal where the covariance
-matrix is full rank. 
+In our treatment, the multivariate normal is the special case of the singular normal where the covariance matrix is full rank. In other treatments of linear models,
+the definition of the
+multivariate normal allows for the possibility of rank deficient covariance matrices. However, personally, I think the distinction is useful, so reserve
+the term multivariate normal for the full rank case.
 
 \section{Normal likelihood}
 
@@ -99,13 +101,13 @@ Since this doesn't depend on $\sigma$ it is the MLE.
 Taking derivatives and setting equal to zero we
 see that 
 $$
-\hat \sigma^2 = ||e||^2 / n
+\hat \sigma^2 = ||\be||^2 / n
 $$
 (i.e. the average of the squared residuals). We'll
 find that there's a potentially preferable unbiased
 estimate given by
 $$
-S^2 = ||e||^2 / (n - p).
+S^2 = ||\be||^2 / (n - p).
 $$
 
 This model can be written in a  likelihood equivalent fashion
@@ -165,7 +167,7 @@ $$
 \left[
 \begin{array}{cc}
 \bSigma_{11} & \bSigma_{12} \\
-\bSigma{12}^t & \bSigma_{22}
+\bSigma_{12}^t & \bSigma_{22}
 \end{array}
 \right].
 $$
@@ -224,7 +226,7 @@ predictor and response is conceptually reasonable. Though we note that often suc
 joint normality is not reasonable, such as when the predictors are binary, even
 though the linear model remains well justified. 
 
-\subsection{Second important example}
+\subsection{Gaussian graphical models}
 Consider our partitioned variance matrix. 
 $$
 \bSigma = \left[
@@ -234,7 +236,9 @@ $$
 \end{array}
 \right].
 $$
-The upper diagonal element of $\bSigma^{-1}$ is given by  $\bSigma_{11} - \bSigma_{12} \bSigma_{22}^{-1} \bSigma_{12}^t$, which is $\Var(\bX_1 ~|~ \bX_2)$. Suppose that
+The upper diagonal element of $\bSigma^{-1}$ is given by  the inverse of 
+$\bSigma_{11} - \bSigma_{12} \bSigma_{22}^{-1} \bSigma_{12}^t$. Recall that
+$\bSigma_{11} - \bSigma_{12} \bSigma_{22}^{-1} \bSigma_{12}^t = \Var(\bX_1 ~|~ \bX_2)$. Suppose that
 $\bX_1 = (X_{11} ~ X_{12})^t$. Then this result suggests that
 $X_{11}$ is independent of $X_{12}$ given $\bX_2$ if the $(1,2)$ off diagonal element
 of $\bSigma^{-1}$ is zero. (Recall that independence and absence of correlation are
@@ -252,13 +256,13 @@ We assume a slight familiarity of Bayesian calculations and inference for this s
 In a Bayesian analysis, one multiplies the likelihood times a prior distribution
 on the parameters to obtain a posterior. The posterior distribution is then used for
 inference. Let's go through a simple example.
-Suppose that $\by ~|~ \mu \sim N(\bmu \bone_n, \sigma^2 I)$ and
+Suppose that $\by ~|~ \mu \sim N(\mu \bone_n, \sigma^2 I)$ and
 $\mu ~|~ N(\mu_0, \tau^2)$ where $\by$ is $n \times 1$ and $\mu$ is a scalar. The
 normal distribution placed on $\mu$ is called the "prior" and $\mu_0$ and $\tau^2$ 
 are assumed to be known. For this example, let's assume that $\sigma^2$ is also
 known. The goal is to calculate
 $\mu ~|~ \by$, the posterior distribution. This is done by multiplying prior times
-likelihood. Since, operarting generically,
+likelihood. Symbolically,
 $$
 f(\mbox{Param} | \mbox{Data}) = \frac{f(\mbox{Param}, \mbox{Data})}{f(\mbox{Data})} 
 \propto f(\mbox{Data} | \mbox{Param}) f(\mbox{Param}) = \mbox{Likelihood} \times \mbox{Prior}.

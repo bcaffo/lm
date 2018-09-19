@@ -10,7 +10,7 @@ $
 \by = (y_1,\ldots, y_n)^t
 $ and recall that $\bone_n$ is an $n$ vector of ones. We want
 to minimize 
-$f(\mu) = ||\by - \mu \bone||^2$ with respect to $\mu$. 
+$f(\mu) = ||\by - \bone \mu ||^2$ with respect to $\mu$. 
 
 Taking derivatives with respect to $\mu$ we obtain that
 $$
@@ -26,7 +26,6 @@ dimensional subspace spanned by the vector $\bone$. We'll
 rely on this form of thinking a lot throughout the text.
 
 \section{Coding example}
-\href{}{}
 
 Let's use the \texttt{diamond} dataset 
 \begin{verbatim}
@@ -38,9 +37,7 @@ Let's use the \texttt{diamond} dataset
 > coef(lm(y ~ 1))
 [1] 500.0833
 \end{verbatim}
-
-Thus, in this example the mean only least squares estimate obtained via \texttt{lm} 
-is the empirical mean.
+Thus, in this example the mean only least squares estimate obtained via \texttt{lm} is the empirical mean.
 
 \section{Regression through the origin}
 
@@ -48,7 +45,7 @@ is the empirical mean.
 
 Let $\bx = (x_1,\ldots, x_n)'$ be another vector. Consider now the
 regression through the origin problem. We want to minimize
-$f(\beta) = ||\by - \beta \bx||^2$ with respect to $\beta$.
+$f(\beta) = ||\by - \bx \beta ||^2$ with respect to $\beta$.
 This is called regression through the origin for the following
 reason. First note that the pairs, $(x_i, y_i)$,
 form a scatterplot. Least squares is then finding the best
@@ -90,7 +87,7 @@ A line through the origin is often not useful. Consider centering the
 $\by$ and $\bx$ first. The the origin would be at the mean of the
 $\by$ vector and the mean of the $\bx$ vector. Let
 $\tilde \by = \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \by$ and $\tilde \bx = \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \bx$. Then regression through the origin (minimizing
-$||\tilde \by - \gamma \tilde \bx||^2$ for $\gamma$)
+$||\tilde \by - \tilde \bx \gamma ||^2$ for $\gamma$)
 for the centered data yields
 the solution 
 $
@@ -101,13 +98,13 @@ $$
 \ip{\tilde \by}{\tilde \bx} = \by^t \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \bx^t
 = (n-1)\hat{\rho}_{xy} \sigma_x \sigma_y
 $$
-and similarly $\ip{\tilde \bx}{\tilde \bx} = (n-1)\hat{\sigma}_y^2$
-where $\hat \rho_{xy}$ and $\hat{\sigma}_y^2$ are the empirical correlation and
+and similarly $\ip{\tilde \bx}{\tilde \bx} = (n-1)\hat{\sigma}_y^2$.
+Here, $\hat \rho_{xy}$ and $\hat{\sigma}_y^2$ are the empirical correlation and
 variance, respectively. Thus our regression through the origin estimate is
 $$
 \hat \gamma = \rho_{xy} \frac{\sigma_y}{\sigma_x}.
 $$
-Thus the best fitting line that has to go through the center of the data
+That is, the best fitting line that has to go through the center of the data
 has a slope equal to the correlation times the ratio of the standard deviations.
 If we reverse the role of $\bx$ and $\by$, we simply invert the ratio of the
 standard deviations. Thus we also note, that if we center and scale our
