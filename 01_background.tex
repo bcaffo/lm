@@ -11,7 +11,7 @@ Then $ \nabla f = \ba.$ That is, the function that
 contains the elementwise derivatives of $f$ (the gradient)
 is constant with respect to $x$. 
 
-Consider now the matrix $\bA$
+Consider now the symmetric matrix $\bA$
 ($p\times p$) and the quadratic form:
 $$
 f(\bx) =  \bx^t \bA \bx.
@@ -34,7 +34,7 @@ $$
 The gradient of $f$ (with respect to $\bbeta$) is:
 \begin{equation}
 \label{eq:deriv}
-\nabla f(\bbeta) = -2 \bX \by + \bX^t\bX \bbeta.
+\nabla f(\bbeta) = -2 \bX^t \by + 2 \bX^t\bX \bbeta.
 \end{equation}
 A useful result is that if $\bX$ is of full column rank then
 $\bX^t \bX$ is square and full rank and hence invertible. Thus, we can
@@ -48,7 +48,7 @@ inflection point. We can do this by checking a second derivative
 condition. Taking the second derivative of \eqref{eq:deriv} we 
 get
 $$
-\bX^t\bX,
+2 \bX^t\bX,
 $$
 a positive definite matrix. Thus our solution is indeed a minimum.
 
@@ -167,7 +167,8 @@ R functions.
 \href{https://www.youtube.com/watch?v=hTVkDOojbdw&index=5&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
 
 
-The standard sample variance is the average deviation of the
+Consider the fact that the matrix $\left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\}$
+is both symmetric and idempotent. The standard sample variance is the average squared deviation of the
 observations from the sample mean (usually using $n-1$ rather than $n$). That is,
 $$
 S^2 = \frac{1}{n-1}|| \by -  \bone_n \bar y||^2 = \frac{1}{n-1} \tilde \by^t \tilde \by
@@ -182,8 +183,8 @@ Thus, our sample variance is a fairly simple quadratic form.
 Notice the fact that the matrix $\left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\}$
 is both symmetric and idempotent.
 
-Similarly, if we have two vectors, $\by$ and $\bz$ then $\frac{1}{n-1}\by \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \bz$ is the
-empirical covariance between them.
+Similarly, if we have two vectors, $\by$ and $\bz$ then $\frac{1}{n-1}\by^t \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \bz$ is the
+empirical correlation between them.
 This is then useful for matrices. Consider that
 $$
 \frac{1}{n-1} \bX^t \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \bX

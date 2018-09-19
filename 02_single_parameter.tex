@@ -10,7 +10,7 @@ $
 \by = (y_1,\ldots, y_n)^t
 $ and recall that $\bone_n$ is an $n$ vector of ones. We want
 to minimize 
-$f(\mu) = ||\by - \bone \mu ||^2$ with respect to $\mu$. 
+${f(\mu) = ||\by - \mu \bone_n||^2}$ with respect to $\mu$. 
 
 Taking derivatives with respect to $\mu$ we obtain that
 $$
@@ -21,8 +21,8 @@ derivative is $2n>0$.
 Thus, the average is the least squares estimate in the
 sense of minimizing the Euclidean distance between the
 observed data and a constant vector. We can think of this
-as projecting our $n$ dimensional onto the best $1$
-dimensional subspace spanned by the vector $\bone$. We'll
+as projecting our $n$ dimensional vector $\by$ onto the best $1$
+dimensional subspace spanned by the vector $\bone_n$. We'll
 rely on this form of thinking a lot throughout the text.
 
 \section{Coding example}
@@ -95,14 +95,14 @@ $
 $
 However, from the previous chapter, we know that
 $$
-\ip{\tilde \by}{\tilde \bx} = \by^t \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \bx^t
-= (n-1)\hat{\rho}_{xy} \sigma_x \sigma_y
+\ip{\tilde \by}{\tilde \bx} = \by^t \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \bx
+= (n-1)\hat{\rho}_{xy} \hat{\sigma}_x \hat{\sigma}_y
 $$
 and similarly $\ip{\tilde \bx}{\tilde \bx} = (n-1)\hat{\sigma}_y^2$.
 Here, $\hat \rho_{xy}$ and $\hat{\sigma}_y^2$ are the empirical correlation and
 variance, respectively. Thus our regression through the origin estimate is
 $$
-\hat \gamma = \rho_{xy} \frac{\sigma_y}{\sigma_x}.
+\hat \gamma = \hat{\rho}_{xy} \frac{\hat{\sigma}_y}{\hat{\sigma}_x}.
 $$
 That is, the best fitting line that has to go through the center of the data
 has a slope equal to the correlation times the ratio of the standard deviations.
@@ -131,7 +131,7 @@ Let's continue with the diamond example. We'll center the variables first.
 \section{Bonus videos}
 
 \noindent
-Watch these videos before moving on. (I had created them beofre I reorganized chapters.)
+Watch these videos before moving on. (I had created them before I reorganized chapters.)
 
 \href{https://www.youtube.com/watch?v=lmv88DtCNiU&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=10}{Sneak preview of projection logic.}
 
