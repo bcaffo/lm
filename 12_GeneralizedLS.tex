@@ -49,7 +49,11 @@ $$
 
 \vb
 The solution to the problem when $\cov(\bfY) \neq \sigma^2\bfI$, is to transform the model to a new set of observations that satisfy the constant variance assumption, and therafter use the ordinary least squares to estimate the parameters.
-Since $\sigma^2 \bfV$ is a variance-covariance matrix, $\bfV$ is a symmetric non-singular matrix, and we can write: $\bfV = \bfK′\bfK$, where $\bfK$ is called the squared root of $\bfV$ . Using this matrix,  let ${\tilde \bfy} = \bfK^{-1}\bfy$, ${\tilde \bfX} = \bfK^{-1}\bfX$, and $ {\tilde \bfeps} = \bfK^{-1}  \bfeps$. Then, it holds that 
+Since $\sigma^2 \bfV$ is a variance-covariance matrix, $\bfV$ is a symmetric non-singular
+matrix, and we can write: $\bfV = \bfK' \bfK$, where $\bfK$ is called the squared root
+of
+$\bfV$ . Using this matrix,  let ${\tilde \bfy} = \bfK^{-1}\bfy$, ${\tilde \bfX} = 
+\bfK^{-1}\bfX$, and $ {\tilde \bfeps} = \bfK^{-1}  \bfeps$. Then, it holds that 
 $$
 {\tilde \bfy} = {\tilde \bfX} \bfbet + {\tilde \bfeps},
 $$
@@ -112,20 +116,20 @@ estimate.
 $E[Y_i]=\beta x_i$, and $\var(Y_i)=\sigma^2 w_i^{-1}$.  The GLS
 estimate of $\beta$ is
 $$
-\bfbet^*={\sum_{i=1}^n w_i x_i Y_i \over \sum_{i=1}^n w_i x_i^2}.
+\bfbet^*={\sum_{i=1}^n \frac{w_i x_i Y_i}{\sum_{i=1}^n w_i x_i^2}}.
 $$
 The OLS estimate is
 $$
-\hat{\bfbet}={\sum_{i=1}^n x_i Y_i \over \sum_{i=1}^n x_i^2}.
+\hat{\bfbet}={\sum_{i=1}^n \frac{x_i Y_i}{\sum_{i=1}^n x_i^2}}.
 $$
 The variances are
 $$
-\var(\bfbet^*) = {\sigma^2 \over \sum_{i=1}^n w_i x_i^2}
+\var(\bfbet^*) = \frac{\sigma^2}{\sum_{i=1}^n w_i x_i^2}
 \qquad
 \mbox{and}
 \qquad
 \var(\hat{\bfbet}) =  
-{\sigma^2 \sum_{i=1}^n {x_i^2 \over w_i} \over 
+\frac{\sigma^2 \sum_{i=1}^n \frac{x_i^2}{w_i}}{ 
 (\sum_{i=1}^n x_i^2)^2}.
 $$
 \eexa

@@ -221,7 +221,7 @@ The most common approaches towards estimating the parameters in the covariance m
 The MLE of $\bfV$ is based on using the marginal model $$\bfy \sim N(\bfX \bfbet, \bfV).$$
 The log-likelihood of $\bfy$ is given by:
 $$
-\ell (\bfbet, \bfV) = -\frac{n}{2}\log(2\pi) -\frac{1}{2}\log| \bfV | -\frac{1}{2} (\bfy - \bfX\bfbet)'�� \bfV^{-1}(\bfy - \bfX\bfbet).
+\ell (\bfbet, \bfV) = -\frac{n}{2}\log(2\pi) -\frac{1}{2}\log| \bfV | -\frac{1}{2} (\bfy - \bfX\bfbet)'\bfV^{-1}(\bfy - \bfX\bfbet).
 $$
 By first optimizing over $\bfbet$ for fixed $\bfV$ we obtain the familiar estimate:
 $$

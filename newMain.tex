@@ -3,14 +3,13 @@
 \usepackage[utf8]{inputenc}
 \usepackage[colorlinks=true,urlcolor=blue]{hyperref}
 \usepackage{amsmath,amssymb,amsfonts}
-\usepackage{helvet}
+%\usepackage{helvet}
 \usepackage{natbib}
 \usepackage[margin=1in]{geometry}
 \usepackage{graphicx}
 \usepackage{style751,times,theorem}
 
-\renewcommand{\familydefault}{\sfdefault}
-
+%\renewcommand{\familydefault}{\sfdefault}
 
 \setlength{\oddsidemargin}{-0.00in}
 \setlength{\textwidth}{6.5in}
@@ -26,6 +25,7 @@
 {\theorembodyfont{\rmfamily} \theoremstyle{plain} \newtheorem{theo}[defi]{Theorem:}}
 {\theorembodyfont{\rmfamily} \theoremstyle{plain} \newtheorem{exa}[defi]{Example:}}
 {\theorembodyfont{\rmfamily} \theoremstyle{plain} \newtheorem{note}[defi]{Note:}}
+
 
 \newcommand{\bdefi}{\vb\begin{defi}}
 \newcommand{\edefi}{\end{defi}\vb}
@@ -46,6 +46,7 @@
 
 \input{definitions}
 
+
 \title{Advanced linear models for data science}
 \author{Brian Caffo and Martin Lindquist}
 
@@ -62,11 +63,8 @@
 
 \mainmatter
 
-\end{document}
-
 \newpage
 \input{01_Introduction.tex}
-
 
 \newpage
 \input{02_AlgebraReview.tex}
@@ -82,6 +80,9 @@
 
 \newpage
 \input{06_Bases.tex}
+
+\newpage
+\input{07_Residuals.tex}
 
 \newpage
 \input{07_Residuals.tex}
@@ -106,9 +107,6 @@
 
 \newpage
 \input{14_Quadratic.tex}
-
-\newpage
-\input{14_Distro.tex}
 
 \newpage
 \input{15_estimability.tex}
@@ -140,15 +138,9 @@
 \newpage
 \input{24_mixed_models.tex}
 
-% \setcounter{section}{22}
 \newpage
 \input{25_bayes.tex}
-\end{document}
-
-
-
-\bibliographystyle{apalike}
-\bibliography{database}
 
 
 \end{document}
+

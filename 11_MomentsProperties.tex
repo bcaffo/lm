@@ -234,7 +234,7 @@ on the first two moments. In following sections, we'll see the consequences of
 assuming normality.
 
 
-\subsection{Estimating $\sigma^2$}
+\subsection{Estimating the residual variance}
 
 We can devise an unbiased estimator for $\sigma^2$ based on the least-squares estimator $\hat{\bf \beta}$. 
 Let us define 
@@ -264,13 +264,13 @@ Assume, for example, that a correctly specified regression model would be
 $$\bfy =\bfX_1 \bbeta_1 + \bfX_1 \bbeta_2 + \epsilon.$$
 Suppose we erroneously fit the model:
 $$\bfy =\bfX_1 {\bfbet_1} + \epsilon.$$ This implies we are under-fitting the model.
-Then the least-squares estimator is given by ${{\hat \bfbet_1}} = (\bfX_1'™ \bfX_1)^{-1} \bfX_1'€™ \bfy$.
+Then the least-squares estimator is given by ${{\hat \bfbet_1}} = (\bfX_1'\bfX_1)^{-1} \bfX_1' bfy$.
 Computing the expectation, we see that 
 \begin{eqnarray*}
-E({{\hat \bfbet_1}}) &=&E( (\bfX_1'€™ \bfX_1)^{-1} \bfX_1'™ \bfy)\\
-&=& (\bfX_1'€™ \bfX_1)^{-1} \bfX_1'€™ E(\bfy)\\
-&=& (\bfX_1'€™ \bfX_1)^{-1} \bfX_1'€™(\bfX_1 \bfbet_1 + \bfX_2 \bfbet_2)\\
-&=& \bfbet_1  + (\bfX_1' \bfX_1)^{-1} \bfX_1'™ \bfX_2 \bfbet_2
+E({{\hat \bfbet_1}}) &=&E( (\bfX_1'\bfX_1)^{-1} \bfX_1' \bfy)\\
+&=& (\bfX_1' \bfX_1)^{-1} \bfX_1' E(\bfy)\\
+&=& (\bfX_1' \bfX_1)^{-1} \bfX_1' \bfX_1 \bfbet_1 + \bfX_2 \bfbet_2)\\
+&=& \bfbet_1  + (\bfX_1' \bfX_1)^{-1} \bfX_1' \bfX_2 \bfbet_2
 \end{eqnarray*}
 In addition,  $$\var(\hat \bfbet_1) = \sigma^2 (\bfX_1' \bfX_1)^{-1}.$$
 The estimate of $\bfbet$ is biased. However, note that the bias disappears if $\bfbet_2=0$ or $\bfX_1' \bfX_2=0$. 

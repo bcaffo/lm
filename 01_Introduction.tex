@@ -2,6 +2,36 @@
 
 Linear models are the cornerstone of statistical methodology. They allow us to model the relationship between a response variable (dependent variable) and one or more explanatory variables (covariate, predictor, factor, independent variable), and determine which of these variables are important. In addition, they are relatively easy to work with, and are applicable to many real-life settings.  Properly constructed, linear models encompass many common statistical techniques, including t-tests, regression, analysis of variance, and analysis of covariance.
 
+In this book, we give a brief, but rigorous 
+treatment of advanced linear models.
+It is advanced in the sense that it is of level that an
+introductory PhD student in statistics or biostatistics
+would see. The material in this book is standard
+knowledge for any PhD in statistics or biostatistics. 
+
+\section{Prerequisites}
+
+Students will need a fair amount of mathematical prerequisites
+before trying to undertake this class. First, is multivariate
+calculus and linear algebra. Especially linear algebra, since
+much of the early parts of linear models are direct applications
+of linear algebra results applied in a statistical context.
+In addition, some basic proof based mathematics is necessary
+to follow the proofs.
+
+We will also assume some basic mathematical statistics. The
+courses \href{https://www.coursera.org/course/biostats}{Mathematical Biostatistics Boot Camp 1}
+and \href{https://www.coursera.org/course/biostats2}{Mathematical Biostatistics Boot Camp 2}
+by the author on Coursera would suffice. The \href{https://www.coursera.org/course/statinference}{Statistical Inference} is a lower level
+treatment that with some augmentated reading would also suffice.
+There is a \href{https://leanpub.com/LittleInferenceBook}{Leanpub book} for
+this course as well.
+
+Some basic regression is necessary. The \href{https://www.coursera.org/course/regmods}{Regression Models}
+also by the author would suffice. Note that there is a
+\href{https://leanpub.com/regmods/}{Leanpub book} for this class. 
+
+\section{Background}
 Let $y_i$ be the response variable and $(x_{i1}, x_{i2}, \ldots x_{ip})$ a set of explanatory variables for observation $i=1, \ldots n$. The relationship between the variables can be expressed using the model:
 \begin{align}
 y_i = \mu(x_{i1}, x_{i2}, \ldots x_{ip}) + \epsilon_i \label{LM}
