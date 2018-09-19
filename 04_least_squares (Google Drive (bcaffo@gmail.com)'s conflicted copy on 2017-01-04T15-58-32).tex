@@ -100,10 +100,10 @@ is going to give us a larger norm than if we plug in $\hat \beta$ so that
 it is the unique minimum.
 Notice that going from line 5 to 6, we used the fact that $\bI - \hatmat$ is symmetric. (It is also idempotent.) Also, we used a fact that is very
 useful in general, $\bI - \hatmat$ is orthogonal to any linear combination
-of the columns of $\bX$. This is true since if $\bX \ba$ is such a combination,
+of the columns of $\bX$. This is try since if $\bX \ba$ is such a combination,
 then
 $$
-\{\bI - \hatmat)\}\bX \ba = \{\bX - \hatmat \bX\}\ba = (\bX - \bX) \ba = 0.
+\{\bI - \hatmat)\}bX \ba = \{\bX - \hatmat \bX\}\ba = (\bX - \bX) \ba = 0.
 $$
 This fact is extremely handy in working with linear models. 
 
@@ -206,17 +206,8 @@ orthogonal to all elements in $\Gamma$.
 Logically the projection matrix must be idempotent. Consider that
 for any vector, multiplication by the projection matrix finds the
 closest element in $\Gamma$. Therefore, we can't multiply again
-and find a closer one. That is, $Py = P^2 y$ for a projection
-matrix $P$ and any $y$ and thus $P =P^2$. Since we are
-dealing in Euclidean spaces, a projection matrix must also
-be symmetric. To see this, note that the residual must be
-orthogonal to any projected point, $<(I - P)y, Pw> = 0
-= y^t (I - P^t) P w$. Since this holds for all $y$ and $w$, it must be
-the case that $(I-P^t)P = 0$ or in other words $P = P^tP$.
-Since the right hand side is symmetric, $P$ must be symmetric.
-It's worth noting that this result is dependent the use of the
-Euclidean metric. If the inner product is $<a,b> = a^t \Sigma^{-1}b$ (Mahalanobis distance), the the projection metric is necessarily
-idempotent, but not symmetric.
+and find a better one. That is, $Py = P^2 y$ for a projection
+matrix $P$ and any $y$.
 
 
 Thinking this helps us interpret statistical aspects of least squares.

@@ -1,5 +1,6 @@
 \chapter{Linear regression}
 
+\section{Introduction to linear regression}
 \href{https://www.youtube.com/watch?v=0PLufpySIcs&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=14}{Watch this video before beginning.}
 
 Now let's consider upping the ante to two parameters. Consider the minimizing
@@ -51,6 +52,7 @@ regression through  the origin after centering the data. The intercept simply
 forces the line through the average of the Y's and X's.
 
 \subsection{Coding example}
+
 \href{https://www.youtube.com/watch?v=fLITbjrkQks&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=15}{Watch this video before beginning.}
 
 \begin{verbatim}
@@ -109,7 +111,9 @@ $||\be||^2 $
 is called the sum of the squared errors while $\frac{1}{n-2}||\be||^2$ is
 called the mean squared error or the residual variance.
 
-\href{https://www.youtube.com/watch?v=k8szlEkWmAg&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=19}{Watch this video before beginning.}
+~\\
+\noindent
+\href{https://www.youtube.com/watch?v=k8szlEkWmAg&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=19}{Watch this video of this coding exercise.}
 \begin{verbatim}
 > yhat = beta0 + beta1 * x 
 > e = y - yhat

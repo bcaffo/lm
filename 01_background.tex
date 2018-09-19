@@ -28,8 +28,8 @@ Let $\by$ be an array of dimension $n\times 1$ and
 $\bX$ be an $n\times p$ full rank matrix. Let $\bbeta$ be a
 $p$ vector of unknowns. Consider trying to minimize the function:
 $$
-f(\bbeta) = ||\by - \bX \bbeta||^2 = (\by - \bX \bbeta)^t (\by - \bX \bbeta)
-= \by^t \by - 2 \by^t \bX \bbeta + \bbeta^t \bX^t \bX \bbeta.
+f(\bbeta) = ||\by -  \bX \bbeta||^2 = (\by - \bX \bbeta )^t (\by -  \bX \bbeta)
+= \by^t \by - 2 \by^t \bX^t \bbeta + \bbeta^t \bX^t \bX \bbeta.
 $$
 The gradient of $f$ (with respect to $\bbeta$) is:
 \begin{equation}
@@ -98,7 +98,7 @@ Consider our previous least squares problem. If $\bX = \bone_n$ and $\bbeta$
 is just the scalar $\beta$. The least squares function we'd like to minimize
 is:
 $$
-(\by - \beta \bone_n)^t (\by - \beta \bone_n) = ||\by - \beta \bone_n||^2.
+(\by - \bone_n  \beta)^t (\by -  \bone_n \beta) = ||\by -  \bone_n\beta||^2.
 $$
 Or, what constant vector best approximates $\by$ it the terms of minimizing the
 squared Euclidean distance? From above, we know that the solution is of the form 
@@ -116,26 +116,29 @@ Euclidean distance.
 
 Continuing to work with our vector of ones, note that 
 $$
-\by - \bar y \bone_n
+\by -  \bone_n \bar y
 $$
 is the centered version of $\by$ (in that it has the mean subtracted from each element of the $\by$ vector).
 We can rewrite this as:
 $$
-\tilde \by = \by - \bar y \bone_n = \by - (\bone_n^t \bone_n)^{-1} \bone^t \bone \by
+\tilde \by = \by -  \bone_n \bar y= \by - (\bone_n^t \bone_n)^{-1} \bone^t \bone \by
 = \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone^t \right\} \by.
 $$
 In other words, multiplication by the matrix $ \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone^t \right\}$
-centers vectors. This can be very handy for centering matrices. For example, if $\bX$ is an $n\times p$
-matrix then the matrix $\tilde \bX  = \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone^t \right\} \bX$
-is the matrix with every column centered. 
-
-To check that $\tilde \by$ is centered, consider multiplying by $\bone_n$ (which sums its elements). 
+centers vectors. To check that $\tilde \by$ is centered, consider multiplying by $\bone_n$ (which sums its elements). 
 $$
 \bone_n^t \tilde \by = \bone_n^t \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \by
 = \left\{ \bone_n^t - \bone_n^t \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} =
 \left\{ \bone_n^t - \bone_n^t \right\}\by = 0.
 $$
-Convince yourself that $\tilde \bX$ has every column mean equal to 0.
+
+This operation can be very handy for centering matrices. For example, if $\bX$ is an $n\times p$
+matrix then the matrix $\tilde \bX  = \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone^t \right\} \bX$
+is the matrix with every column centered. Conversely, right multiplication
+by  $ \bI - \bone_p (\bone_p^t \bone_p)^{-1} \bone_p^t$ centers every row
+of $\bX$.
+
+
 
 \subsection{Coding example}
 
@@ -168,7 +171,7 @@ Consider the fact that the matrix $\left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1
 is both symmetric and idempotent. The standard sample variance is the average squared deviation of the
 observations from the sample mean (usually using $n-1$ rather than $n$). That is,
 $$
-S^2 = \frac{1}{n-1}|| \by - \bar y \bone_n ||^2 = \frac{1}{n-1} \tilde \by^t \tilde \by
+S^2 = \frac{1}{n-1}|| \by -  \bone_n \bar y||^2 = \frac{1}{n-1} \tilde \by^t \tilde \by
 $$
 We can write out the norm component of this as: 
 $$
@@ -177,6 +180,8 @@ $$
 = \by^t \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\}\by.
 $$
 Thus, our sample variance is a fairly simple quadratic form. 
+Notice the fact that the matrix $\left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\}$
+is both symmetric and idempotent.
 
 Similarly, if we have two vectors, $\by$ and $\bz$ then $\frac{1}{n-1}\by^t \left\{ \bI - \bone_n (\bone_n^t \bone_n)^{-1} \bone_n^t \right\} \bz$ is the
 empirical correlation between them.
@@ -186,7 +191,7 @@ $$
 = \frac{1}{n-1} \tilde \bX^t \tilde \bX
 $$
 is a matrix where each element is the empirical covariance between columns of $\bX$.
-This is called the variance-covariance matrix. 
+This is called the variance/covariance matrix. 
 
 \subsection{Coding example}
 
