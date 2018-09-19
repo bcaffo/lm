@@ -1,63 +1,138 @@
-\documentclass[12pt,oneside]{book}
-\usepackage[utf8]{inputenc}
-\usepackage[colorlinks=true,urlcolor=blue]{hyperref}
-\usepackage{amsmath,amssymb}
-\usepackage{helvet}
-\usepackage{natbib}
-\usepackage[margin=1in]{geometry}
+\documentclass[11pt]{article}
 
-\renewcommand{\familydefault}{\sfdefault}
+\usepackage{style751,times,theorem}
+\usepackage[dvips]{graphicx}
+\usepackage{amsmath, amsfonts}
+
+\setlength{\oddsidemargin}{-0.00in}
+\setlength{\textwidth}{6.5in}
+%\setlength{\topmargin}{-0.0in}
+%\setlength{\textheight}{9.25in}
+\setlength{\parskip}{1ex plus0.5ex minus0.2ex} 
+
+\parindent0em
+
+\pagestyle{plain}
+
+{\theorembodyfont{\rmfamily} \theoremstyle{plain} \newtheorem{defi}{Definition:}[section]}
+{\theorembodyfont{\rmfamily} \theoremstyle{plain} \newtheorem{theo}[defi]{Theorem:}}
+{\theorembodyfont{\rmfamily} \theoremstyle{plain} \newtheorem{exa}[defi]{Example:}}
+{\theorembodyfont{\rmfamily} \theoremstyle{plain} \newtheorem{note}[defi]{Note:}}
+
+\newcommand{\bdefi}{\vb\begin{defi}}
+\newcommand{\edefi}{\end{defi}\vb}
+\newcommand{\bsdefi}{\begin{defi}}
+\newcommand{\esdefi}{\end{defi}}
+\newcommand{\btheo}{\vb\begin{theo}}
+\newcommand{\etheo}{\end{theo}\vb}
+\newcommand{\bstheo}{\begin{theo}}
+\newcommand{\estheo}{\end{theo}}
+\newcommand{\bexa}{\vb\begin{exa}}
+\newcommand{\eexa}{\end{exa}\vb}
+\newcommand{\bsexa}{\begin{exa}}
+\newcommand{\esexa}{\end{exa}}
+\newcommand{\bnote}{\vb\begin{note}}
+\newcommand{\enote}{\end{note}\vb}
+\newcommand{\bsnote}{\begin{note}}
+\newcommand{\esnote}{\end{note}}
 
 \input{definitions}
 
-\title{Advanced linear models for data science}
-\author{Brian Caffo}
+\title{Notes for 751-752}
+
 
 \begin{document}
 
 \maketitle
 
+\newpage
 \tableofcontents
+%
+%\frontmatter
+%
+%\mainmatter
 
-\frontmatter
+\newpage
+\input{01_Introduction.tex}
 
-\input{preface.tex}
+\newpage
+\input{02_AlgebraReview.tex}
 
-\mainmatter
+\newpage
+\input{03_SingleParameter.tex}
 
-\input{00_introduction.tex}
+\newpage
+\input{04_LinearRegression.tex}
 
-\input{01_background.tex}
+\newpage
+\input{05_LeastSquares.tex}
 
-\input{02_single_parameter.tex}
+\newpage
+\input{06_Bases.tex}
 
-\input{03_linear_regression.tex}
+\newpage
+\input{07_Residuals.tex}
 
-\input{04_least_squares.tex}
+\newpage
+\input{08_Examples.tex}
 
-\input{05_examples.tex}
+\newpage
+\input{09_NonFullRank.tex}
 
-\input{06_bases.tex}
+\newpage
+\input{10_Moments.tex}
 
-\input{07_residuals.tex}
+\newpage
+\input{11_MomentsProperties.tex}
 
-\input{08_expectations.tex}
+\newpage
+\input{12_GeneralizedLS.tex}
 
-\input{09_normal.tex}
+\newpage
+\input{13_MVNormal.tex}
 
-\input{10_distro.tex}
+\newpage
+\input{14_Quadratic.tex}
 
-\input{11_residuals_diagnostics.tex}
+\newpage
+\input{14_Distro.tex}
 
-\input{12_underover.tex}
+\newpage
+\input{15_estimability.tex}
 
-\input{13_penalties.tex}
+\newpage
+\input{16_Simultaneous.tex}
 
-\input{14_asymptotics.tex}
+\newpage
+\input{17_residuals_diagnostics.tex}
 
-\input{15_mixed_models.tex}
+\newpage
+\input{18_underover.tex}
 
-\input{16_bayes.tex}
+\newpage
+\input{19_modelselection.tex}
+
+\newpage
+\input{20_penalties.tex}
+
+\newpage
+\input{21_pcr.tex}
+
+\newpage
+\input{22_timeseries.tex}
+
+\newpage
+\input{23_asymptotics.tex}
+
+\newpage
+\input{24_mixed_models.tex}
+
+% \setcounter{section}{22}
+\newpage
+\input{25_bayes.tex}
+\end{document}
+
+
 
 \bibliographystyle{apalike}
 \bibliography{database}
