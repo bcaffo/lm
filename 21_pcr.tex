@@ -1,0 +1,145 @@
+\section{Dimension Reduction Approaches}
+
+Next we explore a class of approaches that transform the predictors and then fit an OLS model using a subset of the transformed variables.
+We refer to these techniques as dimension reduction methods.
+Here we focus in particular on principal components regression. However, we begin by reviewing 
+principal components analysis (PCA).
+
+\subsection{Principle component analysis}
+
+Principal components analysis (PCA) is a multivariate procedure concerned with explaining the variance-covariance structure of a random vector. 
+In PCA, a set of correlated variables are transformed into a set of uncorrelated variables, ordered by the amount of variability in the data that they explain. 
+The new variables are linear combinations of the original variables, and several of them can be ignored with a minimum loss of information.
+Thus, PCA provides a lower dimensional basis to represent the data. 
+
+Let us express $\bfX$ in terms of its SVD,  $\bfX = \bfU \bfD \bfV'.$
+Here $$\bfD = \diag\{d_1, d_2, \ldots d_p\},$$ where $d_1 \ge d_2 \ge \ldots \ge d_p$.
+Note, we can write $\bfX' \bfX = \bfV \bfD^2 \bfV'$.
+Hence, the columns of $\bfV$ are the eigenvectors for $\bfX' \bfX$.
+
+The principal components of the matrix $\bfX$ is a linear re-parameterization $\bfZ \bfW$ such that:
+(i) the re-parameterized variables are uncorrelated with one another; and (ii) the first component has the largest variance of all linear combinations of the the columns of $\bfX$, the second component has the largest variance conditional on being uncorrelated withe the first, etc. 
+
+Here $\bfW$ is an orthogonal matrix called the loadings.
+Let ${\bf w}_1$ be the first column of the matrix $\bfW$.
+Then the first principal component is $\bfz_1 = \bfX {\bf w}_1$.
+We seek ${\bf w}_1$ so that
+$$
+\max_{||{\bf w}_1||=1} \{ \langle \bfX {\bf w}_1, \bfX {\bf w}_1 \rangle \}.
+$$
+This is maximized when ${\bf w}_1$ is a multiple of the first right singular vector, i.e., the first column of $\bfV$ from the SVD.
+Similarly, the second column of $\bfW$ is the the second column of $\bfV$, etc.
+
+Hence, the principal components are given by:
+$$
+\bfZ = \bfX \bfV.
+$$
+In addition, the following relationship holds:
+\begin{eqnarray*}
+\bfZ &=& \bfX \bfV\\
+&=& \bfU \bfD \bfV' \bfV\\
+&=& \bfU \bfD
+\end{eqnarray*}
+Thus, the principal components are the weighted columns of $\bfU$.
+
+Note that 
+$$\var(\bfz_i) = d_i^2$$ 
+for $i=1, \ldots p$.
+Therefore, we often quantify the proportion of the explained variance by the first $m$ principal components as follows:
+$$
+\frac{d_1^2 + \cdots d_m^2}{d_1^2 + \cdots d_p^2}.
+$$
+
+
+\subsection{Coding example}
+
+
+\begin{verbatim}
+> data(swiss)
+> y = swiss$Fertility
+> x = as.matrix(swiss[,-1])
+> n = nrow(x)
+> decomp = princomp(x, cor = TRUE)
+> decomp$loadings
+
+Loadings:
+                 Comp.1 Comp.2 Comp.3 Comp.4 Comp.5
+Agriculture       0.524  0.258         0.809       
+Examination      -0.572                0.422 -0.702
+Education        -0.492 -0.190 -0.539  0.332  0.567
+Catholic          0.385 -0.370 -0.726 -0.101 -0.422
+Infant.Mortality        -0.872  0.425  0.215       
+
+\end{verbatim}
+
+
+\subsection{Principal component regression}
+
+Principal components regression (PCR) uses $\bfZ$ instead of $\bfX$ as the explanatory variables in the linear model.
+Importantly, the columns of $\bfZ$ are uncorrelated, so we can fit the model sequentially.
+In addition, only the variables $\bfz_1, \ldots \bfz_m$ for some $m \le p$ are typically used.
+It therefore disregards the $p-m$ components with smallest eigenvalues.
+By manually setting the projection onto the principal component directions with small eigenvalues equal to $0$, dimension reduction is achieved. 
+
+If we use all $p$ principal components, the linear model can be written:
+\begin{eqnarray*}
+\bfy &=& \bfX \bfbet + \bfeps \\
+&=& \bfX \bfV \bfV' \bfbet + \bfeps \\
+&=& \bfZ {\bf \gamma} + \bfeps
+\end{eqnarray*}
+where ${\bf \gamma} = \bfV' \bfbet$.
+Under this formulation,
+\begin{eqnarray*}
+\hat {\bf \gamma} &=& (\bfZ' \bfZ)^{-1} \bfZ' \bfy \\
+&=& \bfD^{-2} \bfZ' \bfy\\
+&=& \bfD^{-1} \bfU' \bfy.
+\end{eqnarray*}
+Hence, be can write:
+\begin{eqnarray*}
+\hat \bfbet &=& \bfV \hat {\bf \gamma}  \\
+&=& \bfV \bfD^{-1} \bfU' \bfy.
+\end{eqnarray*}
+Using all $p$ principal components, this is equivalent to the OLS solution.
+
+In practice, we only use $m < p$ principal components.
+Let $\bfZ_{(m)} = [\bfz_1, \ldots \bfz_m]$.
+Then, in a similar manner as above we can show that:
+$$\hat \bfbet_{(m)} = \bfV_{(m)} \bfD_{(m)}^{-1} \bfU_{(m)}' \bfy.$$
+The fitted values are given by: 
+\begin{eqnarray*}
+\hat \bfy_{(m)} &=& \bfH_{(m)} \bfy
+\end{eqnarray*}
+where
+\begin{eqnarray*}
+\bfH_{(m)} &=& \bfZ_{(m)} (\bfZ_{(m)}'\bfZ_{(m)})^{-1} \bfZ_{(m)}' \\
+&=& \bfU_{(m)} \bfU_{(m)}' \bfy
+\end{eqnarray*}
+Thus, we can write:
+\begin{eqnarray*}
+\hat \bfy_{(m)} &=& \sum_{j=1}^m  \bfu_j \bfu_j'  \bfy \\
+&=& \sum_{j=1}^m  \bfu_j \langle \bfu_j,  \bfy \rangle.
+\end{eqnarray*}
+
+The total variability can be written:
+$$
+tr(\var(\hat \bfbet_{(m)}) = \sigma^2 \sum_{i=1}^m \frac{1}{d_i^2}. 
+$$
+Compare this to the OLS solution:
+\begin{eqnarray*}
+tr(\var(\hat \bfbet))  &=& \sigma^2 \sum_{j=1}^p \frac{1}{d_j^2}.
+\end{eqnarray*}
+Hence, it holds that $tr(\var(\hat \bfbet_{(m)}) \le tr(\var(\hat \bfbet))$.
+However, $\hat \bfbet_{(m)}$ will be biased.
+Thus, the mean square error is given by
+\begin{eqnarray*}
+MSE(\hat \bfbet_{(m)})  &=& \sigma^2 \sum_{j=1}^m \frac{1}{d_j^2} + \sum_{j=m+1}^p \gamma_j^2.
+\end{eqnarray*}
+
+As more principal components are used in the regression model, the bias decreases but the variance increases.
+PCR tends to perform well in settings when the first few principal components capture most of the variation in the predictors as well as the relationship with the response.
+Note that even though PCR provides a simple way to perform regression using $m < p$ predictors, it is not a feature selection method.
+One can typically choose the number of principal components by cross-validation.
+
+It should be noted that PCR identifies linear combinations, or directions, that best represents the predictors.
+These directions are identified is an unsupervised way, since the response $\bfy$ is not used to help determine the principal component directions.
+Thus, there is no guarantee that the directions that best explain the predictors will also be the best directions to use for predicting the response. To achieve this, as an alternative, methods such as partial least squares can be used.

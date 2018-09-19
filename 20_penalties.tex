@@ -1,0 +1,266 @@
+\section{Regularization Methods}
+
+Regularization imposes an upper threshold on the value least-squares coefficients can take,  potentially providing more parsimonious solutions. 
+Regularization methods are particularly useful when variables are highly correlated with one another (i.e. when there is multicollinearity).
+But they also have utility as a variable selection tool.
+
+
+\subsection{Bias-variance Tradeoff}
+
+So far we have been using the ordinary least-squares estimate:
+$$
+\hat \bfbet = (\bfX' \bfX)^{-1} \bfX' \bfy.
+$$
+We have previously shown this to be the BLUE.
+However, is it still possible to improve upon it?
+
+If an estimate has only a small bias but is substantially more precise than an unbiased estimate it may in fact be preferable.
+The quality of an estimator can be quantified using the mean square error: 
+$$
+MSE(\hat \bfbet) = E[({\hat \bfbet} - \bfbet)'({\hat \bfbet} - \bfbet)].
+$$
+The MSE can be written as the sum of the total variation of the estimator and its squared bias, i.e.,
+$$
+MSE(\hat \bfbet) = tr(\var({\hat \bfbet})) + ({\hat \bfbet} - \bfbet)'({\hat \bfbet} - \bfbet).
+$$
+If $\hat \bfbet$ is unbiased, then $MSE(\hat \bfbet) = tr(\var({\hat \bfbet}))$. 
+
+
+\subsection{Ridge regression}
+
+Consider adding a quadratic constraints to the least squares equation:.
+$$
+||\by - \bX \bbeta||^2 + \bbeta' \bGamma \bbeta.
+$$
+In this case we consider instances where $\bX$ is not necessarily full rank. The
+addition of the penalty is called ``Tikhonov regularization'' for the mathematician of
+that name. The specific instance of this regularization in regression is called ridge
+regression. The matrix $\bGamma$ is typically assumed known or alternatively set to $\gamma \bI$. 
+
+Another way to envision ridge regression is to think in the terms of a posterior mode 
+on a regression model. Specifically, $\bSigma^{-1} = \bGamma / \sigma^2$ and consider the model
+where $\by ~|~ \bbeta \sim N(\bX \bbeta, \sigma^2 \bI)$ and $\bbeta \sim N(\bzero, \bSigma)$. 
+Then one obtains the posterior for $\bbeta$ and $\sigma$ by multiplying the two densities. The
+posterior mode would be obtained by minimizing minus twice the log of this product
+$$
+||\by - \bX \bbeta||^2 / \sigma^2 + \bbeta' \bGamma \bbeta / \sigma^2.
+$$
+which is equivalent to above in the terms of maximization for $\bbeta$.
+
+We'll leave it as an exercise to obtain that the estimate actually obtained is
+$$
+\hat \bbeta_{ridge} = (\xtx + \bGamma)^{-1} \bX' \by.
+$$
+To see how this regularization helps with invertibility of $\xtx$, consider the case where
+$\bGamma = \gamma \bI$. If $\gamma$ is very large then $\xtx + \gamma \bI$ is simply
+small numbers added around an identity matrix, which is clearly invertible. 
+
+Consider the case where $\bX$ is column centered and is of full column rank. 
+Let $\bU \bD \bV'$ be the SVD of $\bX$ where $\bU' \bU = \bV ' \bV = \bI$. 
+Note then $\xtx = \bV \bD^2 \bV'$ and $\xtxinv = \bV \bD^{-2} \bV'$ so that
+the ordinary least squares estimate satisfies
+$$
+\hat \by = \bX \xtxinv \bX' \by = \bU \bD \bV' \bV \bD^{-2} \bV' \bV \bD \bU \by = \bU \bU' \by.
+$$
+Consider now the fitted values under ridge regression with $\bGamma = \gamma \bI$:
+\begin{align*}
+\hat \by_{ridge} 
+& = \bX (\xtx + \gamma \bI)^{-1} \bX' \by \\
+& = \bU \bD \bV' (\bV \bD^2 \bV' + \gamma \bI)^{-1} \bV \bD \bU' \by \\
+& = \bU \bD \bV' (\bV \bD^2 \bV' + \gamma \bV \bV')^{-1} \bV \bD \bU' \by \\
+& = \bU \bD \bV' \{\bV (\bD^2 + \gamma \bI) \bV'\}^{-1} \bV \bD \bU' \by \\
+& = \bU \bD \bV' \bV (\bD^2 + \gamma \bI)^{-1} \bV' \bV \bD \bU' \by \\
+& = \bU \bD (\bD^2 + \gamma \bI)^{-1} \bD \bU' \by\\
+& = \bU \bW \bU' \by
+\end{align*}
+where the third line follows since $\bX$ is full column rank so that $\bV$ is $p\times p$ of full rank
+and $\bV^{-1} = \bV'$ so that $\bV' \bV = \bV \bV' = \bI$. Here $\bW$ is a diagonal matrix with elements
+$$
+\frac{D_i^2}{D_i^2 + \gamma}
+$$
+where $D_i^2$ are the eigenvalues. 
+
+In the not full rank case, the same identity can be found, though it takes a bit more work. Now assume
+that $\bX$ is of full row rank (i.e. that $n < p$ and there are no redundant subjects). Now note that
+$\bV$ does not have an inverse, while $\bU$ does (and $\bU^{-1} = \bU'$. Further note via
+the Woodbury theorem (where $\theta = 1/\gamma)d$:
+\begin{align*}
+(\xtx + \gamma \bI)^{-1} & = 
+\theta \bI - \theta^2 \bX' (\bI + \theta \bX \bX')^{-1} \bX \\
+& = \theta \bI - \theta^2 \bV \bD \bU'  (\bU \bU' + \theta \bU \bD^2 \bU')^{-1} \bU \bD \bV' \\
+& = \theta \bI - \theta^2 \bV \bD \bU' \{\bU(\bI + \theta \bD^2) \bU')\}^{-1} \bU \bD \bV' \\
+& = \theta \bI - \theta^2 \bV \bD \bU' \{\bU(\bI + \theta \bD^2)^{-1} \bU')\} \bU \bD \bV' \\ 
+& = \theta \bI - \theta^2 \bV \bD (\bI + \theta \bD^2)^{-1} \bD \bV' \\
+& = \theta \bI - \theta^2 \bV \tilde \bD \bV' 
+\end{align*}
+where $\tilde \bD$ is diagonal with entries $D_i^2 / (1 + \theta D_i^2)$ where $D_i$ are the 
+diagonal entries of $\bD$. Then:
+\begin{align*}
+\hat \by_{ridge} 
+& = \bX (\xtx + \gamma \bI)^{-1} \bX' \by  \\
+& = \bU \bD \bV' (\theta \bI - \theta^2 \bV \tilde \bD \bV') \bV \bD \bU' \by \\
+& = \bU \bD (\theta \bI - \theta^2 \tilde \bD)\bD \bU' \by \\
+& = \bU \bW \bU' \by
+\end{align*}
+Thus we've covered the full row and column rank cases. (Omitting the instance where $\bX$ is neither
+full row nor column rank.)
+
+%Note that the inverse necessary for ridge regression
+%can be obtained easily in the event that there are few rows but lots of columns. By the Woodbury %theorem (mentioned
+%several times in this text), we have that
+%$$
+%(\xtx + \bGamma)^{-1} = \bGamma^{-1} - \bGamma^{-1} \bX' (\bI + \bX \bGamma^{-1} \bX')^{-1} \bX %\bGamma^{-1}
+%$$
+%This identity is especially convenient when $\bGamma = \gamma \bI$. Note that the inverse necessary has the dimension of
+%$\bX \bX'$, which is the easier dimension to work with when $p$ is larger than $n$. 
+
+
+Let us now study the bias and variance properties of the ridge estimator when $\Gamma = \gamma \bfI$:
+\begin{eqnarray*}
+E(\hat \bfbet_{ridge}) 
+& = & ({\bfX' \bfX} + \gamma \bfI)^{-1} \bfX' E(\bfy) \\
+& = & ({\bfX' \bfX} + \gamma \bfI)^{-1} \bfX' \bfX \bfbet \\
+& = & ({\bfX' \bfX} + \gamma \bfI)^{-1} (\bfX' \bfX + \gamma \bfI - \gamma \bfI) \bfbet \\
+& = & (\bfI - \gamma(\bfX' \bfX + \gamma \bfI)^{-1}) \bfbet \\
+& = & \bfbet - \gamma(\bfX' \bfX + \gamma \bfI)^{-1} \bfbet 
+\end{eqnarray*}
+The bias increases as a function of $\gamma$.
+The variance-covariance matrix can be expressed as follows:
+\begin{eqnarray*}
+Var(\hat \bfbet_{ridge}) 
+& = & \sigma^2 ({\bfX' \bfX} + \gamma \bfI)^{-1} ({\bfX' \bfX}) ({\bfX' \bfX} + \gamma \bfI)^{-1}
+\end{eqnarray*}
+which can be simplified as follows:
+\begin{eqnarray*}
+Var(\hat \bfbet_{ridge}) 
+& = & \sigma^2 \bfV (\bfD^2 + \gamma \bfI)^{-1} {\bfD}^2 ({\bfD}^2 + \gamma \bfI)^{-1} \bfV'.
+\end{eqnarray*}
+The total variability is represented by the trace of the variance-covariance matrix. 
+Here we can write:
+\begin{eqnarray*}
+tr(Var(\hat \bfbet_{ridge}))  &=& \sigma^2 \sum_{j=1}^p \frac{d_j^2}{(d_j^2 + \gamma)^2}.
+\end{eqnarray*}
+
+Compare this to the OLS solution:
+\begin{eqnarray*}
+tr(Var(\hat \bfbet))  &=& \sigma^2 \sum_{j=1}^p \frac{1}{d_j^2}.
+\end{eqnarray*}
+Thus, one can show that the ridge estimator has systematically smaller total variation, i.e.
+\begin{eqnarray*}
+tr(Var(\hat \bfbet_{ridge}))  & \leq & tr(Var(\hat \bfbet)).
+\end{eqnarray*}
+
+
+
+
+\subsection{Coding example}
+
+In the example below, we use the \texttt{swiss} data set to illustrate
+fitting ridge regression. In this example, penalization isn't really
+necessary, so the code is more used to simply show the fitting.
+Notice that \texttt{lm.ridge} and our code give slightly different
+answers. This is due to different scaling options for the design matrix.
+
+\begin{verbatim}
+data(swiss)
+y = swiss[,1]
+x = swiss[,-1]
+y = y - mean(y)
+x = apply(x, 2, function(z) (z - mean(z)) / sd(z))
+n = length(y); p = ncol(x)
+##get ridge regression estimates for varying lambda
+lambdaSeq = seq(0, 100, by = .1)
+betaSeq = sapply(lambdaSeq, function(l) solve(t(x) %*% x + l * diag(rep(1, p)), t(x) %*% y))
+plot(range(lambdaSeq), range(betaSeq), type = "n", xlab = "- lambda", ylab = "Beta")
+for (i in 1 : p) lines(lambdaSeq, betaSeq[i,])
+
+##Use R's function for Ridge regression
+library(MASS)
+fit = lm.ridge(y ~ x, lambda = lambdaSeq)
+plot(fit)
+
+\end{verbatim}
+
+
+\subsection{Lasso regression}
+
+The Lasso has been somewhat of a revolution in statistics and biostatistics
+of late. The central idea of the lasso is to create a penalty that forces
+certain coefficients to be zero. For centered $\by$ and centered and scaled $\bX$, 
+consider minimizing
+$$
+|| \by - \bX \bbeta||^2
+$$
+subject to $\sum_{i=1}^p | \beta_i| < t$. The Lagrangian form of this minimization
+can be written as minimizing
+$$
+|| \by - \bX \bbeta||^2 + \gamma \sum_{i=1}^n | \beta_i|.
+$$
+Here $\gamma$ is a penalty parameter. As the Lasso constrains
+$\sum_{i=1}^p | \beta_i| < t$, which has sharp corners on the axes,
+it has a tendency to set parameters exactly to zero. Thus, it is 
+thought of as doing model selection along with penalization. 
+Moreover, the Lasso handles the $p > n$ problem. Finally, it's
+a convex optimization problem, so that numerically solving 
+for the Lasso is stable. We can more generally specify the parameter
+as
+$$
+|| \by - \bX \bbeta||^2 + \gamma \sum_{i=1}^n | \beta_i |^q.
+$$
+for $q > 0$. We obtain a case of ridge regression when $q=2$ and
+the Lasso when $q=1$. Since $(\sum_{i=1}^n | \beta_i |^q)^{1/q}$ is a norm,
+usually called the $\ell_q$ norm, the various forms of
+regression are often calld $\ell_q$ regression. For example,
+ridge regression could be called $\ell_2$ regression, the Lasso
+$\ell_1$ regression and so on. We could write the penalized regression estimate as
+$$
+|| \by - \bX \bbeta||^2 + \gamma ||\bbeta||_q^q
+$$
+where $||\cdot||_q$ is the $\ell_q$ norm.
+
+
+%You can visualize the parameters easily using Wolfram's alpha:
+%\href{http://www.wolframalpha.com/input/?i=abs\%28x1\%29+\%2B+abs\%28x2\%29+\%3D+1}{$|x_1| + |x_2|$},
+%\href{http://www.wolframalpha.com/input/?i=abs\%28x1\%29\%5E2+\%2B+abs\%28x2\%29\%5E2+\%3D+1}{$|x_1|^2 + |x_2|^2$},
+%\href{http://www.wolframalpha.com/input/?i=abs\%28x1\%29\%5E0.5+\%2B+abs\%28x2\%29\%5E0.5+\%3D+1}{$|x_1|^0.5 + |x_2|^0.5$},
+%and \href{http://www.wolframalpha.com/input/?i=plot+abs\%28x1\%29\%5E4+\%2B+abs\%28x2\%29\%5E4+\%3D+1}{$|x_1|^4 + |x_2|^4$}.
+Notice that as $q$ tends to zero, it tends to all of the mass on the axes. In contrast, as $q$ tends to infinity, it tends
+to a square. The limit as $q$ tends to 0 is called the $l_0$ norm, which just penalizes the number
+of non-zero coefficients. 
+
+Just like with ridge regression, the Lasso has a Bayesian representation. Let
+the prior on $\beta_i$ be iid from a Laplacian distribution with mean 0, which has
+density $\frac{\theta}{2}\exp(- \theta |\beta_i|)$, and is denoted Lapplace$(0, \theta)$. 
+Then, the Lasso estimate is
+the posterior mean assuming $\by \sim N(\bX \bbeta, \sigma^2 I)$ and 
+$\beta_i \sim_{iid} \mbox{Laplace}(0, \gamma / 2\sigma^2)$. Then minus twice 
+the log of the posterior for $\bbeta$, conditioning on $\sigma$, is proportional to
+$$
+||\by - \bX \bbeta||^2 + \gamma ||\bbeta||_{1}.
+$$
+The connection with Bayesian statistics is somewhat loose for Lasso regression. 
+While the Lasso is the posterior mode under a specific prior, whether or not that
+prior makes sense from a Bayesian perspective is not clear. Furthermore, the full
+posterior for a parameter in the model 
+is averaged over several sparse models, so is actually not sparse. 
+Also, the posterior mode is conditioned on $\sigma$ under these assumptions, Bayesian analysis usually
+take into account the full posterior.
+
+
+\subsection{Coding example}
+
+Let's give an example of coding the Lasso. Here, because the optimization
+problem isn't closed form, we'll rely on the \texttt{lars} package from
+Tibshirani and Efron. Also assume the code from the ridge regression example.
+
+\begin{verbatim}
+library(lars)
+data(swiss)
+y = swiss$Fertility
+x = as.matrix(swiss[,-1])
+fit2 = lars(x, y, type = c("lasso"))
+plot(fit2)
+\end{verbatim}
+
+
+

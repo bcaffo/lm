@@ -1,0 +1,360 @@
+\section{Conceptual examples of least squares}
+
+In this section we discuss some conceptual examples of least squares. This illustrates the flexibility of this approach and how it allows us to effectively analyze different types of data. First, we revisit some of the models previously used, before moving on to introduce some new ones.
+
+
+\subsection{Mean only regression}
+%\href{https://www.youtube.com/watch?v=OSfPvU1Tq0k&index=28&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+First let us revisit mean only regression,  which we recall can be expressed as as ${\mathbf y} = {\mathbf J}_n \mu + {\mathbf \epsilon}$.
+Placing this into the GLM framework, our design matrix is $\bX = {\bf J}_n$. Our coefficient estimate is therefore:
+$$
+{\hat \mu}=({\bf J}_n'{\bf J}_n)^{-1} {\bf J}_n' \by = \bar y.
+$$
+
+\subsection{Regression through the origin}
+
+Next, we revisit the regression through the origin problem, i.e., ${\mathbf y} = {\mathbf x} \beta$. 
+Here the design matrix is $\bX = \bx$. Our coefficient estimate is therefore:
+$$
+{\hat \beta} = (\bx'\bx)^{-1}\bx' \by
+= \frac{\ip{\by}{\bx}}{||\bx||^2}.
+$$
+
+\subsection{Linear regression}
+% Section \ref{sec:lslin} of the last chapter showed that multivariable least squares was the direct extension of linear regression (and hence reduces to it).
+
+In the case of simple linear regression ${\mathbf y} = {\mathbf J}_n \beta_0 + {\mathbf x} \beta_1$, the design matrix is $\bX = [ {\bf J}_n \, \, \bx ]$. Now, the estimate of ${\bf \beta} = [ \beta_0 \, \, \beta_1]'$ can be obtained through the equations 
+$$
+{\hat \beta} = (\bfX' \bfX)^{-1} \bfX' \bfy.
+$$
+Here the term $\bfX' \bfX$ is a $2 \times 2$ matrix and easily invertible. It is thus easy (though somewhat tedious) to show that this solution corresponds to the one we have previously obtained. We leave this as an exercise to the reader.
+
+
+\subsection{ANOVA}
+% \href{https://www.youtube.com/watch?v=3rPoBwGPKAM&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=29}{Watch this video before beginning.}
+Analysis of Variance (ANOVA) is a technique for comparing the means across multiple groups.
+For example, we may be interested in determining whether the cholesterol levels ($y$) differ between subjects in a drug group and a control group.
+There are multiple ways to formulate this model. Here we use the following:
+$$
+y_{ij} =  \alpha_i +  \epsilon_{ij}  \hskip1cm {\mbox{for}}  \;\; j=1,\ldots n_i, \; \;  i = 1,2
+$$
+or
+$$
+\left( \begin{array}{c}
+y_{11} \\ \vdots \\ y_{1n_1} \\
+y_{21} \\ \vdots \\ y_{2n_2} \\
+\end{array} \right) =
+\left( \begin{array}{ccc}
+ 1   &   0  \\ 
+ \vdots &\vdots\\ 
+1   &   0  \\
+ 0   &   1  \\ 
+\vdots &\vdots\\ 
+ 0   &   1  \\ 
+\end{array} \right)
+\left( \begin{array}{c} \alpha_1 \\ \alpha_2 \end{array} \right) +
+\left( \begin{array}{c}
+\varepsilon_{11} \\ \vdots \\ \varepsilon_{1n_1} \\
+\varepsilon_{21} \\ \vdots \\ \varepsilon_{2n_2} \\
+\end{array} \right) 
+$$
+
+Note here the first column codes whether an observation belongs to the first group, and the second column whether it belongs to the second group.
+These types of indicator variables, or `dummy variables' are often used to denote the values of a categorical variable.
+
+To estimate $\alpha_1$ and $\alpha_2$, note the following results:
+\begin{eqnarray*}
+\bX' \bX = 
+\left( \begin{array}{cc}
+ n_1   &   0  \\ 
+ 0   &   n_2  
+\end{array} \right)
+\end{eqnarray*}
+and
+\begin{eqnarray*}
+\bX' \by = 
+\left( \begin{array}{cc}
+ n_1 {\bar \by_1}   &   0  \\ 
+ 0   &   n_2 {\bar \by_2}  
+\end{array} \right).
+\end{eqnarray*}
+
+Now the solution can be obtained by computing $(\bX' \bX)^{-1} \bX' \by$, which gives us
+$$
+\left( \begin{array}{c} \alpha_1 \\ \alpha_2 \end{array} \right) = \left( \begin{array}{c} \bar \by_1 \\ \bar \by_2 \end{array} \right)
+$$
+
+
+\bigskip
+We can generalize this to more than two treatment groups as follows.
+Assume $J$ groups, each with $K$ observations. Let $\by = [y_{11}, \ldots y_{JK}]$ and our design matrix look like
+$$
+\bX =
+\left[
+\begin{array}{cccc}
+1 & 0  & \ldots & 0 \\
+1 & 0  & \ldots & 0 \\
+\vdots & \vdots & \ldots  & \vdots \\
+1 & 0 & \ldots & 0 \\
+0  & 1 & \ldots & 0 \\
+\vdots & \vdots & \ldots  & \vdots \\
+0  & 1 & \ldots & 0 \\
+\vdots & \ldots & \ldots  & \vdots \\
+0  & 0 & \ldots & 1 \\
+\vdots & \ldots & \ldots  & \vdots \\
+0  & 0 & \ldots & 1 \\
+\end{array}
+\right] = \bI_J \otimes \bJ_K,
+$$
+where $\otimes$ is the Kronecker product. 
+That is, our $\by$ arises out of $J$ groups
+where there is $K$ measurements per group. Let
+$\bar y_j$ be the mean of the $\by$ measurements
+in group $j$. 
+Then 
+$$
+\bX' \by = 
+\left[
+\begin{array}{c}
+K \bar y_1 \\
+\vdots \\
+K \bar y_J
+\end{array}
+\right] ,
+$$
+Note also that 
+$\bX' \bX = K \bI.$ Therefore, $(\bX' \bX)^{-1} \bX' \by =
+(\bar y_1 \ldots, \bar y_J)'.$ Thus, if 
+our design matrix parcels $\by$ into groups,
+the coefficients are the group means.
+
+% \href{https://www.youtube.com/watch?v=GSTHLCP8x5U&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=30}{Some completing thoughts on ANOVA.}
+
+
+\subsection{Computing}
+
+The data set {\tt{PlantGrowth}} in {\tt{R}} contains results from an experiment to compare yields (as measured by dried weight of plants) obtained under a control and two different treatment conditions. The data consists of 30 observations on 2 variables weight and group.  The levels of group are 'ctrl', 'trt1', and 'trt2'.
+
+\begin{verbatim}
+> fit = lm(weight ~ group -1, data = PlantGrowth)
+> summary(fit)
+
+Call:
+lm(formula = weight ~ group - 1, data = PlantGrowth)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-1.0710 -0.4180 -0.0060  0.2627  1.3690 
+
+Coefficients:
+          Estimate Std. Error t value Pr(>|t|)    
+groupctrl   5.0320     0.1971   25.53   <2e-16 ***
+grouptrt1   4.6610     0.1971   23.64   <2e-16 ***
+grouptrt2   5.5260     0.1971   28.03   <2e-16 ***
+---
+Signif. codes:  0 ?***? 0.001 ?**? 0.01 ?*? 0.05 ?.? 0.1 ? ? 1
+
+Residual standard error: 0.6234 on 27 degrees of freedom
+Multiple R-squared:  0.9867,	Adjusted R-squared:  0.9852 
+F-statistic: 665.5 on 3 and 27 DF,  p-value: < 2.2e-16
+
+\end{verbatim}
+
+
+
+
+
+\subsection{ANCOVA}
+
+% \href{https://www.youtube.com/watch?v=fx5OSXmsy_k&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=31}{Watch this video before beginning.}
+
+Next, we consider analysis of covariance. 
+This allows us to compare differences in means between two or more groups while taking into account the variability of other variables, called covariates.
+Suppose we have data on two variables $\bx$ and $\by$ collected for two separate groups (A and B). 
+Let $\bx = (\bx_1 \, \, \bx_2)'$, where $\bx_1$ are the observations associated with group A and $\bx_2$ those associated with group B.
+
+We can write this as follows:
+$$
+\bX =
+\left[
+\begin{array}{ccc}
+1 & 0  & x_{11} \\
+1 & 0  & x_{12} \\
+\vdots &  \ldots  & \vdots \\
+1  & 0 & x_{1n}  \\
+0  & 1 & x_{21} \\
+0  & 1 & x_{22} \\
+\vdots & \ldots & \ldots \\
+0  & 1 & x_{2n}
+\end{array}
+\right]
+= [\bI_{2} \otimes \bone_n ~~ \bx]
+.
+$$
+
+In this setting we seek to project $\by$ onto the space spanned by two groups
+and a regression variable. This is effectively equivalent to fitting two parallel
+lines to the data.
+Let $\bbeta = (\mu_1 \, \, \mu_2 \, \, \beta)' = (\bmu' \, \, \beta)'$. Denote the outcome
+vector, $\by$, as comprised of $y_{ij}$ for $i=1,2$ and $j=1,\ldots,n$
+stacked in the relevant order. Now, imagine holding $\beta$ fixed. We now want to solve:
+\begin{equation}
+\label{eq:ancova}
+|| \by - \bX \bbeta ||^2 = 
+|| \by - \bx \beta - (\bI_2 \otimes \bone_n) \bmu ||^2 
+\end{equation}
+Then we are in the case of the previous section and the best estimate
+of $\bmu$ are the group means $\frac{1}{n}(\bI_2 \otimes \bJ_n)'(y - \bx \bbeta) = (\bar y_1 \, \, \bar y_2)' - (\bar x_1 \, \, \bar x_2)' \beta$ where
+$\bar y_i$ and $\bar x_i$ are the group means of $\by$ and $\bx$ respectively.
+Then we have that \eqref{eq:ancova} satisfies:
+\begin{eqnarray*}
+\eqref{eq:ancova} &\geq&  || \by - \bx \beta - (\bI_2 \otimes \bone_n) \{(\bar y_1 \, \, \bar y_2)' - (\bar x_1 \, \, \bar x_2)' \beta\}||^2  \\
+&=& || \tilde \by - \tilde \bx \beta||^2 
+\end{eqnarray*}
+where $\tilde \by$ and $\tilde \bx$ are the group centered versions 
+of $\by$ and $\bx$. (That is $\tilde y_{ij} = y_{ij} - \bar y_i$, for example.)
+This is equivalent to the regression through the origin problem yielding the solution
+$$
+\hat \beta 
+= \frac{\sum_{ij} (y_{ij} - \bar y_i) (x_{ij} - \bar x_i)}
+{\sum_{ij} (x_{ij} - \bar x_i)^2}
+= p \hat \beta_1 + (1 - p) \hat \beta_2
+$$
+where 
+$$
+p = \frac{\sum_{j} (x_{1j} - \bar x_1)^2}{\sum_{ij} (x_{ij} - \bar x_i)^2}
+$$
+and 
+$$
+\hat \beta_i =
+\frac{\sum_{j} (y_{ij} - \bar y_i) (x_{ij} - \bar x_i)}
+{\sum_{j} (x_{ij} - \bar x_i)^2}.
+$$
+This implies that the estimated slope is a convex combination of the
+group-specific slopes weighted by the variability in the $\bx$'s
+within the group. Furthermore,
+$\hat \mu_i = \bar y_i - \bar x_i \hat \beta$ and thus
+$$
+\hat \mu_1 - \hat \mu_2
+= (\bar y_1 - \bar y_2) - (\bar x_1 - \bar x_2) \hat \beta.
+$$
+
+
+\subsection{Computing}
+
+We illustrate simple linear regression using the \texttt{mtcars} data set that is directly available in \textsf{R}. The data was extracted from the 1974 Motor Trend US magazine, and consists of gas consumption (\texttt{mpg}) and 10 other aspects of automobile design and performance for a total of 32 cars.
+Here we focus on how mileage depends upon transmission type ({\texttt{am}} / 0 = automatic, 1 = manual), controlling for the weight of the car (\texttt{wt}).
+
+First fit ANOVA, ignoring weight.
+\begin{verbatim}
+> fit = lm(mpg~factor(am) - 1,data = mtcars)
+> summary(fit)
+
+Call:
+lm(formula = mpg ~ factor(am) - 1, data = mtcars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-9.3923 -3.0923 -0.2974  3.2439  9.5077 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+factor(am)0   17.147      1.125   15.25 1.13e-15 ***
+factor(am)1   24.392      1.360   17.94  < 2e-16 ***
+---
+Signif. codes:  0 ?***? 0.001 ?**? 0.01 ?*? 0.05 ?.? 0.1 ? ? 1
+
+Residual standard error: 4.902 on 30 degrees of freedom
+Multiple R-squared:  0.9487,	Adjusted R-squared:  0.9452 
+F-statistic: 277.2 on 2 and 30 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+
+Now fit ANCOVA, controlling for weight.
+\begin{verbatim}
+> fit = lm(mpg~factor(am) +wt - 1,data = mtcars)
+> summary(fit)
+
+Call:
+lm(formula = mpg ~ factor(am) + wt - 1, data = mtcars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-4.5295 -2.3619 -0.1317  1.4025  6.8782 
+
+Coefficients:
+            Estimate Std. Error t value Pr(>|t|)    
+factor(am)0  37.3216     3.0546  12.218 5.84e-13 ***
+factor(am)1  37.2979     2.0857  17.883  < 2e-16 ***
+wt           -5.3528     0.7882  -6.791 1.87e-07 ***
+---
+Signif. codes:  0 ?***? 0.001 ?**? 0.01 ?*? 0.05 ?.? 0.1 ? ? 1
+
+Residual standard error: 3.098 on 29 degrees of freedom
+Multiple R-squared:  0.9802,	Adjusted R-squared:  0.9781 
+F-statistic: 478.1 on 3 and 29 DF,  p-value: < 2.2e-16
+\end{verbatim}
+
+
+\subsection{Including interactions}
+
+In the ANCOVA model we used an indicator variable to model differences in the intercept between groups.
+Sometimes we also want the slopes of the regression model to differ between groups.
+This can be done by including an interaction term together with the indicator variable in the model.
+
+Suppose we have data on two variables $\bz$ and $\by$ collected for two groups (A and B). 
+Let $\bx_1$ be equal to 1 if the observation belongs to group A and 0 if it belongs to group B.
+Similarly, let $\bx_2$ be equal to 1 if the observation belongs to group B and 0 if it belongs to group A. Let $\bz = (\bz_1 \, \, \bz_2)'$, where $\bz_1$ are the observations associated with group A and $\bz_2$ those associated with group B.
+Consider the following model with interactions:
+$$
+\by = \bJ_n \mu_1 + \bx_2 \mu_2 + \bz \beta_1 + \bz*\bx_2 \beta_2 + \epsilon
+$$
+
+We can fit this model using the following design matrix:
+$$
+\bX =
+\left[
+\begin{array}{cccc}
+1 & 0  & z_{11}  & 0\\
+1 & 0  & z_{12}  & 0\\
+\vdots &  \ldots  & \vdots & \ldots\\
+1  & 0 & z_{1n}   & 0\\
+1  & 1 & z_{21}  & z_{21}\\
+1  & 1 & z_{22} & z_{22}\\
+\vdots & \ldots & \ldots & \ldots\\
+1  & 1 & z_{2n} & z_{2n}
+\end{array}
+\right]
+.
+$$
+
+The model allows both the slopes and intercepts to vary between groups.
+It can be fit in the same manner as described above.
+
+\subsection{Computing}
+
+\begin{verbatim}
+> fit = lm(mpg ~ factor(am) + wt + factor(am)*wt, data = mtcars)
+> summary(fit)
+
+Call:
+lm(formula = mpg ~ factor(am) + wt + factor(am) * wt, data = mtcars)
+
+Residuals:
+    Min      1Q  Median      3Q     Max 
+-3.6004 -1.5446 -0.5325  0.9012  6.0909 
+
+Coefficients:
+               Estimate Std. Error t value Pr(>|t|)    
+(Intercept)     31.4161     3.0201  10.402 4.00e-11 ***
+factor(am)1     14.8784     4.2640   3.489  0.00162 ** 
+wt              -3.7859     0.7856  -4.819 4.55e-05 ***
+factor(am)1:wt  -5.2984     1.4447  -3.667  0.00102 ** 
+---
+Signif. codes:  0 ?***? 0.001 ?**? 0.01 ?*? 0.05 ?.? 0.1 ? ? 1
+
+Residual standard error: 2.591 on 28 degrees of freedom
+Multiple R-squared:  0.833,	Adjusted R-squared:  0.8151 
+F-statistic: 46.57 on 3 and 28 DF,  p-value: 5.209e-11
+\end{verbatim}
+

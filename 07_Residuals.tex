@@ -1,0 +1,168 @@
+\section{Residuals and variability}
+
+\subsection{Residuals}
+
+
+The residuals represent the variability left unexplained by the projection of $\by$
+onto the linear space spanned by the design matrix. The residuals
+are othogonal to the space spanned by the design matrix, and thus
+are othogonal to the design matrix itself.
+
+We define the residuals as follows:
+$$
+\be = \by - \hat \by.
+$$
+Thus, the least squares solution can be thought of as minimizing
+the squared norm of the residuals. Notice further that 
+expanding the column space of $\bX$ by including new
+linearly independent variables, leads to a decrease in the the norm of the residuals. 
+In other words, by adding non-redundant
+regressors, we necessarily remove residual variability. Furthermore,
+if $\bX$ is $n \times n$ of full rank, then the residuals
+are all zero, since $\by = \hat \by$. 
+
+We can re-express the residuals as follows:
+$$
+\be = \by - \hat \by = \by - \hatmat \by = \{\bI - \hatmat\} \by.
+$$
+Thus multiplication by the matrix $\bI - \hatmat$ transforms the
+vector $\by$ into its residual. This matrix is interesting for several reasons.
+First, note that $\{\bI - \hatmat\} \bX = 0$, thus making the residuals
+orthogonal to any vector, $\bX \bgamma$, in the space spanned by the
+columns of $\bX$. Secondly, it is both symmetric and idempotent. 
+
+A consequence of the orthogonality is that if an intercept is
+included in the model, the residuals must sum to $0$. Specifically,
+since the residuals are orthogonal to any column of $\bX$, 
+$\be' \bJ_n = 0$.
+
+\subsection{Partitioning variability}
+
+In this section we discuss partitioning the variability in the data. 
+Before continuing, it is useful to note 
+that the mean centered version of $\by$, 
+$ \by -  {\bf J}_n \bar y$
+can be written as:
+\begin{eqnarray*}
+\tilde \by &=& \by - {\bf J}_n \bar y \\
+&=& \by - {\bf J}_n({\bf J}_n' {\bf J}_n)^{-1} {\bf J}_n'  \by \\
+&=& \left\{ \bI - {\bf J}_n ({\bf J}_n' {\bf J}_n)^{-1} {\bf J}_n' \right\} \by.
+\end{eqnarray*}
+In other words, multiplication by the matrix $\left\{ \bI - {\bf J}_n ({\bf J}_n' {\bf J}_n)^{-1} {\bf J}_n' \right\}$
+centers vectors. This can be very handy for centering matrices as well. For example, if $\bX$ is an $n\times p$
+matrix then the matrix $\tilde \bX  = \left\{ \bI - {\bf J}_n ({\bf J}_n' {\bf J}_n)^{-1} {\bf J}_n' \right\} \bX$
+is the matrix with every column centered. 
+
+Continuing with partitioning the variability, for convenience, define $\bH_{\bX}= \hatmat$ and $\bH_{\bf J} =  {\bf J}_n ({\bf J}_n' {\bf J}_n)^{-1} {\bf J}_n'$. 
+%Note that
+%the variability in a vector $\by$ is estimated by 
+%$$
+%\frac{1}{n-1} \by' (\bI - \bH_{\bf J}) \by.
+%$$
+%Omitting the $n-1$ term we define the total sums of squares as
+We define the total sums of squares as
+$$
+\mbox{SS}_{Tot} = ||\by - \bar y {\bf J}_n ||^2 = \by' (\bI - \bH_{\bf J}) \by.
+$$
+This is an unscaled measure of the total variability in the
+sample. Given a design matrix, $\bX$, define the residual 
+sums of squares as
+$$
+\mbox{SS}_{Res} = ||\by - \hat \by||^2 = \by' (\bI - \bH_{\bX}) \by
+$$
+and the regression sums of squares as 
+$$
+\mbox{SS}_{Reg} = ||\hat \by - \bJ_n \bar y||^2 = \by' (\bH_{\bX} - \bH_{\bJ}) \by.
+$$
+The latter equality is obtained by the following. First note that since
+$(\bI - \bH_{\bX})\bJ_n = 0$ (since $\bX$ contains an intercept) we have that
+$\bH_{\bX} \bJ_n = \bJ_n$ and then $\bH_{\bX} \bH_{\bJ_n} = \bH_{\bJ_n}$
+and $\bH_{\bJ_n} = \bH_{\bJ_n} \bH_{\bX}$.
+Also, note that $\bH_{\bX}$ is symmetric and idempotent. 
+Now we can perform the following manipulation
+\begin{eqnarray*}
+||\hat \by - \bJ_n \bar y||^2 & = & 
+\by' (\bH_{\bX} - \bH_{\bJ})' (\bH_{\bX} - \bH_{\bJ})\by \\
+& = & \by' (\bH_{\bX} - \bH_{\bJ}) (\bH_{\bX} - \bH_{\bJ})\by \\ 
+& = & \by' (\bH_{\bX} - \bH_{\bJ}\bH_{\bX} - \bH_{\bX} \bH_{\bJ} + \bH_{\bJ}) \by \\
+& = & \by' (\bH_{\bX} - \bH_{\bJ}) \by.
+\end{eqnarray*}
+Using this identity we can now show that
+\begin{eqnarray*}
+\mbox{SS}_{Tot} & = & \by' (\bI - \bH_{\bJ}) \by \\
+& = & \by' (\bI - \bH_{\bX} + \bH_{\bX} - \bH_{\bJ}) \by \\
+& = & \by' (\bI - \bH_{\bX}) \by + \by' (\bH_{\bX} - \bH_{\bJ}) \by \\
+& = & \mbox{SS}_{Res} + \mbox{SS}_{Reg}
+\end{eqnarray*}
+Thus our total sum of squares partitions into the residual and regression sums of squares.
+We define the coefficient of determination 
+$$
+R^2 = \frac{\mbox{SS}_{Reg}}{\mbox{SS}_{Tot}}.
+$$
+as the proportion of the total variability explained by our model. Via our equality above,
+this is guaranteed to be between 0 and 1. Here high values imply that the explanatory variables are useful in explaining the response and low values that the explanatory variables are not useful.
+
+Note that $\mbox{SS}_{Tot}$ only depends on the response variable and not on the model formulation. 
+Hence, it is equal for all regression models. Adding additional explanatory variables to a multiple regression model can only lower $\mbox{SS}_{Reg}$, and thus lead to an increase in the value of $R^2$.
+Since $R^2$ can be made large by including more (and sometimes unimportant) explanatory variables, it is sometimes modified to adjust for the number of variables included in the model.
+This allows us to balance model parsimony with explanatory power.
+
+The ratio of the sum of squares to the `degrees of freedom' (corresponding to the dimensions of the respective subspaces) gives the mean squares:
+\begin{eqnarray*}
+\mbox{MS}_{Tot} &=& \frac{ \mbox{SS}_{Tot} }{n-1} \\
+\mbox{MS}_{Res} &=& \frac{ \mbox{SS}_{Res} }{n-p} \\
+\mbox{MS}_{Reg} &=& \frac{ \mbox{SS}_{Reg} }{p-1}
+\end{eqnarray*}
+The adjusted coefficient of multiple determination, uses the mean squares instead of the sums of square, i.e.
+$$
+R_a^2 = 1 - \frac{\mbox{MS}_{Res}}{\mbox{MS}_{Tot}} = 1 - \left( \frac{n-1}{n-p} \right) \frac{\mbox{SS}_{Res}}{\mbox{SS}_{Tot}}.
+$$
+Since the term includes the number of model parameters, $p$, it penalizes for model complexity.
+
+
+\subsection{Coding example}
+
+\begin{verbatim}
+> summary(lm(y ~ X))
+
+Call:
+lm(formula = y ~ X)
+
+Residuals:
+     Min       1Q   Median       3Q      Max 
+-15.2743  -5.2617   0.5032   4.1198  15.3213 
+
+Coefficients:
+                  Estimate Std. Error t value Pr(>|t|)    
+(Intercept)       66.91518   10.70604   6.250 1.91e-07 ***
+XAgriculture      -0.17211    0.07030  -2.448  0.01873 *  
+XExamination      -0.25801    0.25388  -1.016  0.31546    
+XEducation        -0.87094    0.18303  -4.758 2.43e-05 ***
+XCatholic          0.10412    0.03526   2.953  0.00519 ** 
+XInfant.Mortality  1.07705    0.38172   2.822  0.00734 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+Residual standard error: 7.165 on 41 degrees of freedom
+Multiple R-squared:  0.7067,	Adjusted R-squared:  0.671 
+F-statistic: 19.76 on 5 and 41 DF,  p-value: 5.594e-10
+
+
+> anova(fit)
+Analysis of Variance Table
+
+Response: y
+          Df Sum Sq Mean Sq F value    Pr(>F)    
+X          5 5072.9 1014.58  19.761 5.594e-10 ***
+Residuals 41 2105.0   51.34                      
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+> SSreg = anova(fit)[1,2]
+> SSres = anova(fit)[2,2]
+> SStot = SSres + SSreg
+
+> 1-SSres/SStot
+[1] 0.706735
+\end{verbatim}
+

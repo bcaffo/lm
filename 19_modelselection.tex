@@ -1,0 +1,209 @@
+\section{Model selection}
+
+We often have data on a large number of explanatory variables and wish to build a model using some subset of them. 
+The problem becomes choosing between different competing linear models. 
+If the model is too small we `underfit' the data. This leads to poor predictions and high bias, but low variance.
+If the model is too big we `overfit' the data. This leads to  poor predictions and high variance, but low bias.
+When the model is `just right', we balance bias and variance to get good predictions.
+
+One approach towards model selection is to consider all possible subsets of the pool of explanatory variables and find the `best' model according to some predetermined criteria.
+Another approach is to use a search algorithm to find the `best' model. The latter is usually more efficient when the number of potential variables is large.
+In both cases different criteria may be used to select what constitutes the best model. Popular choices include Adjusted $R^2$, Mallow's $C_p$, AIC and BIC. These criteria assign scores to each model and allow us to choose the model with the best score.
+
+
+\subsection{Model Selection Criteria}
+
+
+Before we start, recall that we can partition the data into sums of squares:
+$$
+\mbox{SST}_{p} = \mbox{SSE}_{p} + \mbox{SSR}_{p}
+$$
+where
+\begin{eqnarray*}
+\mbox{SST}_{p} &=& ||\bfy - \bar y {\bf J}_n ||^2 = \bfy' (\bfI - \bfH_{\bf J}) \bfy \\
+\mbox{SSE}_{p} &=& ||\bfy - \hat \bfy||^2 = \bfy' (\bfI - \bfH_{\bfX}) \bfy \\\
+\mbox{SSR}_{p} &=& ||\hat \bfy - \bfJ_n \bar y||^2 = \bfy' (\bfH_{\bfX} - \bfH_{\bfJ}) \bfy 
+\end{eqnarray*}
+Here the subscript $p$ refers to the fact that the model includes $p$ parameters.
+
+We can use these values to compute the coefficient of multiple determination, which is given by
+$$
+R_p^2 = \frac{\mbox{SSR}_{p}}{\mbox{SST}_{p}} = 1- \frac{\mbox{SSE}_{p}}{\mbox{SST}_{p}}.
+$$
+This represents the proportion of the total variability explained by our model. 
+It is guaranteed to take values between $0$ and $1$. High values imply that the explanatory variables are useful in explaining the response and low values imply that the explanatory variables are not useful.
+However, since $R_p^2$ increases with the size of the model, it is not a good criterion for variable selection.
+It would always choose to include all variables.
+Alternative approaches that penalize for unnecessary model complexity are needed.
+
+
+\subsubsection{Adjusted $R_p^2$}
+
+One such approach is the adjusted coefficient of multiple determination, which uses the mean squares instead of the sums of square, i.e.
+$$
+R_{a,p}^2 = 1 - \frac{\mbox{MSE}_{p}}{\mbox{MST}_{p}} = 1 - \left( \frac{n-1}{n-p} \right) \frac{\mbox{SSE}_{p}}{\mbox{SST}_{p}}.
+$$
+Since the term includes the number of model parameters, $p$, it penalizes for model complexity.
+
+
+
+\subsubsection{Mallow's $C_p$}
+
+Mallow's $C_p$ is a criteria to assess fits when models with different numbers of parameters are being compared.
+It can be expressed as:
+$$
+C_p = \frac{SSE_p}{s^2} - n + 2p.
+$$
+Here the MSE of the full model is used to estimate $s^2$.
+If the model includes all important variables, then
+$$
+E(SSE_p) = (n-p) \sigma^2.
+$$
+If $s^2$ provides a good estimate of $\sigma^2$ then 
+$$
+E(C_p) \approx \frac{(n-p) \sigma^2}{\sigma^2} -n + 2p = p.
+$$
+Values close to the corresponding $p$ indicate a good model. 
+The smaller the value, the better the model fits.
+
+
+
+\subsubsection{Information Criteria}
+
+Many methods are based on combining a term based on the log-likelihood with one based on penalizing model complexity.
+This provides a means to balance model fit with model complexity when assessing the best fitting models, providing a way to penalize unnecessarily complicated models.
+
+To illustrate, let $f(\bfy | \bfX, \bfbet)$ be the density of the response $\bfy$.
+For a sample of $n$ observations $(\bfx_i, y_i)$, $i=1, \ldots n$,  the log-likelihood is given by
+$$
+\log (L) = \sum_{i=1}^n log(f(y_i | \bfx_i, \bfbet).
+$$
+Let $\ell(\hat \beta_p)$ be the log-likelihood evaluated at the MLE under the model with $p$ parameters.
+Standard information criteria are of the form:
+$$
+-2 \ell(\hat \bfbet) - \phi(n,p).
+$$
+Here the first term represents model fit, and the second a penalized model complexity.
+In the linear model setting $\ell(\hat \bfbet) \propto -n \log(SEE_p/n)$.
+
+
+Akaike's Information Criterion (AIC) tries to balance the conflicting demands of model accuracy and parsimony. 
+For the linear model with Guassianity assumption it  can be expressed as:
+$$
+AIC_p = n \log(SSE/n) + 2p.
+$$
+here low values indicate a better model.
+
+
+Several modifications of AIC have been suggested.
+For example, the Bayesian Information Criterion (BIC) is defined as:
+$$
+BIC_p = n \log(SSE/n) + \log(n)p.
+$$
+Again, low values indicate a better model.
+
+The difference between AIC and BIC lies in the severity of the penalty. 
+The penalty is larger for BIC when $n>8$. 
+Hence, BIC tends to favor more parsimonious models compared to AIC which has a tendency to overfit (i.e., include too many explanatory variables).
+
+
+\subsubsection{PRESS}
+
+The prediction sum of squares (PRESS) criterion measures how well the fitted values for a subset model can predict the observed response.
+The PRESS statistic is defined as:
+$$
+PRESS_p = \sum_{i=1}^n (y_i - \hat y_{(i),i})^2
+$$ 
+Thus, the PRESS statistic is the sum of squared deleted residuals.
+
+The model with the smallest PRESS statistic is considered  `best'. 
+Leaving one item out at a time is known as leave-one-out cross-validation.
+This allows us to predict the performance of the model on holdout data.
+
+
+\subsection{Methods for Model Selection}
+
+\subsubsection{Exhaustive Search}
+
+One approach is to consider all possible subsets of the pool of explanatory variables and find the `best' model according to of the criteria outlined above. However, if have $15$ predictors there are $2^{15}$ different models (even before considering interactions, transformations, etc.).
+
+
+\subsubsection{Step-wise Methods}
+
+
+When the number of explanatory variables is large it is not feasible to fit all possible models. 
+Instead, it is more efficient to use a search algorithm to find the best model.
+A number of such algorithms exist, including forward selection, backward elimination and stepwise regression.
+
+Let, us begin by setting up the problem. Assume we are choosing from a set of $P$ possible explanatory variables $v_k,\, k=1,…..P$.
+In each algorithm our goal is to find the subset of $v_k$ that best balances model fit and parsimony.
+We discuss each algorithm in detail.
+
+\bigskip
+\noindent {\bf Forward Selection}
+
+\begin{enumerate}
+\item Fit the $P$ simple linear regression models:
+$$
+y_i = \beta_0 +\beta_1 v_{ki} + \epsilon_i \,\,\, k = 1,\ldots P.
+$$
+
+\item Set $x_1=v_k$, where $v_k$ is the variable that has the most significant regression coefficient (i.e. the smallest p-value) If no variable is significant (e.g., none of the p-values are smaller than a preset significance level $\alpha$) the algorithm stops.
+
+\item Lock in the variable $x_1$, and repeat the procedure with models that include two explanatory variables:
+$$
+y_i = \beta_0 + \beta_1 x_{1i} + \beta_2 v_{ki} + \epsilon_i, \,\,\, k = 1,\ldots P, \,\, v_k \ne x_1.
+$$
+Set $x_2=v_k$, where $v_k$ is the variable that has the most significant regression coefficient. If no variable is significant stop the algorithm.
+
+\item Continue the procedure until no remaining $v_k$ generate a p-value that is smaller than the preset significance level $\alpha$.
+\end{enumerate}
+
+The criteria for choosing whether to include a new variable can vary.
+As an alternative to using p-values one can instead use a criteria such as the AIC.
+In each step choose the variable whose inclusion lowers the AIC the most. 
+If no variables lower the AIC than stop the algorithm.
+
+\bigskip
+\noindent {\bf Backward Elimination}
+
+\begin{enumerate}
+\item Start by fitting a model that includes all possible variables:
+$$
+y_i = \beta_0 +\beta_1 v_{1i} + \dots + \beta_Pv_{Pi} +  \epsilon_i .
+$$
+
+\item Find the variable $v_k$ which has the least significant regression coefficient (i.e. the largest p-value).
+If its p-value is smaller than some preset significance level, stop the algorithm, otherwise drop the variable. 
+
+\item Next, fit the largest model excluding the dropped $v_k$.
+Find the variable which has the least significant regression coefficient.
+If its p-value is smaller than some preset significance level, stop the algorithm, otherwise drop the variable. 
+
+\item Continue until the algorithm stops.
+\end{enumerate}
+
+Alternatively, AIC or BIC can be used as a criteria for determining whether to drop variables.
+Start with a full model. In each step choose the variable whose exclusion lowers the AIC the most. 
+If the exclusion of any variable does not lower the AIC than stop the algorithm.
+
+\bigskip
+\noindent {\bf Stepwise Regression}
+
+\begin{enumerate}
+\item Start in the same manner as in forward selection and add the most significant variable from a series of $P$ simple linear regressions. 
+
+\item Once a new variable has been included in the model, check other variables already included in the model for their partial significance. 
+Remove the least significant explanatory variable whose p-value is greater than the preset significance level. 
+
+\item Continue until no variables can be added and none removed, according to the specified criteria.
+\end{enumerate}
+
+Again, note that AIC can be used instead of p-values.
+
+
+\subsection{Shrinkage Methods}
+
+The subset selection procedure is a discrete process, as individual variables are either in or out.
+This method can have high variance in that a different dataset from the same source can result in a totally different model. Shrinkage methods allow a variable to be partly included in the model. That is, the variable is included but with a shrunken co-efficient. Here popular methods include ridge regression, the Lasso, or the Elastic Net.
+

@@ -1,0 +1,96 @@
+\section{Single Parameter Regression}
+
+Here we will consider two simple linear models consisting of a single variable: {\it mean only regression} and {\it regression through the origin}. Throughout we will seek a particular estimate of these models, namely the least squares estimate. 
+
+
+\subsection{Mean Only Regression}
+Consider the following model:
+$$
+y_i = \mu + \epsilon_i  \hskip1cm {\mbox{for}} \; \;  i = 1,\ldots n,
+$$
+which we can alternatively write as ${\mathbf y} = {\mathbf J}_n \mu + {\mathbf \epsilon}$, where $ {\mathbf J}_n$ is a vector of ones. 
+
+\vb
+We seek to minimize $f(\mu) = || {\mathbf y} - {\mathbf J}_n \mu ||^2$ with respect to $\mu$.
+To do so, we begin by rewriting $f$ as follows:
+\begin{eqnarray}
+f(\mu) &= \bfy' \bfy - 2{\mathbf J}_n' \bfy \mu  + {\mathbf J}_n' {\mathbf J}_n \mu^2 \nonumber \\
+& =  \bfy' \bfy - 2n {\bar \bfy} \mu  +  n \mu^2 \nonumber
+\end{eqnarray}
+
+Taking derivatives of $f$ with respect to $\mu$ we obtain:
+$$
+\frac{df}{d \mu} = -2n{\bar y} + 2n \mu.
+$$
+This has a root at ${\hat \mu}= {\bar y}$. Note that the second derivative is $2n > 0$. Thus, the average is
+the least squares estimate in the sense of minimizing the Euclidean distance between the
+observed data and a constant vector. 
+
+\vb
+Note we can think of this as projecting our $n$ dimensional
+onto the best one dimensional subspace spanned by the vector $\bfJ_n$. 
+
+\subsubsection{R Code}
+
+Let's use the \texttt{diamond} dataset 
+\begin{verbatim}
+> library(UsingR); data(diamond)
+> y = diamond$price; x = diamond$carat
+> mean(y)
+[1] 500.0833
+> #using least squares
+> coef(lm(y ~ 1))
+[1] 500.0833
+\end{verbatim}
+
+Thus, in this example the mean only least squares estimate obtained via \texttt{lm} 
+is the empirical mean.
+
+\subsection{Regression Through the Origin}
+
+%\href{https://www.youtube.com/watch?v=1ZFED8AcHWc&index=7&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
+We now consider the regression through the origin problem. 
+Let ${\mathbf x} = (x_1, \dots x_n)'$ be a vector. Here we seek to minimize $f(\beta) = || {\mathbf y} - {\mathbf x} \beta ||^2$ with respect to $\beta$. 
+Note that the pairs, $(x_i, y_i)$ form a scatterplot. Least squares is then finding the best multiple of the ${\mathbf x}$ vector to approximate ${\mathbf y}$. That is, finding the best line of the form ${\mathbf y} = {\mathbf x}\beta$ to fit the scatter plot. Thus we are considering lines through the origin hence the name.
+
+\vb
+Note that $f(\beta) = \bfy' \bfy - 2\bfy' \bfx \beta +\bfx' \bfx \beta^2.$ 
+Taking derivatives with respect to $\beta$ we obtain:
+$$
+\frac{df}{d \beta} = -2{\bfy' \bfx} + 2 {\bfx' \bfx} \beta.
+$$
+
+Setting this equal to zero we obtain the equation:
+$$
+\beta = \frac{\bfy' {\mathbf x}}{{\mathbf x}'{\mathbf x}} = \frac{<\bfy, {\mathbf x}>}{<{\mathbf x},{\mathbf x}>}
+$$
+
+Note that the second derivative is $2 \bfx' \bfx > 0$. Thus, $f$ is convex and ${\hat \beta}$ minimizes the least-squares criteria.
+
+\vb
+%Note that we have shown the function $g: \mathbb{R}^n \to \mathbb{R}$
+%defined by 
+%$$g({\mathbf y}) = \frac{<\bfy, {\mathbf x}>}{<{\mathbf x},{\mathbf x}>}$$ 
+%projects any $n$ dimensional vector ${\mathbf Y}$  into the linear space spanned by the single vector ${\mathbf x}$, i.e. $\{\beta {\mathbf x} | \beta \in \mathbb{R} \}$
+%
+Note that we can think of this as projecting our $n$ dimensional data onto the one dimensional subspace spanned by the single vector ${\mathbf x}$, i.e. $\{\beta {\mathbf x} | \beta \in \mathbb{R} \}.$
+
+\subsubsection{R Code}
+
+%\href{https://www.youtube.com/watch?v=CrqNQEYF-nU&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=9}{Watch this video before beginning.}
+
+Let's continue with the diamond example. We'll center the variables first.
+\begin{verbatim}
+> yc = y - mean(y);
+> xc = x - mean(x)
+> sum(yc * xc) / sum(xc * xc)
+[1] 3721.025
+> coef(lm(yc ~ xc - 1))
+      xc 
+3721.025 
+\end{verbatim}
+
+
+
+

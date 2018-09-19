@@ -1,0 +1,179 @@
+\section{Asymptotics}
+
+\subsection{Convergence in probability}
+A series of random variables, $Y_n$, is said the converge in probability to 
+a constant $c$ if $P( | Y_n - c| > \epsilon) \rightarrow 0$ for any $\epsilon$. 
+A standard result is that convergence in probability to the mean is implied if the
+variance of random variable goes to zero (a consequence of Chebyshev's inequality).
+Specifically, let $Z_n = Y_n - \mu$ have mean $0$, variance 
+$\sigma^2_n$
+and distribution $F_n$
+\begin{eqnarray*}
+P( |Z_n | \geq  \epsilon) & = & 
+\int_{|z_n | \geq \epsilon} dF_n (z_n) \\
+& =  & 
+\int_{z_n^2 / \epsilon^2 \geq 1} dF_n (z_n) \\
+& \leq & \int_{z_n^2 / \epsilon^2 \geq 1} \frac{z_n^2}{\epsilon^2} dF_n (z_n)\\
+& \leq & \int \frac{z_n^2}{\epsilon^2} dF_n (z_n)\\
+& = & \sigma^2_n / \epsilon^2.
+\end{eqnarray*}
+Thus, according to our definition, $Z_n$ converges in probability 
+to 0 (thus $Y_n$ converges in probability to $\mu$) if the
+sequence of variances tends to zero. 
+
+Consider now convergence in probability of our slope estimate
+$$
+\hat \bbeta_n = (\bX_n^t \bX_n)^{-1}\bX_n^t  \bY_n
+$$
+where subscripts have been added to denote the dependence on the sample size.
+This estimator is unbiased for all $n$.
+Under the assumption of iid errors, with a finite variance of $\bY_n$
+of $\bI \sigma^2$, the variance of a linear contrast of $\hat \bbeta_n$ is
+$$
+\bq^t (\bX_n^t \bX_n)^{-1} \bq \sigma^2.
+$$
+Thus a sufficient condition for consistency of $\bq^t \hat \bbeta_n$ is 
+for $\bq^t (\bX_n^t \bX_n)^{-1} \bq$ to converge to zero. Probably more
+useful is if sample variance covariance associated with the $\bX_n$ converges,
+then the estimate is consistent for all linear contrasts.
+
+In the particular case for linear regression, recall that the variance of the slope
+is 
+$$
+\frac{\sigma^2}{\sum_{i=1}^n (x_{i} - \bar{x})^2} =
+\frac{\sigma^2}{(n-1) s^2_{x,n}}
+$$
+where $s^2_{x,n}$ is the sample variance of the $x$'s. Thus, as long as
+$s_{x,n}^2$ converges, the estimate is consistent. Alternatively,
+if the $X_i$ are bounded, then the estimate will converge. 
+
+
+
+Consider now the case where $E[\bY_n] = \bX_n\bbeta$ but $\Var(\bY_n) = \bSigma_n$. Consider
+a working covariance matrix, $\bW_n$, and the estimate
+$$
+\hat \bbeta(\bW_n) = (\bX^t_n \bW^{-1}_n \bX_n)^{-1} \bX^t_n \bW^{-1}_n \bY_n.
+$$
+The OLS estimate is the case where $\bW_n = \bI$. (Notice that the estimate is invariant to scale
+changes in $\bW_n$.). Notice that $\hat \bbeta(\bW_n)$ is unbiased for all $n$ regardless of $\bW_n$.
+The variance of $\hat \bbeta(\bW_n)$ is given by
+$$
+(\bX^t_n \bW^{-1}_n \bX_n)^{-1} \bX^t_n \bW^{-1}_n \bSigma_n  \bW^{-1}_n \bX_n (\bX^t_n \bW^{-1}_n \bX_n)^{-1}
+$$
+Thus, linear contrasts associated with $\hat \bbeta(\bW_n)$ will be consistent if both
+$$
+\frac{1}{n}(\bX^t_n \bW^{-1}_n \bX_n)
+$$
+and
+$$
+\frac{1}{n}(\bX^t_n \bW^{-1}_n \bSigma_n  \bW^{-1}_n \bX_n)
+$$
+converge. These are both weighted covariance matrices, weighting subjects via 
+the working covariance matrix in the first case and $\bW^{-1}_n \bSigma_n  \bW^{-1}_n$ in the
+latter. In the event that $\bW_n = \bI$ then the convergence of the former reduces to
+convergence of the variance covariance matrix of the regression variables. However,
+in more general cases, and the convergence of the latter weighted variance estimate,
+cannot be given without further restrictions. 
+One setting where convergence can be obtained is where $\bW_n$ and
+$\bSigma_n$ have block diagonal structures as would be seen if one had repeated measurements
+on subjects. 
+
+In that case let $n$ be the number of subjects and $J$ be the number of observations within
+subjects. Further let:
+$\bX_n^t = [\bZ_1^t \ldots \bZ_n^t]$, $\bW_n = \bI_{n} \otimes \bW$ and $\bSigma_n = \bI_{n} \otimes \bSigma$ for 
+$J \times p$ matrices $\bZ_i$ and $J\times J$
+matrices $\bW$ and $\bSigma$. Think of each $\bZ_i$ as the covariates associated with the 
+repeated measurements on subject $i$, $\bSigma$ is the within subject correlation and
+$\bW$ is our working version of the within subject correlation. Then our two necessary convergent series are:
+$$
+\frac{1}{n}(\bX^t_n \bW^{-1}_n \bX_n) = \frac{1}{n} \sum_{i=1}^n \bZ_i^t \bW^{-1} \bZ_i
+%=
+% \mbox{Trace}\left(\bW^{-1}\frac{1}{n}\sum_{i=1}^n \bZ_i \bZ_i^t \right)
+,
+$$
+and
+$$
+\frac{1}{n}(\bX^t_n \bW^{-1}_n \bSigma_n  \bW^{-1}_n \bX_n)=
+\frac{1}{n} \sum_{i=1}^n \bZ_i^t \bW^{-1}\bSigma\bW^{-1} \bz_i = 
+% \mbox{Trace}\left( \bW^{-1}\bSigma\bW^{-1} \frac{1}{n} \sum_{i=1}^n \bZ_i\bZ_i^t \right). 
+$$
+%Therefore, in both cases convergence of the 
+%empirical variance covariance matrix of the $\bZ_i$ is enough
+%to guarantee convergence.
+
+
+\subsection{Normality}
+Ascertaining convergence to normality is a bit more involved.
+Fortunately, there's some convenient asymptotic theory to 
+make life easier for us. Particularly, a version of the
+Central Limit Theorem states that if $E[\epsilon_i] = 0$ and
+$\Var(\epsilon_i) = \sigma2$ for $\epsilon_i$ iid and constants, $\bd^t
+= [d_{n1} \ldots d_{nn}]$ then
+$$
+\frac{\sum_{i=1}^n d_{ni} \epsilon_i}{\sigma \sqrt{\sum_{i=1}^n d_{ni}^2 }}
+=  \frac{ \bd_n ^ t \beps }{\sigma|| \bd_n ||} \rightarrow N(0, 1)
+$$
+if $\max d_{ni}^2 = o(\sum_{i=1}^n d_{ni}^2)$.
+
+With this theorem, we have all that we need. Let
+$\bY = \bX_n \bbeta + \beps$. Then note that
+$$
+\hat \bbeta_n  - \bbeta 
+= (\bX_n^t \bX_n)^{-1} \bX_n^t \beps. 
+$$
+And so,
+$$
+\frac{\bq^t(\hat \bbeta_n  - \bbeta)}{\sigma \sqrt{\bq^t (\bX_n^t \bX_n)^{-1} \bq}}=
+\frac{\bq^t (\bX_n^t \bX_n)^{-1} \bX_n^t \beps}%
+{\sigma \sqrt{\bq^t (\bX_n^t \bX_n)^{-1} \bq}}
+= \frac{\bd^t \beps}{\sigma ||\bd||}
+$$
+for $\bd = \bq^t (\bX_n^t \bX_n)^{-1}\bX_n$. Thus, our linear contrast
+is $N(0,1)$, provided $\max \bq^t (\bX_n^t \bX_n)^{-1}\bX_n^t = o(\bq^t (\bX_n^t \bX_n)^{-1} \bq)$.
+This will always be true if our $\bX_n$ matrix is bounded.
+
+Consider now our case where $\hat \bbeta (\bw_n) = (\bX^t \bW_n \bX)^{-1} \bX^t \bY$. We
+assume that $\bY^t = [\bY_1^t \ldots \bY_n^t]$, $\bX^t = [\bZ_1^t \ldots \bZ_n^t]$,
+$\bW_n$ is a block matrix of $\bW$ as assumed before. For context consider repeated measurements
+per subject. Let $\bY_i = \bZ_i \bbeta + \beps_i$ where $\Var(\beps_i) = \bSigma$. Then
+relying on our earlier work:
+\begin{align*}
+\frac{\bq^t (\hat \bbeta(\bW_n) - \bbeta)}{\mbox{SD}\{\bq^t \hat \bbeta(\bW_n)\}}
+& =  \frac{\bq^t(\sum_{i=1}^n \bZ_i^t \bW \bz_i)^{-1}\sum_{i=1}^n \bZ_i^t \bW \bSigma^{1/2} \bSigma^{-1/2} \beps_i}%
+{\mbox{SD}\{\bq^t \hat \bbeta(\bW_n)\}} \\
+& = \frac{\bq^t(\sum_{i=1}^n \bZ_i^t \bW \bz_i)^{-1}\sum_{i=1}^n \bZ_i^t \bW \bSigma^{1/2} \tilde \beps_i}%
+{\mbox{SD}\{\bq^t \hat \bbeta(\bW_n)\}} \\
+& = \frac{\sum_{i=1}^n \bd_{i} \tilde \beps_i}{\sqrt{\sum_{i=1}^n ||\bd_i ||^2}} \\
+%& = \frac{\sum_{i=1}^n \frac{\bd_{i}}{||\bd_i||} \tilde \beps_i}{\sqrt{\sum_{i=1}^n ||\bd_i ||^2}} \\
+& = \frac{\sum_{i=1}^n ||\bd_i|| \frac{\bd_i^t \tilde \beps_i}{||\bd_i||}}{\sqrt{\sum_{i=1}^n ||\bd_i ||^2}} \\
+& = \frac{\sum_{i=1}^n ||\bd_i|| z_i}{\sqrt{\sum_{i=1}^n ||\bd_i ||^2}} 
+\end{align*}
+here $\tilde \beps_i$ is $N(0,\bI_{J})$, $z_i$ are iid with mean $0$ and variance $1$ and
+$
+\bd_i = \bq^t(\sum_{i=1}^n \bZ_i^t \bW \bz_i)^{-1} \bZ_i^t \bW \bSigma^{1/2}.
+$
+Thus we have reduced our statements down to the form of our generalized central limit theorem. 
+Thus, we have shown that our estimates are asymptotically normal.
+
+A final concern is that our statistic required $\bSigma$. However, a consequence of 
+Slutsky's theorem allows
+us to replace it with any consistent estimate. Let:
+$$
+\be_i = \bY_i - (\bZ_i^t \bZ_i)^{-1} \bZ_i^t \bY_i 
+$$
+then 
+$$
+\frac{1}{n} \sum_{i=1}^n \be_i \be_i^t
+$$
+is a consistent estimate of $\bSigma$. A last concern is the issue of assuming equal
+numbers of observations per subject. Generalizing this results in the same theory, just with more
+notational difficulties. (So we'll just assume that it's taken care of). 
+Thus we have a fully formed methodology for
+performing inference on repeated measures data, where at no point did we presume
+knowledge of $\bSigma$, or even a good estimate of it. This form of analysis 
+was later generalized into Generalized Estimating Equations (GEEs). 
+
+
+
+
+

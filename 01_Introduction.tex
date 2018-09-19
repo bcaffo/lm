@@ -1,0 +1,312 @@
+\section{Introduction}
+
+Linear models are the cornerstone of statistical methodology. They allow us to model the relationship between a response variable (dependent variable) and one or more explanatory variables (covariate, predictor, factor, independent variable), and determine which of these variables are important. In addition, they are relatively easy to work with, and are applicable to many real-life settings.  Properly constructed, linear models encompass many common statistical techniques, including t-tests, regression, analysis of variance, and analysis of covariance.
+
+Let $y_i$ be the response variable and $(x_{i1}, x_{i2}, \ldots x_{ip})$ a set of explanatory variables for observation $i=1, \ldots n$. The relationship between the variables can be expressed using the model:
+\begin{align}
+y_i = \mu(x_{i1}, x_{i2}, \ldots x_{ip}) + \epsilon_i \label{LM}
+\end{align}
+where $\mu(x_{i1}, x_{i2}, \ldots x_{ip})$ is a function of the explanatory variables, which are assumed to be known constants, and the error term $\epsilon$. 
+The function $\mu(.)$ is the deterministic part of the model, while $y_i$ and $\epsilon_i$ are both random. The form of $\mu(.)$ is generally assumed to be known, but contains unknown parameters.  Here the term {\it linear} implies that $\mu(.)$ is a linear function of some unknown parameters,
+e.g.,  $\mu(x_{i1},x_{i2}) = \beta_1 x_{i1} + \beta_2 x_{i2}$. However, the original explanatory variables can be subjected to arbitrary transformations.
+
+The variables $x_{i1}, x_{i2}, \ldots x_{ip}$ can be quantitative, transformations of quantitative variables, basis expansions, numeric, or interactions. In the next section we explore various models that can be created using these inputs. 
+
+
+Throughout the course we will make additional assumptions about the mean, variance, and distribution of the error, but for now we leave this information unspecified. 
+
+\subsection{Examples}
+
+Below follow some specific cases of linear models. Many times it is convenient to write the models in matrix form so we provide details of how to do so in each case. 
+
+% For example, we may want to model the relationship between blood pressure and age, or how a patient's health status depends upon their treatment regimen and certain behavioral variables. 
+
+
+
+\bexa
+Simple linear regression.
+$$
+y_i = \beta_0 + \beta_1 x_i + \epsilon_i  \hskip1cm {\mbox{for}} \; \;  i = 1,\ldots n
+$$
+or
+$$
+\left( \begin{array}{c} y_1 \\ y_2 \\ \vdots \\ y_n \end{array} \right) =
+\left( \begin{array}{cc}
+1 & x_1 \\ 
+1 & x_2 \\ 
+\vdots & \vdots \\ 
+1 & x_n
+\end{array} \right)
+\left( \begin{array}{c} \beta_0 \\ \beta_1 \end{array} \right) +
+\left( \begin{array}{c} \varepsilon_1 \\ \varepsilon_2 \\ \vdots \\ 
+	\varepsilon_n \end{array} \right) 
+$$
+\esexa
+
+\bexa
+Polynomial regression.
+$$
+y_i = \beta_0 + \beta_1 x_i + \beta_2 x_i^2 + \epsilon_i  \hskip1cm {\mbox{for}} \; \;  i = 1,\ldots n
+$$
+or
+$$
+\left( \begin{array}{c} y_1 \\ y_2 \\ \vdots \\ y_n \end{array} \right) =
+\left( \begin{array}{ccc}
+1 & x_1 & x_1^2\\ 
+1 & x_2 & x_2^2\\ 
+\vdots & \vdots & \vdots\\ 
+1 & x_n & x_n^2
+\end{array} \right)
+\left( \begin{array}{c} \beta_0 \\ \beta_1 \\ \beta_2 \end{array} \right) +
+\left( \begin{array}{c} \varepsilon_1 \\ \varepsilon_2 \\ \vdots \\ 
+	\varepsilon_n \end{array} \right) 
+$$
+\esexa
+
+\bexa
+Multiple linear regression.
+$$
+y_i = \beta_0 + \beta_1 x_{i1} + \beta_2 x_{i2} + \beta_3 x_{i3} + \epsilon_i  \hskip1cm {\mbox{for}} \; \;  i = 1,\ldots n
+$$
+or
+$$
+\left( \begin{array}{c} y_1 \\ y_2 \\ \vdots \\ y_n \end{array} \right) =
+\left( \begin{array}{cccc}
+1 & x_{11} & x_{12} & x_{13} \\
+1 & x_{21} & x_{22} & x_{23} \\
+\vdots & \vdots & \vdots & \vdots \\
+1 & x_{n1} & x_{n2} & x_{n3}
+\end{array} \right)
+\left( \begin{array}{c} \beta_0 \\ \beta_1 \\ \beta_2 \\ \beta_3 \end{array} \right) +
+\left( \begin{array}{c} \varepsilon_1 \\ \varepsilon_2 \\ \vdots \\ 
+	\varepsilon_n \end{array} \right) 
+$$
+\esexa
+
+\bexa
+%
+%We can often obtain a linear model  by transforming both the explantory and response variables. However, it is important to note that the errors must be additive on the transformed scale.
+%
+Data transformations.
+$$
+log(y_i) = \beta_0 + \beta_1 log(x_i) + \epsilon_i  \hskip1cm {\mbox{for}} \; \;  i = 1,\ldots n
+$$
+or
+$$
+\left( \begin{array}{c} log(y_1) \\ log(y_2) \\ \vdots \\ log(y_n) \end{array} \right) =
+\left( \begin{array}{cc}
+1 & log(x_1) \\ 
+1 & log(x_2) \\ 
+\vdots & \vdots \\ 
+1 & log(x_n)
+\end{array} \right)
+\left( \begin{array}{c} \beta_0 \\ \beta_1 \end{array} \right) +
+\left( \begin{array}{c} \varepsilon_1 \\ \varepsilon_2 \\ \vdots \\ 
+	\varepsilon_n \end{array} \right) 
+$$
+\esexa
+
+\bexa
+One-way analysis of variance.
+$$
+y_{ij} = \mu + \alpha_i +  \epsilon_{ij}  \hskip1cm {\mbox{for}} \; \;  i = 1,2; \;\; j=1,\ldots J
+$$
+or
+$$
+\left( \begin{array}{c}
+y_{11} \\ \vdots \\ y_{1J} \\
+y_{21} \\ \vdots \\ y_{2J} \\
+\end{array} \right) =
+\left( \begin{array}{cccc}
+1     &    1   &   0  \\ 
+\vdots& \vdots &\vdots\\ 
+1     &    1   &   0  \\
+1     &    0   &   1  \\ 
+\vdots& \vdots &\vdots\\ 
+1     &    0   &   1  \\ 
+\end{array} \right)
+\left( \begin{array}{c} \mu\\ \alpha_1 \\ \alpha_2 \end{array} \right) +
+\left( \begin{array}{c}
+\varepsilon_{11} \\ \vdots \\ \varepsilon_{1J} \\
+\varepsilon_{21} \\ \vdots \\ \varepsilon_{2J} \\
+\end{array} \right) 
+$$
+\esexa
+
+\newpage
+\bexa
+Two-way analysis of variance.
+$$
+y_{ijk} = \mu + \alpha_i + \beta_j +  \epsilon_{ijk}  \hskip1cm {\mbox{for}} \; \;  i,j = 1,2; \;\; k=1,\ldots K
+$$
+or
+$$
+\left( \begin{array}{c}
+y_{111} \\ \vdots \\ y_{11K} \\ \hline
+y_{121} \\ \vdots \\ y_{12K} \\ \hline
+y_{211} \\ \vdots \\ y_{21K} \\ \hline
+y_{221} \\ \vdots \\ y_{22K} \\
+\end{array} \right) =
+\left( \begin{array}{ccccc}
+1 & 1 & 0 & 1 & 0\\ 
+\vdots&\vdots&\vdots&\vdots&\vdots\\
+1 & 1 & 0 & 1 & 0\\  \hline
+1 & 1 & 0 & 0 & 1\\ 
+\vdots&\vdots&\vdots&\vdots&\vdots\\
+1 & 1 & 0 & 0 & 1\\  \hline
+1 & 0 & 1 & 1 & 0\\ 
+\vdots&\vdots&\vdots&\vdots&\vdots\\
+1 & 0 & 1 & 1 & 0\\  \hline
+1 & 0 & 1 & 0 & 1\\ 
+\vdots&\vdots&\vdots&\vdots&\vdots\\
+1 & 0 & 1 & 0 & 1\\ 
+\end{array} \right)
+\left( \begin{array}{c} \mu \\ \alpha_1 \\ \alpha_2 \\ \beta_1 \\ \beta_2
+	\end{array} \right) +
+\left( \begin{array}{c}
+\varepsilon_{111} \\ \vdots \\ \varepsilon_{11K} \\\hline
+\varepsilon_{121} \\ \vdots \\ \varepsilon_{12K} \\\hline
+\varepsilon_{211} \\ \vdots \\ \varepsilon_{21K} \\\hline
+\varepsilon_{221} \\ \vdots \\ \varepsilon_{22K} \\
+\end{array} \right) 
+$$
+\esexa
+
+\bexa
+Analysis of covariance.
+$$
+y_{ij} = \mu + \alpha_i +  \beta (x_{ij} -\bar{x}_{..}) +  \epsilon_{ij}  \hskip1cm {\mbox{for}} \; \;  i = 1,2; \;\; j=1,\ldots J
+$$
+or
+$$
+\left( \begin{array}{c}
+y_{11} \\ \vdots \\ y_{1J} \\
+y_{21} \\ \vdots \\ y_{2J} \\
+\end{array} \right) =
+\left( \begin{array}{ccccc}
+1     &    1   &   0  & (x_{11}-\bar{x}_{..})\\ 
+\vdots& \vdots &\vdots&\vdots\\ 
+1     &    1   &   0  & (x_{1J}-\bar{x}_{..})\\
+1     &    0   &   1  & (x_{21}-\bar{x}_{..})\\ 
+\vdots& \vdots &\vdots&\vdots\\ 
+1     &    0   &   1  & (x_{2J}-\bar{x}_{..})\\ 
+\end{array} \right)
+\left( \begin{array}{c} \mu\\ \alpha_1 \\ \alpha_2 \\ \beta \end{array} \right) +
+\left( \begin{array}{c}
+\varepsilon_{11} \\ \vdots \\ \varepsilon_{1J} \\
+\varepsilon_{21} \\ \vdots \\ \varepsilon_{2J} \\
+\end{array} \right) 
+$$
+\eexa
+
+\vb
+\subsection{The General Linear Model}
+
+The general linear model in matrix form:
+$$
+\left( \begin{array}{c} y_1 \\ y_2 \\ \vdots \\ y_n \end{array} \right) =
+\left( \begin{array}{ccccc}
+x_{10} & x_{11} & x_{12} & \cdots & x_{1,p-1} \\ 
+x_{20} & x_{21} & x_{22} & \cdots & x_{2,p-1} \\ 
+\vdots & \vdots & \vdots & \vdots & \vdots \\ 
+x_{n0} & x_{n1} & x_{n2} & \cdots & x_{n,p-1}
+\end{array} \right)
+\left(\begin{array}{c}\beta_0\\\beta_1\\\beta_2\\\vdots\\\beta_{p-1}
+	\end{array}\right) +
+\left(\begin{array}{c}\varepsilon_1\\\varepsilon_2\\\vdots\\\varepsilon_n
+	\end{array}\right) 
+$$
+
+\vb
+
+Equivalent shorthand form:
+$$
+\mathbf{y=X\bfbet + \bfeps}.
+$$
+Here
+$\mathbf{y}\ (n\times 1)$ is the response vector, 
+$\mathbf{X}\ (n\times p)$ is the design (or model or regression) matrix, 
+$\bfbet\ (p\times 1)$ is the vector of regression coefficients, 
+$\bfeps\ (n\times 1)$ is the error vector (mean {\bf 0}).
+
+
+\bnote
+Usually $x_{i0}=1$ for all $i$, i.e., there is an intercept $\beta _0$
+in the model.
+\esnote
+
+\bsnote
+$x_{i0},x_{i1},\ldots,x_{i,p-1}$ are called the predictor variables or
+regressor variables. They are known constants.
+\esnote
+
+\bsnote
+The model is linear in the unknown regression coefficients
+$\beta_0,\beta_1,\ldots,\beta_{p-1}$, i.e.,
+$$
+{\bf y} = \sum_{j=0}^{p-1} \beta_j {\bf x}_j + \bfeps,
+$$
+where ${\bf x}_j=(x_{1j},x_{2j},\ldots,x_{nj})'$.
+\esnote
+
+\bsnote
+We will give assumptions on the distribution of $\bfeps$ when we
+discuss estimation methods.
+\esnote
+
+\vb
+\subsection{Least Squares Estimation}
+\bdefi
+An estimate $\hat{\bfbet}$ is a least-squares estimate of $\bfbet$ if
+it minimizes $||\bfy - \bfX\bfbet||^2$ over all $\bfbet$.
+\esdefi
+
+\bsnote
+We  can re-express the least-squares criteria as follows:
+$$
+||\bfy - \bfX\bfbet||^2 = (\bfy - \bfX\bfbet)'(\bfy - \bfX\bfbet) = \bfy' \bfy - 2 \bfy' \bfX \bfbet  + \bfbet' \bfX' \bfX  \bfbet .
+$$
+\esnote
+
+
+\vb
+\subsection{Goals}
+
+We have multiple goals when working with linear models. These include: 
+\begin{itemize}
+\item  Finding the best `fit' between the explanatory variables and the response.  The standard procedure for this is the method of least squares, but other methods exist.
+
+\item Obtaining good parameter estimates that allow us to determine the relationship between variables.
+
+\item Making predictions that allow us to determine what response can we expect to get under a new set of experimental conditions.
+
+\item Performing inference.
+
+\end{itemize}
+
+\vb
+\subsection{Software}
+
+\textsf{R} is a programming language and software environment for statistical computing and graphics that is highly extensible. In recent years it has become the most popular language among statisticians for developing new statistical methodology.
+
+Linear models can be fit in  \textsf{R} using using the \texttt{lm} command. Here we illustrate simple linear regression using the \texttt{mtcars} data set that is directly available in \textsf{R}.
+The data was extracted from the 1974 Motor Trend US magazine, and consists of gas consumption (\texttt{mpg}) and 10 other aspects of automobile design and performance for a total of 32 cars. Here we will fit a simple linear regression using gas consumption (\texttt{mpg}) as the response variable and weight (\texttt{wt}) as the explanatory variable.
+
+\begin{verbatim}
+> fit <- lm(mpg ~ wt, data=mtcars)
+> fit
+
+Call:
+lm(formula = mpg ~ wt, data = mtcars)
+
+Coefficients:
+(Intercept)           wt  
+     37.285       -5.344  
+\end{verbatim}
+
+We will revisit \textsf{R} and the \texttt{lm} command throughout the course.
+
+
+
+
+

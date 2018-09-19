@@ -1,0 +1,238 @@
+\section{Quadratic forms}
+
+We are often interested in working with random vectors that are combined into quadratic forms.
+The result is a function of random variables which is a scalar, and itself a random variable.
+Formally, a quadratic form is a function $ f: \R^n \mapsto \R$ that can be written:
+$$
+f(\bfy) = \bfy' \bfA \bfy = \sum_{i,j} A_{ij}y_i y_j.
+$$
+We have previously discussed how to compute the expected value of quadratic forms. 
+Here we discuss their distributional properties and how they apply to linear models. But first we review some distributional results.
+
+
+\subsection{Distributional results}
+
+\subsubsection{$\chi^2$ distribution}
+
+A random variable $U$ has a (central) $\chi^2$ distribution with $n>0$ degrees of freedom if it has a pdf given by
+$$
+f_U(u|n) =\frac{1}{\Gamma(\frac{n}{2})2^{n/2}}u^{\frac{n}{2}-1}e^{-u/2} I(u>0)
+$$
+\vb
+We write $U \sim \chi^2_n$. The moment generating function of $U$ is given by
+$$M_U(t) = (1-2t)^{-n/2}$$ for $t<1/2$.
+
+Below follow some important results related to the $\chi^2$-distribution.
+
+\bstheo
+If $Z \sim N(0, 1)$, then $U=Z^2 \sim \chi^2(1)$. 
+\estheo
+
+
+\bstheo
+If $\bfy \sim N_p(\zero, \bfI)$, then $\bfy' \bfy \sim \chi^2(p)$. 
+\estheo
+
+
+\bstheo
+If $\bfy \sim N_p(\bfmu, \Sigma)$, then 
+$(\bfy - \bfmu)' \Sigma^{-1} (\bfy - \bfmu) \sim \chi^2(p).$
+\estheo
+
+%\bdefi 
+%For any positive integer $d$, $\ \chi_d^2\ $ is the distribution of $\
+%\sum_{i=1}^d Z_i^2,\ $ where $\ Z_1,\ldots,Z_d\ $ are independent and
+%identically distributed $N(0,1)$ random variables.
+%\edefi
+%
+%\bsexa
+%Let $Y_1,\ldots,Y_n$ be independent $N(\mu,\sigma^2)$ random
+%variables.  Then $\bar{Y}$ and $S^2$ are independent and $(n-1) \times
+%S^2/\sigma^2 \sim \chi^2_{n-1}$.
+%\eexa
+
+\vb
+
+
+\subsubsection{Noncentral $\chi^2$ distribution}
+
+A random variable $V$ has a noncentral $\chi^2$ distribution with $n>0$ degrees of freedom and noncentrality parameter $\lambda >0$ if it has a pdf given by
+$$
+f_V(v|n,\lambda) =  \sum_{j=0}^\infty \left( \frac{e^{-\lambda} \lambda^j}{j!} \right) f_U(v|n+2j)
+$$
+\vb
+We write $V \sim \chi^2_n(\lambda)$. The moment generating function of $V$ is given by
+$$M_V(t) = (1-2t)^{-n/2} \exp \left( \frac{2t\lambda}{1-2t} \right)$$ for $t<1/2$.
+
+
+Below follow some important results related to the non-central $\chi^2$-distribution.
+
+\bstheo
+If $Y \sim N(\mu, 1)$, then $U=Y^2 \sim \chi^2_1(\lambda)$ where $\lambda = \mu^2/2$.
+\estheo
+
+\bstheo
+If $U_1, U_2, \ldots U_m$ are independent random variables, where $U_i \sim \chi^2(n_i,\lambda_i)$ for $i=1,2, \ldots m$, then $U=\sum_i U_i \sim \chi^2(n,\lambda)$, where $n=\sum_i n_i$ and $\lambda = \sum_i \lambda_i$. 
+\estheo
+
+
+
+
+\subsubsection{ $F$ distribution}
+
+A random variable $W$ has a (central) $F$ distribution with $m_1 >0$ and  $m_2 >0 $ degrees of freedom if it has a pdf given by
+$$
+f_W(w|m_1,m_2) =\frac{ \Gamma \left( \frac{m_1+m_2}{2} \right)  \left( \frac{m_1}{m_2} \right)^{m_1/2}  w^{(m_1-2)/2}   }{\Gamma \left( \frac{m_1}{2} \right)  \Gamma \left( \frac{m_2}{2} \right) \left( 1+  \frac{m_1 w}{m_2}  \right)^{(m_1 + m_2)/2}}
+$$
+for $0 < w < \infty.$
+We write $W \sim F_{m_1,m_2}$.
+
+If $U_1$ and $U_2$ are independent central $\chi^2$ random variables with degrees of freedom $m_1$ and $m_2$, respectively
+then
+$$
+W = \frac{U_1/m_1}{U_2/m_2} \sim F_{m_1,m_2}.
+$$
+
+
+\subsubsection{Noncentral $F$ distribution}
+A random variable $W$ has a noncentral $F$ distribution with $m_1 >0$ and  $m_2 >0 $ degrees of freedom and noncentrality paramter $\lambda >0$ if it has a pdf given by
+$$
+f_W(w|m_1,m_2, \lambda) = 
+\sum_{j=0}^\infty \left( \frac{e^{-\lambda} \lambda^j}{j!} \right) \frac{ \Gamma \left( \frac{m_1+2j+m_2}{2} \right)  \left( \frac{m_1+2j}{m_2} \right)^{(m_1+2j)/2}  w^{(m_1- +2j+2)/2}   }{\Gamma \left( \frac{m_1+2j}{2} \right)  \Gamma \left( \frac{m_2}{2} \right) \left( 1+  \frac{m_1 w}{m_2}  \right)^{(m_1 + 2j+ m_2)/2}}
+$$
+for $0 < w < \infty.$
+We write $W \sim F_{m_1,m_2}(\lambda)$.
+
+If $U_1 \sim \chi^2_{m_1}(\lambda)$ and $U_2\sim \chi^2_{m_2}$ be independent, then
+$$
+W = \frac{U_1/m_1}{U_2/m_2} \sim F_{m_1,m_2} (\lambda).
+$$
+
+
+
+\subsection{Distribution of quadratic forms}
+\label{sec:qf}
+
+In linear model theory, test statistics arise from sums of squares
+(which are special cases of quadratic forms) with $\chi^2$ distributions.
+Below follows some useful results regarding quadratic forms that will be extremely useful whe we start performing hypothesis testing.
+
+\bstheo
+If $\bfy \sim N_p(\zero, \bfI)$ and $\bfA$ is symmetric idempotent of rank $r$ then $$\bfy' \bfA \bfy \sim \chi^2(r).$$
+\estheo
+
+
+\bstheo
+If $\bfy \sim N_p(\bfmu, \bfI)$ then $$\bfy' \bfA \bfy \sim \chi^2(r,\bfmu'\bfA \bfmu/{2}))$$ if and only if $\bfA$ is symmetric idempotent of rank $r$ 
+\estheo
+
+
+\bstheo
+\label{QFthm}
+If $\bfy \sim N_p(\bfmu, \Sigma)$ then $$\bfy' \bfA \bfy \sim \chi^2(r,\bfmu'\bfA \bfmu/{2}))$$ if and only if $\bfA \Sigma$ is idempotent of rank $r$ 
+\estheo
+
+
+
+\vb
+\bexa
+To illustrate consider the linear model $\mathbf{y=X\bfbet + \bfeps},$ where $\bfeps \sim N_n(\zero, \sigma^2 \bfI).$
+Let $\bfH = \bfX (\bfX' \bfX)^{-1} \bfX'$ and consider the following  partition of the sum of squares:
+$$
+\bfy'\bfy = \bfy'\bfH\bfy + \bfy'(\bfI - \bfH)\bfy.
+$$
+
+Let us begin by studying the term $\bfy'(\bfI - \bfH)\bfy$. 
+Dividing this term by $\sigma^2$ we obtain $$\bfy' \bfA \bfy$$ where $$\bfA = \sigma^{-2}(\bfI - \bfH).$$
+Note that  $\bfA \bfV = (\bfI - \bfH)$ is idempotent with rank $n-p$. 
+Also note that
+$$
+\lambda = \frac{1}{2} \bfmu' \bfA \bfmu = \frac{1}{2} (\bfX \bfbet)' (\bfI - \bfH) \bfX \bfbet =0.
+$$
+Hence, by Theorem \ref{QFthm} it holds that
+$$
+\bfy' (\bfI - \bfH) \bfy/\sigma^2 \sim \chi^2(n-p).
+$$
+
+Now consider the term $\bfy' \bfH \bfy$.
+Dividing this term by $\sigma^2$ we obtain $$\bfy' \bfA \bfy$$ where $$\bfA = \sigma^{-2}\bfH.$$
+Note that  $\bfA \bfV = \bfH$ is idempotent with rank $p$. 
+Also note that 
+$$
+\lambda = \frac{1}{2} \bfmu' \bfA \bfmu = \frac{1}{2 \sigma^2} (\bfX \bfbet)' \bfH \bfX \bfbet = \bfbet \bfX' \bfX \bfbet/ (2 \sigma^2).
+$$
+Hence, 
+$$
+\bfy' \bfH \bfy \sim \chi^2(p,  \bfbet \bfX' \bfX \bfbet/ (2 \sigma^2)).
+$$
+\eexa
+
+
+\subsection{Independence}
+ 
+Let's continue by discussing some independence results related to quadratic forms.
+In particular, we seek conditions for when $\bfy' \bfA \bfy$ and $\bfB \bfy$ are independent and when $\bfy' \bfA \bfy$ and $\bfy' \bfB \bfy$ are independent.
+
+ 
+
+\bstheo
+Let $\bfy \sim N_p(\bfmu, \Sigma)$, $\bfA$ be idempotent of rank $m$, and $\bfB$ be idempotent of rank $s$, and suppose $\bfB \Sigma \bfA = \zero$. Then $\bfy' \bfA \bfy$ and $\bfB \bfy$ are independent.
+\estheo
+
+
+\bstheo
+Let $\bfy \sim N_p(\bfmu, \Sigma)$, $\bfA$ be idempotent of rank $m$, and $\bfB$ be idempotent of rank $s$, and suppose $\bfB \Sigma \bfA = \zero$. Then $\bfy' \bfA \bfy$ and $\bfy' \bfB \bfy$ are independent.
+\estheo
+
+
+\vb
+\bexa
+Consider the linear model $\mathbf{y=X\bfbet + \bfeps}$, where $\bfeps \sim N_n(\zero, \sigma^2 \bfI)$. 
+In a previous example we showed that
+$$
+\bfy' (\bfI - \bfH) \bfy/\sigma^2 \sim \chi^2_{n-p}.
+$$
+and
+$$
+\bfy' \bfH \bfy /\sigma^2\sim \chi^2_p(\bfbet \bfX' \bfX \bfbet/ (2 \sigma^2)).
+$$
+
+Now let
+$$
+\bfy' (\bfI - \bfH) \bfy/\sigma^2 = \bfy' \bfA \bfy
+$$
+where $\bfA = \sigma^{-2}(\bfI - \bfH)$.
+In addition, let
+$$
+\bfy' \bfH \bfy/\sigma^2 = \bfy' \bfB \bfy 
+$$
+where $\bfB = \sigma^{-2} \bfH$.
+
+Hence, it holds that
+\begin{eqnarray*}
+\bfB \Sigma \bfA  &=& \sigma^{-2} \bfH  \sigma^2 \bfI \sigma^{-2}(\bfI - \bfH)\\
+&=& \zero
+\end{eqnarray*}
+Thus, $\bfy' (\bfI - \bfH) \bfy/\sigma^2$ and $\bfy' \bfH \bfy/\sigma^2$ are independent quadratic forms and it holds that
+\begin{eqnarray*}
+F &=& \frac{\bfy' \bfH \bfy/p}{\bfy' (\bfI - \bfH) \bfy/(n-p)} \\
+\vb
+&=& \frac{\sigma^{-2}\bfy' \bfH \bfy/p}{\sigma^{-2}\bfy' (\bfI - \bfH) \bfy/(n-p)} \\
+\vb
+& \sim& F_{p, n-p}(\bfbet' \bfX' \bfX \bfbet/{2\sigma^2})
+\end{eqnarray*}
+
+\eexa
+
+
+
+\subsection{Cochran's Theorem}
+Cochran's Threorem can be used to determine the distributions of partitioned sums of squares of normally distributed random variables.  It allows us to split the sum of the squares of observations into a number of quadratic forms where each corresponds to some cause of variation. This result can be used to construct  the ANOVA tables one typically encounters when fitting linear models.
+
+\bstheo
+Let $\bfy \sim N_p(\mu, \sigma^2 \bfI)$ and suppose that $\bfA_1, \bfA_2, \ldots \bfA_k$ are $n \times n$ symmetric idempotent matrices with $rank(\bfA_i) = s_i$. If 
+$$\bfA_1 + \bfA_2 + \cdots + \bfA_k = \bfI,$$ then $$\bfy' \bfA_1 \bfy/\sigma^2, \,  \bfy' \bfA_2 \bfy/\sigma^2, \, \ldots  \bfy' \bfA_k \bfy/\sigma^2$$ follow independent $\chi^2_{s_i}(\lambda_i)$ distributions, where  $\lambda_i = \bfmu' \bfA_i \bfmu/{2\sigma^2}$, for $i=1,2,\ldots k$ and $\sum_{i=1}^k s_i = n$.
+\estheo
+
+
+

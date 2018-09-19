@@ -1,0 +1,140 @@
+\section{Generalized Least Squares}
+
+\vb
+
+What happens if we relax the assumption that $\cov(\bfY) =
+\sigma^2\bfI$?
+
+Although this assumption has no effect on the actual ordinary least-squares (OLS) estimate, it does affect the properties of the estimator and any subsequent inference. To illustrate, assume $\cov(\bfY)=\sigma^2 \bfV$, where $\bfV$ is assumed to be  known. Note, in practice, we will also have to estimate $\bfV$. In this setting, $\bfbet$ is still unbiased. However,  the variance-covariance matrix is
+$$
+\var({\hat \bfbet}) = \sigma^2 (\bfX' \bfX)^{-1} \bfX' \bfV \bfX (\bfX' \bfX)^{-1}.
+$$
+In addition, there is no longer any guarantee that the estimator is the BLUE of $\bfbet$.
+
+\vb
+Here we introduce the method of generalized least squares (GLS) to improve upon estimation efficiency for the case when $\cov(\bfY) \neq \sigma^2\bfI$
+
+
+\bexa
+(Clustered data). Let
+$$
+\bfY=\left(\begin{array}{c}
+	\bfY_1 \\ \bfY_2 \\ \vdots \\ \bfY_K
+\end{array}\right),
+$$
+where $\bfY_i=(Y_{i1},\ldots,Y_{in_i})'$ is a vector of responses on
+the $i$th cluster (patient, household, school, etc).  Assuming
+clusters are independent,
+$$
+\cov(\bfY)=\left(\begin{array}{cccc}
+	\bfV_1 & \zero & \cdots & \zero \\
+	\zero & \bfV_2 & \cdots & \vdots \\
+	\vdots & \vdots & \ddots & \zero \\
+	\zero & \cdots & \zero & \bfV_K
+\end{array}\right),
+$$
+where we might assume a common variance $\sigma^2$ and common pairwise
+correlation $\rho$ within a cluster, i.e.~an exchangeable correlation
+structure:
+$$
+cov(\bfY_i)=\sigma^2\bfV_i=\sigma^2 \left(\begin{array}{cccc}
+        1 & \rho  & \cdots & \rho  \\
+        \rho & 1 & \cdots & \vdots \\
+        \vdots & \vdots & \ddots & \rho \\
+        \rho & \cdots & \rho & 1
+\end{array}\right)_{n_i\times n_i}
+$$
+\eexa
+
+
+\vb
+The solution to the problem when $\cov(\bfY) \neq \sigma^2\bfI$, is to transform the model to a new set of observations that satisfy the constant variance assumption, and therafter use the ordinary least squares to estimate the parameters.
+Since $\sigma^2 \bfV$ is a variance-covariance matrix, $\bfV$ is a symmetric non-singular matrix, and we can write: $\bfV = \bfK′\bfK$, where $\bfK$ is called the squared root of $\bfV$ . Using this matrix,  let ${\tilde \bfy} = \bfK^{-1}\bfy$, ${\tilde \bfX} = \bfK^{-1}\bfX$, and $ {\tilde \bfeps} = \bfK^{-1}  \bfeps$. Then, it holds that 
+$$
+{\tilde \bfy} = {\tilde \bfX} \bfbet + {\tilde \bfeps},
+$$
+where 
+$E({\tilde \bfeps}) = {\bf 0}$ and $\var({\tilde \bfeps}) = \sigma^2\bfI$.
+We are now back to the assumptions of ordinary least squares. The least squares function can be given by
+\begin{eqnarray*}
+f(\bbeta) &=& || {\tilde \by} - {\tilde \bX} \bbeta ||^2 \\
+&=& (\bfK^{-1}\by - \bfK^{-1}\bX \bbeta)' (\bfK^{-1}\by - \bfK^{-1}\bX \bbeta)\\
+&=& (\by - \bX \bbeta)' \bfK^{-1}\bfK^{-1} (\by - \bX \bbeta)\\
+&=& (\by - \bX \bbeta)' \bfV^{-1} (\by - \bX \bbeta)\\
+\end{eqnarray*}
+
+To minimize $f(\bbeta)$, begin by
+taking the derivative with respect to $\bbeta$ and set the results equal to $0$. This 
+gives the normal equations:
+$$(\bfX'\bfV^{-1} \bfX) \hat \bbeta = \bX' \bfV^{-1} \by.$$
+Thus, least
+squares applied to the transformed $\bfY$ yields
+$$
+\bfbet^* = (\bfX'\bfV^{-1}\bfX)^{-1}\bfX'\bfV^{-1}\bfY,
+$$
+the Generalized Least Squares (GLS) estimate.
+
+\bstheo 
+Properties of $\bfbet^*$:
+\begin{itemize}
+\item[(a)] 
+$E[\bfbet^*] = \bfbet$,
+\item[(b)] 
+$\cov(\bfbet^*) = \sigma^2(\bfX'\bfV^{-1}\bfX)^{-1}$,
+\end{itemize}
+\etheo
+
+Let $\ \bfbet^* = (\bfX'\bfV^{-1}\bfX)^{-1}\bfX'\bfV^{-1}\bfY\ $ be
+the generalized least squares (GLS) estimate, and $\ \hat{\bfbet} =
+(\bfX'\bfX)^{-1}\bfX'\bfY\ $ be the ordinary least squares (OLS)
+estimate.
+
+%\btheo
+%Under the conditions of Theorem \ref{theo.gls1}, the OLS estimate has the
+%following properties:
+%\begin{itemize}
+%\item[(a)] 
+%$E[\hat{\bfbet}] = \bfbet,$
+%\item[(b)] 
+%$\cov(\hat{\bfbet}) = \sigma^2 (\bfX'\bfX)^{-1} 
+%(\bfX'\bfV\bfX) (\bfX'\bfX)^{-1}.$
+%\end{itemize}
+%\estheo
+
+\btheo 
+(Optimality of GLS estimates).  If $\ E[Y]=\bfX\bfbet\ $ and $\
+\cov(\bfY)=\sigma^2\bfV\ $, then for any constant vector $\bfa$, $\
+\bfa'\bfbet^*\ $ is the BLUE of $\ \bfa'\bfbet$.
+\etheo
+
+\bsexa
+(Weighted least squares).  Let $Y_1,\ldots,Y_n$ be independent,
+$E[Y_i]=\beta x_i$, and $\var(Y_i)=\sigma^2 w_i^{-1}$.  The GLS
+estimate of $\beta$ is
+$$
+\bfbet^*={\sum_{i=1}^n w_i x_i Y_i \over \sum_{i=1}^n w_i x_i^2}.
+$$
+The OLS estimate is
+$$
+\hat{\bfbet}={\sum_{i=1}^n x_i Y_i \over \sum_{i=1}^n x_i^2}.
+$$
+The variances are
+$$
+\var(\bfbet^*) = {\sigma^2 \over \sum_{i=1}^n w_i x_i^2}
+\qquad
+\mbox{and}
+\qquad
+\var(\hat{\bfbet}) =  
+{\sigma^2 \sum_{i=1}^n {x_i^2 \over w_i} \over 
+(\sum_{i=1}^n x_i^2)^2}.
+$$
+\eexa
+
+\bstheo
+The GLS estimate and the OLS estimate are equal only when either one
+of the following conditions holds:
+\begin{enumerate}
+\item ${\cal R}(\bfV^{-1}\bfX)=\cal{R}(\bfX)$.
+\item ${\cal R}(\bfV\bfX)=\cal{R}(\bfX)$.
+\end{enumerate}
+\etheo

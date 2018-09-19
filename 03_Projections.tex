@@ -1,0 +1,476 @@
+\section{Review of Linear Algebra and Matrices}
+
+\subsection{Projections}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\bdefi
+Matrix: An $m\times n$ matrix with elements $a_{ij}$ is denoted
+$\mathbf{A}=(a_{ij})_{m\times n}$.
+\esdefi
+
+\bsdefi 
+Vector: A vector of length $n$ is denoted $\mathbf a =(a_i)_n$.  If
+all elements equal 1 it is denoted $\mathbf 1_n$.  
+\esdefi
+
+\vb
+
+\bsdefi 
+Diagonal Matrix:
+$$\mathrm{diag}(a_1,\ldots,a_n) \equiv
+\left( \begin{array}{cccc}
+a_1 & 0 & \cdots & 0 \\ 
+0 & a_2 & \cdots & 0 \\ 
+\vdots & \vdots & \ddots & 0 \\ 
+0 & \cdots & 0 & a_n \\ 
+\end{array} \right).$$ 
+\esdefi 
+
+\bsdefi 
+Identity Matrix: $\mathbf{I}_{n\times n} \equiv
+\mathrm{diag}(\mathbf{1}_n)$.
+\esdefi
+
+\bsdefi 
+Matrix Transpose: If $\mathbf{A}=(a_{ij})_{m\times n}$, then $\mathbf
+A'\equiv(a'_{ij})_{n\times m}$ where $a'_{ij}=a_{ji}$.
+\esdefi
+
+\bsdefi 
+If $\mathbf{A=A'},$ then $\mathbf A$ is symmetric.
+\esdefi 
+
+\bdefi 
+Matrix Sum: If $\mathbf{A}=(a_{ij})_{m\times n}$ and $\mathbf{B} =
+(b_{ij})_{m\times n}$, then $\mathbf{A + B} = (a_{ij} +
+b_{ij})_{m\times n}.$
+\esdefi 
+
+\bstheo
+Matrix sums satisfy $\mathbf{A + B = B + A}$ and $\mathbf{(A + B)' = A' + B'}.$
+\estheo
+
+\bdefi 
+Matrix Product: If $\mathbf{A} = (a_{ij})_{m\times n}$ and $\mathbf{B}
+= (b_{ij})_{n\times p}$, then $\mathbf{AB} = (c_{ij})_{m\times p}$,
+where $c_{ij}=\sum_k a_{ik}b_{kj}.$
+\esdefi
+
+\bstheo
+Matrix products satisfy $\mathbf{(AB)'=B'A'}.$
+\estheo 
+
+\bdefi 
+Matrix Trace: The sum of the diagonal elements, $\mathrm{tr}(\mathbf
+A)\equiv\sum_i a_{ii}.$
+\esdefi
+
+\bstheo
+The trace satisfies $\ \mathbf{\mathrm{tr}(A + B) = \mathrm{tr}(A) +
+\mathrm{tr}(B)}\ $ if $\mathbf{A}=(a_{ij})_{m\times n}$ and
+$\mathbf{B}=(b_{ij})_{m\times n},$ and $\ \mathbf{\mathrm{tr}(AB) =
+\mathrm{tr}(BA)}\ $ if $\mathbf A$ and $\mathbf B$ are square
+matrices.
+\etheo
+
+
+
+\subsection{Vector Spaces}
+
+\bdefi
+A (real) vector space consists of a non empty set $\vbf{V}$ of
+vectors, and two operations:
+\begin{enumerate}
+\item[(1)] 
+Addition is defined for pairs of elements in $\vbf{V}$, $\vbf{x}$ and
+$\vbf{y}$, and yields an element in $\vbf{V}$, denoted by $\vbf{x} +
+\vbf{y}$.
+\item[(2)] 
+Scalar multiplication, is defined for the pair $\alpha$, a real
+number, and an element $\vbf{x} \in \vbf{V}$, and yields an element in
+$\vbf{V}$ denoted by $\alpha\vbf{x}$.
+\end{enumerate}
+Eight properties are assumed to hold for $\vbf{x}, \vbf{y}, \vbf{z}
+\in \vbf{V}, \alpha ,\beta, 1 \in \R$:
+\begin{enumerate}
+\item[(1)] 
+$\vbf{x} + \vbf{y} = \vbf{y} + \vbf{x}$
+\item[(2)] 
+$(\vbf{x} + \vbf{y})+\vbf{z} = \vbf{x}+(\vbf{y} + \vbf{z})$
+\item[(3)] 
+There is an element in $\vbf{V}$ denoted $\vbf{0}$ such that
+$\ \vbf{0} + \vbf{x} = \vbf{x} + \vbf{0} = \vbf{x}$
+\item[(4)] 
+For each $\vbf{x} \in \vbf{V}$ there is an element in $\vbf{V}$
+denoted $-\vbf{x}$ such that
+$\ \vbf{x} + (-\vbf{x}) = (-\vbf{x}) + \vbf{x} = \vbf{0}$
+\item[(5)] 
+$\alpha(\vbf{x} + \vbf{y}) = \alpha\vbf{x}+ \alpha\vbf{y}$ for all
+$\alpha$
+\item[(6)] 
+$(\alpha+\beta)\vbf{x}=\alpha\vbf{x}+\beta\vbf{x}$ for all $\alpha,
+\beta$
+\item[(7)] 
+$ 1\vbf{x} = \vbf{x}$
+\item[(8)] 
+$\alpha(\beta\vbf{x})=(\alpha\beta)\vbf{x}$ for all $\alpha, \beta$
+\end{enumerate}
+\esdefi
+
+\bdefi
+Vectors $\mathbf{a}_1, \mathbf{a}_2, \ldots,\mathbf{a}_n$ are linearly
+independent if $\sum_i c_i \mathbf a_i \neq 0$ unless $c_i=0$ for all
+$i$.
+\esdefi
+
+\bsdefi
+A linear basis or coordinate system in a vector space $\vbf{V}$ is a
+set $\vbf{B}$ of linearly independent vectors in $\vbf{V}$ such that
+each vector in $\vbf{V}$ can be written as a linear combination of the
+vectors in $\vbf{B}$.
+\esdefi
+
+\bsdefi
+The dimension of a vector space is the number of vectors in any basis
+of the vector space.
+\esdefi
+
+\bsdefi
+Let $\vbf{V}$ be a $p$ dimensional vector space and let $\vbf{W}$ be
+an $n$ dimensional vector space.  A linear transformation $\vbf{L}$
+from $\vbf{V}$ to $\vbf{W}$ is a mapping (function) from $\vbf{V}$ to
+$\vbf{W}$ such that
+$$\vbf{L}(\alpha\vbf{x}+\beta\vbf{y})
+=\alpha\vbf{L}(\vbf{x})+\beta\vbf{L}(\vbf{y})\;\;\mbox{for every}\;\;
+\vbf{x},\vbf{y} \in \vbf{V}\;\;\mbox{and all}\;\;\alpha, \beta \in
+\R.$$
+\edefi
+
+
+\subsection{Range, Rank, and Null Space}
+
+\bdefi
+Range (Column Space): $\mathcal R(\mathbf A) \equiv$ the linear space
+spanned by the columns of $\mathbf A$.
+\esdefi
+
+\bsdefi
+Rank: rank$(\mathbf A)\equiv \mathrm{r}(\mathbf A)\equiv$ the number
+of linearly independent columns of $\mathbf A$ (i.e., the dimension of
+$\mathcal R(\mathbf A)$), or equivalently, the number of linearly
+independent rows of $\mathbf A$.
+\esdefi
+
+\btheo
+Decreasing property of rank: $\mathbf{ \mathrm{rank}(AB) \leq
+\mathrm{min}\{\mathrm{rank}(A), \mathrm{rank}(B)\}}.$
+\estheo
+
+\bdefi
+Null Space: $\mathcal{N}(\mathbf{A)\equiv\{x: Ax=0}\}$.  The nullity
+of $\mathbf A$ is the dimension of $\mathcal{N}(\mathbf{A})$.
+\esdefi
+
+\btheo
+$\mathrm{rank}(\mathbf{A}) + \mathrm{nullity}(\mathbf{A}) = n,$ the
+number of columns of $\mathbf A$.
+\estheo
+
+\bstheo
+$\mathbf{\mathrm{r}(A) = \mathrm{r}(A') = \mathrm{r}(A'A) =
+\mathrm{r}(AA')}$.
+\etheo
+
+
+\subsection{Inverse}
+
+\bdefi
+An $n\times n$ matrix $\mathbf{A}$ is invertible (or non-singular) if
+there is a matrix $\mathbf{A}^{-1}$ such that $ \mathbf{A}
+\mathbf{A}^{-1} = \mathbf{A}^{-1} \mathbf{A} = \mathbf{I}_{n\times
+n}.$ Equivalently, $\mathbf{A}\ (n \times n)$ is invertible if and
+only if $\mathrm{rank}(\mathbf{A})=n$.
+\esdefi
+
+\btheo
+If ${\mathbf A}$ is invertible, then $\mathbf{A'}$ is invertible and $(\mathbf{A'})^{-1} = (\mathbf{A}^{-1})'$.
+\etheo
+
+\btheo
+Inverse of Product: $\mathbf{(AB)^{-1}=B^{-1}A^{-1}}$ if $\mathbf A$
+and $\mathbf B$ are invertible.
+\etheo
+
+\newpage
+\subsection{Inner Product, Length, and Orthogonality}
+
+\bdefi
+Inner product: $\mathbf{a'b}=\sum_i a_i b_i$, where
+$\mathbf{a}=(a_i)$, $\mathbf{b}=(b_i)$.
+\esdefi
+
+\bsdefi
+Vector norm (length): $\mathbf{||a||=\sqrt{a'a}}$.
+\esdefi
+
+\bsdefi
+Orthogonal vectors: $\mathbf{a}=(a_i)$ and $\mathbf{b}=(b_i)$ are
+orthogonal if $\mathbf{a'b}=0$.
+\esdefi
+
+\bsdefi
+Orthogonal matrix: $\mathbf A$ is orthogonal if its columns are
+orthogonal vectors of length 1, or equivalently, if
+$\mathbf{A}^{-1}=\mathbf{A}'$.
+\edefi
+
+
+\subsection{Determinants}
+
+\bdefi
+For a square matrix $\mathbf A$, $|\mathbf{A}|\equiv \sum_i
+a_{ij}A_{ij}$, where the cofactor $A_{ij}=(-1)^{i+j}|\mathbf M_{ij}|$,
+and $\mathbf M_{ij}$ is the matrix obtained by deleting the $i$th row
+and $j$th column from $\mathbf A$.
+\esdefi
+
+\btheo
+$\left|\left(\begin{array}{cc} a & b \\ c & d \\ \end{array}
+\right)\right|= ad-bc.$
+\estheo
+
+\bstheo
+$ |\mathbf{A}|=0, \mbox{ if and only if } \mathbf{A} \mbox{ is
+singular}.$
+\estheo
+
+\bstheo
+$|\mathrm{diag}(a_1,\ldots,a_n)|=\prod_i a_i$.
+\estheo
+
+\bstheo
+$ |\mathbf{AB}| = |\mathbf A| \cdot |\mathbf B|.$
+\estheo
+
+\bstheo
+$\left|\left(\begin{array}{cc} \mathbf{A} & \mathbf{B} \\ \mathbf{0} &
+\mathbf{C} \\ \end{array}\right)\right|= |\mathbf A| \cdot |\mathbf
+C|.$
+\etheo
+
+\bstheo
+If $ |\mathbf{A}|$ is invertible, $ |\mathbf{A}^{-1}| = {1}/{ |\mathbf{A}|}$.
+\estheo
+
+\newpage
+\subsection{Eigenvalues}
+
+\bdefi
+If $\mathbf{Ax=\lambda x}$ where $\mathbf x\neq 0$, then $\lambda$ is
+an eigenvalue of $\mathbf A$ and $\mathbf x$ is a corresponding
+eigenvector.
+\edefi
+
+Let $\mathbf A$ be a symmetric matrix with eigenvalues
+$\lambda_1,\ldots,\lambda_n$.
+
+\bstheo
+(Spectral Theorem, a.k.a.~Principal Axis Theorem)
+For any symmetric matrix $\mathbf A$ there exists an orthogonal matrix
+$\mathbf T$ such that: $\mathbf{T'AT = \Lambda} = \mathrm{diag}
+(\lambda_1,\ldots,\lambda_n)$. 
+\estheo
+
+\bstheo
+$\mathrm{r}(\mathbf{A})=\mbox{ the number of non-zero } \lambda_i$
+\estheo
+
+\bstheo
+$\mathrm{tr}(\mathbf{A})=\sum_i \lambda_i$.
+\estheo
+
+\bstheo
+$|\mathbf{A}|=\prod_i \lambda_i.$
+\etheo
+
+
+\subsection{Positive Definite and Semidefinite Matrices}
+
+\bdefi
+A symmetric matrix $\mathbf A$ is positive semidefinite (p.s.d.) if
+$\mathbf{x'Ax} \geq 0$ for all $\mathbf x$.
+\edefi
+
+\bstheo
+If  $\mathbf A$ is a p.s.d matrix, then
+\begin{itemize}
+\item[(a)] The diagonal elements $a_{ii}$ are all non-negative.
+\item[(b)] All eigenvalues of $\mathbf A$ are nonnegative.
+\item[(c)] tr$(\mathbf{A})\geq 0$.
+\end{itemize}
+\estheo
+
+\newpage
+\bdefi 
+A symmetric matrix $\mathbf A$ is called positive definite (p.d.) if
+$\mathbf{x'Ax} > 0$ for all non-zero $\mathbf x$.
+\edefi
+
+
+
+\bstheo
+If  $\mathbf A$ is a p.d matrix, then
+\begin{itemize}
+\item[(a)] All diagonal elements and all eigenvalues of $\mathbf A$ are positive.
+\item[(b)] tr$(\mathbf{A})> 0$.
+\item[(c)] $|\mathbf{A}|>0$.
+\item[(d)] There is a nonsingular $\mathbf R$ such that $\mathbf{A=RR'}$
+(necessary and sufficient for $\mathbf A$ to be p.d.).
+\item[(e)] $\mathbf{A}^{-1}$ is p.d.
+\end{itemize}
+\etheo
+
+
+\subsection{Idempotent and Projection Matrices}
+
+\bdefi
+A matrix $\mathbf P$ is idempotent if $\mathbf P^2={\bf P}$.  A
+symmetric idempotent matrix is called a projection matrix.
+\edefi
+
+Properties of a projection matrix $\mathbf P$:
+
+\bstheo
+If $\mathbf P$ is an $n\times n$ matrix and rank$(\mathbf{P})=r$, then
+$\mathbf P$ has $r$ eigenvalues equal to 1 and $n-r$ eigenvalues equal
+to 0.
+\estheo
+
+\bstheo
+tr$(\mathbf P)$ = rank$(\mathbf P)$.
+\estheo
+
+\bstheo
+$\mathbf P$ is positive semidefinite.
+\etheo
+
+
+\subsection{Projections}
+
+\bdefi
+For two vectors {\bf x} and {\bf y}, the projection of {\bf y} onto
+{\bf x} is
+$$ {\rm Proj}_{\bf x}({\bf y}) = {{\bf x}'{\bf y}\over {\bf x}'{\bf
+x}} {\bf x}.
+$$
+\edefi
+
+\bstheo
+If $V$ is a vector space and $\Omega$ is a subspace of $V$, then
+$\exists$ two vectors, ${\bf w}_1$, ${\bf w}_2$ $\in V$ such that
+\begin{enumerate}
+\item ${\bf y}= {\bf w}_1 + {\bf w}_2 \quad \forall \ {\bf y}\in V$,
+\item ${\bf w}_1 \in \Omega\ $ and $\ {\bf w}_2 \in \Omega^{\perp}$.
+\end{enumerate}
+\estheo
+
+\bstheo
+$\|{\bf y}-{\bf w}_1\| \le \|{\bf y}-{\bf x}\|$ for any ${\bf x}\in
+\Omega$.  ${\bf w}_1$ is called the projection of ${\bf y}$ onto
+$\Omega$.
+\estheo
+
+\bdefi
+The matrix {\bf P} that takes {\bf y} onto ${\bf w}_1$ (i.e., {\bf
+P}{\bf y} $ = {\bf w}_1$) is called a projection matrix.
+\edefi
+
+\bstheo
+{\bf P} projects ${\bf y}$ onto the space spanned by the column
+vectors of {\bf P}.
+\estheo
+
+\bstheo
+{\bf P} is a linear transformation.
+\estheo
+
+\bstheo
+${\bf I}-{\bf P}$ is a projection operator onto $\Omega^{\perp}$.
+\estheo
+
+
+\newpage
+\subsection{Vector and Matrix Calculus}
+
+\bdefi
+Let $u=f({\mathbf x})$ be a function of the variables $x_1, x_2, \ldots , x_p$ in ${\mathbf x} = (x_1, x_2, \ldots x_p)'$, and let ${\partial u}/{\partial x_1}$, ${\partial u}/{\partial x_2}$, ...,  ${\partial u}/{\partial x_p}$ be the partial derivatives. 
+Then, %we define $\frac{\partial u}{\partial {\mathbf x}}$ as
+\begin{align}
+\frac{\partial u}{\partial {\bf x}} &=
+\begin{pmatrix}
+\frac{\partial u}{\partial x_1}\\ 
+\frac{\partial u}{\partial x_2}\\
+\vdots\\
+\frac{\partial u}{\partial x_p}
+\end{pmatrix}. \nonumber
+\end{align}
+\edefi
+
+\bstheo
+Let $u={\mathbf a}'{\mathbf x} = {\mathbf x}'{\mathbf a}$, where ${\mathbf a} = (a_1, a_2, \ldots a_p)'$ is a vector of constants. Then,
+\begin{align}
+\frac{\partial u}{\partial {\mathbf x}} = \frac{\partial ({\mathbf a}'{\mathbf x}) }{\partial {\mathbf x}} = \frac{\partial ({\mathbf x}'{\mathbf a}) }{\partial {\mathbf x}} ={\mathbf a}. \nonumber
+\end{align}
+\estheo
+
+\vb
+
+\bstheo
+Let $u = {\mathbf x}'{\mathbf A}{\mathbf x}$, where ${\mathbf A}$ is a symmetric matrix of constants. Then,
+\begin{align}
+\frac{\partial u}{\partial {\mathbf x}} = \frac{\partial ({\mathbf x}'{\mathbf A}{\mathbf x}) }{\partial {\mathbf x}} =  2{\mathbf A}{\mathbf x}. \nonumber
+\end{align}
+\estheo
+
+
+\bdefi
+Let ${\mathbf A}$ be an $n \times n$ nonsingular matrix with elements $a_{ij}$ that are functions of a scalar $x$. We define ${\partial {\mathbf A}} / {\partial x}$ as the $n \times n$ matrix 
+with elements  ${\partial a_{ij}} / {\partial x}$.
+\edefi
+
+\bstheo
+Then,
+\begin{align}
+\frac{\partial {\mathbf A^{-1}}}{\partial x} = -{\mathbf A^{-1}}  \frac{\partial {\mathbf A}}{\partial x}   {\mathbf A^{-1}}. \nonumber
+\end{align}
+\estheo
+
+
+\bstheo
+Then,
+\begin{align}
+\frac{\partial {\log |{\mathbf A}|}}{ \partial x} =  \mathrm{tr} ({\mathbf A^{-1}}  \frac{\partial {\mathbf A}}{\partial x}). \nonumber
+\end{align}
+\estheo
+
+
+
+

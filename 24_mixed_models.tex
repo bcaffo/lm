@@ -1,0 +1,490 @@
+\section{Mixed Models}
+
+
+It is often the case that parameters of interest in linear
+models are naturally thought of as being random rather
+than fixed. The rational for this can come about for many reasons.
+The first occurs when the natural asymptotics have the number
+of parameters tending to infinity with the sample size. As
+an example, consider the \texttt{Rail} dataset in
+\texttt{nlme}. The measurements are echo times for sound
+traveling along railroad lines (a measure of health of the
+line). Multiple (3) measurements are collected for each rail.
+Consider a model of the form
+$$
+y_{ij} = \mu + U_i + \epsilon_{ij},
+$$
+where $i$ is rail and $j$ is measurement within rail. 
+Treating the $u_i$ as fixed effects results in a
+circumstance where the number of parameters goes
+to infinity with the rails, which can lead to 
+inconsistent parameter estimates.
+
+A solution to this problem is to put a distribution on
+the $U_i$, say $U_i \sim_{iid} N(0, \sigma^2_u)$. This
+is highly related to ridge regression (from the penalization
+chapter). However, unlike penalization, this problem allows
+for thinking about the random effect distribution as a population
+distribution (the population of rails in our example). 
+
+Another way to think about random effects is to
+consider a fixed effect treatment of the $U_i$ terms. Since
+we included an intercept, we would need to add one linear
+constraint on the $U_i$ for identifiability. Consider the
+constraint, $\sum_{i=1}^n U_i = 0$. Then, $\mu$ would be
+interpreted as and overal mean and the $U_i$ terms would
+be interpreted as the rail-specific deviation around
+that mean. The random effect model simply specifies that
+the $U_i$ are iid $N(0, \sigma^2_u)$ and mutually
+independent from $\epsilon_{ij}$. The mean of the distribution
+on the $U_i$ has to be 0 (or fixed at a number), since it would
+not be identified from $\mu$ otherwise. 
+
+A perhaps preferable
+way to specify the model hierarchically, 
+$y_{ij} ~|~ U_i \sim N(\mu, \sigma^2)$ and $U_i ~|~ \sim N(0, \sigma^2_U)$. 
+Consider the implications of this model. First, note that
+\begin{align}
+\Cov(y_{ij}, y_{i'j'}) & = \Cov(U_i + \epsilon_{ij}, U_{i'} + \epsilon_{i'j'})\\
+& = \Cov(U_i, U_{i'}) + \Cov(\epsilon_{ij}, \epsilon_{i'j'}) \\
+& = \left\{
+\begin{array}{cc}
+\sigma^2 + \sigma^2_U & \mbox{if}~ i=i'1 ~\mbox{and}~ j = j' \\
+\sigma^2 & \mbox{if}~ i=i' ~\mbox{and}~ j\neq j' \\
+0 & \mbox{Otherwise}
+\end{array}
+\right.
+\end{align}
+
+And thus the correlation between observations in the same cluster is
+$\sigma^2_u / (\sigma^2_u + \sigma^2)$. This is the ratio between
+the between subject variability, $\sigma^2_u$, and the total variability,
+$\sigma^2_u + \sigma^2$. 
+
+Notice that the marginal model for $\by_i = (y_{i1}, \ldots, y_{in_i})'$ is
+normally distributed with mean $\mu \times \bJ_{n_i}$ and variance 
+$
+\sigma^2 \bI_{n_i} + \bJ_{n_i} \bJ_{n_i}' \sigma^2_{u}. 
+$
+It is by maximizing this (marginal) likelihood that we obtain the ML estimates 
+for $\mu, \sigma^2, \sigma^2_U$. 
+
+We can predict the $U_i$ by considering the estimate $E[U_i ~|~ \bY]$. To derive
+this, note that the density for $U_i ~|~ \bY$ is equal to the density 
+of $U_i ~|~ \by_i$, since $U_i$ is independent of every $y_{i'j}$ for $i \neq i'$. 
+Then further note that the density for $U_i ~|~ \by_i$ is propotional to the
+joint density of $y_i, U_i$, which is equal to the density of $y_i ~|~ U_i$ 
+times the density for $U_i$. Omitting anything that is not proportional
+in $U_i$, and taking twice the natural logarithm of the the densities, we obtain:
+$$
+||\by_i - \mu \bJ_{n_i} - U_i ||^2 / \sigma^2 + U_i / \sigma^2_U.
+$$
+Expanding the square, and discarding terms that are constant in $U_i$,
+we obtain that $U_i$ is normally distributed with mean 
+$$
+\frac{\sigma^2_u}{\sigma^2_u + \frac{\sigma^2}{n}} (\bar y_i - \mu).
+$$
+Thus, if $\hat \mu = \bar Y$, our estimate of $U_i$ is the estimate that
+we would typically use shrunken toward zero. The idea of shrinking estimates
+when simultaneously estimating several quantities is generally a good one.
+This has similarities with James/Stein estimation.
+
+Shrinkage estimation works by trading bias for lower variance. In our example, 
+the shrinkage factor is $\sigma^2_u / (\sigma^2_u + \sigma^2 /n)$. Thus, the
+better estimated the mean for that group is ($\sigma^2 / n$ is small), or the more
+variable the group is ($\sigma^2_u$ is large), the less shrinkage we have. On the
+other hand, the fewer observations that we have, the larger the residual variation
+or the smaller the inter-subject variation, the more shrinkage we have. In this
+way the estimation is optimally calibrated to weigh the contribution of the individual
+versus the contribution of the group to the estimate regarding this specific individual.
+
+
+\subsection{General case}
+
+The general linear mixed model can be written as follows:
+$$
+\bfy_i = \bfX_i \bfbet + \bfZ_i \bfU_i + \bfeps_i, \, \, \, \, \,  i=1,\ldots m. 
+$$
+Here:
+$\bfy_i$ is an $n_i \times 1$ vector of observations;
+ $\bfX_i$ is an $n_i \times p$ design matrix for the fixed effects;
+$\bfbet$ is a $p \times 1$ vector of fixed effects;
+$\bfZ_i$ is an $n_i \times k$ design matrix for the random effects;
+$\bfU_i$ is a $k \times 1$ vector of random effects;
+$\bfeps_j$ is an $n_i \times 1$ vector of error terms.
+In addition, we assume that the error terms and random effects are uncorrelated across groups, i.e., when $i \ne i'$:
+$$\cov(\bfeps_i, \bfeps_{i'}) = \zero, \,\,\,\, \cov(\bfU_i, \bfU_{i'}) = \zero,  \,\,\,\,    \cov(\bfeps_i, \bfU_{i'}) = \zero.$$
+When $i = i'$, we have that 
+$$\cov(\bfeps_i, \bfeps_{i}) = \Sigma_\epsilon, \,\,\,\, \cov(\bfU_i, \bfU_{i}) = \Sigma_u,  \,\,\,\,    \cov(\bfeps_i, \bfU_{i}) = \zero.$$
+
+We can reformulate the model as follows:
+$$
+\bfy = \bfX \bfbet + \bfZ \bfu + \bfeps
+$$
+where
+\begin{eqnarray*}
+\bfy &=& \left( \begin{array}{c} \bfy_{1} \\ \vdots \\ \bfy_{m}  \end{array} \right) \,\,\,\,\,
+\bfX  = \left( \begin{array}{c} \bfX_{1} \\ \vdots \\ \bfX_{m}  \end{array} \right) \,\,\,\,\,
+\bfZ  = \left( \begin{array}{ccc}   \bfZ_{1} & \ldots & \zero \\ \vdots  & \ddots & \vdots \\ \zero &\ldots &   \bfZ_{m}  \end{array} \right) \\
+\\ 
+\\
+\bfu  &=& \left( \begin{array}{c} \bfu_1 \\ \vdots \\ \bfu_{m}  \end{array} \right) \,\,\,\,\,
+\bfeps  = \left( \begin{array}{c} \bfeps_1 \\ \vdots \\ \bfeps_{m}  \end{array} \right) .
+\end{eqnarray*}
+
+We can write the model as follows: $\by ~|~ \bU \sim N(\bX \bbeta + \bZ \bU, \sigma^2 \bI)$ and
+$\bU \sim N(\bzero, \bSigma_U)$. This is marginally equivalent to specifying
+$$
+\by = \bX \bbeta + \bZ \bU + \beps. 
+$$
+Here, the marginal likelihood for $\by$ is normal with mean $\bX \bbeta$ and
+variance $\bZ \bSigma_u \bZ' + \sigma^2 \bI$. Maximum likelihood estimates
+maximize the marginal likelihood via direct numerical maximization or 
+the EM algorithm. Notice, for fixed variance
+components, the estimate of $\bbeta$ is a weighted least squares estimate.
+
+It should be noted the distinction between a mixed effect model and simply
+specifying a marginal variance structure. The same marginal likelihood
+could be obtained via the model:
+$$
+\by = \bX \bbeta + \beps
+$$
+where $\beps \sim N(\bzero, \bZ \bSigma_u \bZ' + \sigma^2 \bI)$. However,
+some differences tend to arise. Often, the natural specification of a marginal
+variance structure doesn't impose positivity constraints that random effects
+do. For example, in the previous section, we saw that the covariance between
+measurements in the same cluster was $\sigma^2_u / (\sigma^2_u + \sigma^2)$,
+which is guaranteed to be positive. However, if fitting a general marginal
+covariance structure, one would typically simply parameterize the covariance
+structure as either positive or negative. 
+
+Another difference lies in the hierarchical model itself. We can actually
+estimate the random effects if we specify them, unlike marginal models.
+This is a key (perhaps ``the'' key) defining attribute of mixed models.
+The Best Linear Unbiased Predictor (BLUP) is given by
+$$
+E[\bU ~|~ \bY]
+$$
+As a homework exercise, derive the general form of the BLUPs.
+
+
+\subsection{Estimation}
+
+Next, we focus on estimation of model parameters. For a given $\bfV$ we can estimate $\bfbet$ using:
+$$
+{\hat \bfbet} = (\bfX'\bfV^{-1}\bfX)^{-1}\bfX'\bfV^{-1}\bfy.
+$$
+However, in practice, $\bfV$ is unknown and needs to be estimated. 
+
+
+Consider re-expressing the model as follows:
+$$
+\bfy = \bfX \bfbet + \bfZ_{(1)} \bfu_1 + \cdots + \bfZ_{(k)} \bfu_k + \bfeps
+$$
+Here we assume each $\bfZ_{(h)}$ is an $n \times r_{h}$ matrix that
+specifies membership in the various clusters or subgroups, and the $\bfu_{h}$ are different random effects.
+Let $E(\bfu) = E(\bfeps) = \zero$, and let us assume 
+$$\var(\bfeps) = \sigma_\epsilon^2 \bfI_{N}$$
+and
+$$\var(\bfu_l) = \sigma_l^2 \bfI_{r_h}.$$
+Here $r_h$ represents the number of elements in $\bfu_h$.
+In addition, $\cov(\bfu_i, \bfu_j) = \zero  \, \, \forall i \ne j$, and $\cov(\bfu, \bfeps) = \zero$.
+
+We summarize the model as follows:
+$$
+\bfy = \bfX \bfbet + \sum_{h=1}^k \bfZ_{(h)} \bfu_{h} + \bfeps
+$$
+where
+$$
+\bfV \equiv  \var(\bfy) =  \sum_{h=1}^k \sigma^2_{h} \bfZ_{(h)} \bfZ_{(h)}' + \sigma_\epsilon^2 \bfI_N. 
+$$
+
+
+A useful extension is to make the following definition:
+\begin{eqnarray*}
+\bfu_0 \equiv \bfeps \hskip1cm
+\bfZ_{(0)} \equiv \bfI_N \hskip1cm
+\sigma^2_0 \equiv \sigma^2_\epsilon 
+\end{eqnarray*}
+We can now write the model:
+$$
+\bfy = \bfX \bfbet + \sum_{h=0}^k \bfZ_{(h)} \bfu_{h} $$
+with
+$$
+\bfV =  \sum_{h=0}^k \sigma^2_{h} \bfZ_{(h)} \bfZ_{(h)}' . 
+$$
+
+
+\subsubsection{Maximum Likelihood}
+After specifying the appropriate model, the next task  is to estimate the fixed effects and variance components. 
+The most common approaches towards estimating the parameters in the covariance matrices is to use maximum likelihood (ML) or restricted maximum likelihood (REML).
+The MLE of $\bfV$ is based on using the marginal model $$\bfy \sim N(\bfX \bfbet, \bfV).$$
+The log-likelihood of $\bfy$ is given by:
+$$
+\ell (\bfbet, \bfV) = -\frac{n}{2}\log(2\pi) -\frac{1}{2}\log| \bfV | -\frac{1}{2} (\bfy - \bfX\bfbet)'�� \bfV^{-1}(\bfy - \bfX\bfbet).
+$$
+By first optimizing over $\bfbet$ for fixed $\bfV$ we obtain the familiar estimate:
+$$
+\hat \bfbet = (\bfX' \bfV^{-1} \bfX)^{-1} \bfX' \bfV^{-1}  \bfy.
+$$
+Next, by plugging this value into $\ell (\bfbet, \bfV)$ we obtain the profile log-likelihood for $\bfV$:
+\begin{eqnarray*}
+\ell_P (\bfV) &=& -\frac{n}{2}\log(2\pi) -\frac{1}{2}\log|\bfV| -\frac{1}{2} (\bfy - \bfX\hat \bfbet)' \bfV^{-1}(\bfy - \bfX \hat \bfbet) \\
+&\propto & -\frac{1}{2}\log|\bfV| -\frac{1}{2} (\bfy'  \bfV^{-1}( \bfI - \bfX(\bfX' \bfV^{-1} \bfX)^{-1} \bfX'\bfV^{-1}) \bfy).
+\end{eqnarray*}
+The MLE for $\bfV$ can be found by maximizing this function.
+
+
+\subsubsection{Restricted Maximum Likelihood}
+Note the MLE estimator for linear mixed effect model is biased and the error on the random effects covariance may be large. 
+In contrast, REML estimates tend to be less biased than the ML estimates. 
+For example, if 
+$y_i \sim_{iid} N(\mu, \sigma^2)$,  REML yields the unbiased variance estimate (divided by $n-1$)
+rather than the biased variance estimate obtained via ML.
+REML estimates are often the default for linear mixed effect model programs. 
+
+The key idea of REML is to perform maximum likelihood estimation for $\bfK \bfy$ rather than $\bfy$, where $\bfK$ is chosen so that the distribution of $\bfK \bfy$ involves only the variance components, not $\bfbet$. 
+For this to occur, we require $\bfK$ to be a full-rank matrix such that $\bfK \bfX = \zero$. 
+In this setting, $E(\bfK \bfy) = \bfK \bfX \bfbet = \zero$. 
+It turns out that $\bfK$ must be of the form 
+\begin{eqnarray*}
+\bfK &=& \bfC (\bfI - \bfH) \\
+&=& \bfC [\bfI -  \bfX(\bfX' \bfX)^{-1} \bfX']
+\end{eqnarray*}
+where $\bfC$ specifies a full-rank transformation of the rows of the projection matrix $\bfI -\bfH$.
+There are an infinite number of such $\bfK$'s, and it does not matter which is used.
+
+Consider the marginal model where $$\bfy \sim N(\bfX \bfbet, \bfV)$$ with
+$$\bfV  =  \sum_{h=0}^k \sigma^2_{h} \bfZ_{(h)} \bfZ_{(h)}' .$$
+Let $\bfK$ be specified as above.
+Then,
+$$
+\bfK \bfy \sim N\bigg(\zero, \bfK \Big(\sum_{h=0}^k \sigma^2_{h} \bfZ_{(h)} \bfZ_{(h)}' \Big) \bfK' \bigg).
+$$
+Thus the distribution of the transformed data $\bfK \bfy$  involves only the $k+1$ variance components as unknown parameters. 
+In order to estimate the variance components, the next step in REML is to maximize the likelihood of $\bfK \bfy$ with respect to these variance components. 
+
+We now develop a set of estimating equations by taking partial derivatives of the log likelihood with respect to the variance components, and setting them equal to zero.
+The log-likelihood can be expressed as follows: 
+\begin{eqnarray*}
+\ell(\sigma^2_0, &\ldots& , \sigma^2_k)\\
+&=&-\frac{n-r}{2}\log (2\pi) -\frac{1}{2}\log |\bfK \bfV \bfK'| -\frac{1}{2} \bfy' \bfK'(\bfK \bfV \bfK')^{-1} \bfK \bfy  \\
+&=& -\frac{n-r}{2}\log (2\pi) -\frac{1}{2}\log |\bfK \Big( \sum_{h=0}^k \sigma^2_{h} \bfZ_{(h)} \bfZ_{(h)}' \Big) \bfK'| \\
+& & \,\,\, -\frac{1}{2} \bfy' \bfK' \bigg[ \bfK \Big(\sum_{h=0}^k \sigma^2_{h} \bfZ_{(h)} \bfZ_{(h)}'\Big) \bfK' \bigg]^{-1} \bfK \bfy  
+\end{eqnarray*}
+
+Using these results, we take the partial derivative of $\ell(\sigma^2_0, \ldots , \sigma^2_k)$ with respect to each of the $\sigma^2_{h}$:
+\begin{eqnarray*}
+&&\frac{\partial}{\partial \sigma^2_h} \ell(\sigma^2_0, \ldots , \sigma^2_k)\\
+&=& -\frac{1}{2} \tr \bigg((\bfK \bfV \bfK')^{-1} \Big[ \frac{\partial}{\partial \sigma^2_{h}} (\bfK \bfV \bfK') \Big] \bigg) \\
+& &  \,\, +\frac{1}{2} \bfy' \bfK'(\bfK \bfV \bfK')^{-1}  \Big[\frac{\partial}{\partial \sigma^2_{h}} (\bfK \bfV \bfK')\Big] (\bfK \bfV \bfK')^{-1} \bfK \bfy\\
+&=& -\frac{1}{2} \tr \bigg((\bfK \bfV \bfK')^{-1} \bfK \bfZ_{(h)} \bfZ_{(h)}' \bfK' )\bigg) \\
+& &  \,\, +\frac{1}{2} \bfy' \bfK'(\bfK \bfV \bfK')^{-1}  \bfK \bfZ_{(h)} \bfZ_{(h)}' \bfK' (\bfK \bfV \bfK')^{-1} \bfK \bfy
+\end{eqnarray*}
+Setting this result equal to zero, we obtain a set of $k+1$ estimating equations for $\sigma^2_0, \ldots \sigma^2_k$ given by
+\begin{eqnarray*}
+& &  \tr \bigg((\bfK \bfV \bfK')^{-1} \bfK \bfZ_{(h)} \bfZ_{(h)}' \bfK' \bigg) \\
+& &  \,\, =  \bfy' \bfK'(\bfK \bfV \bfK')^{-1}  \bfK \bfZ_{(h)} \bfZ_{(h)}' \bfK' (\bfK \bfV \bfK')^{-1} \bfK \bfy
+\end{eqnarray*}
+Note, the expected value of the quadratic form on the right side is given by the left side of the equation.
+In certain special cases these equations can be simplified to yield closed-form estimating equations. 
+However, in most cases, numerical methods are required to solve the equations.
+
+An alternative way to derive the REML estimates is using a Bayesian formulation. 
+Consider a  model where $$\bfy ~|~\bfbet \sim N(\bfX \bfbet, \bfZ \Sigma_u \bfZ' +\sigma^2 \bfI)$$ 
+and $\bfbet \sim N(0, \theta \bfI)$. 
+Calculating the mode for $\Sigma_u$ and $\sigma^2$
+after integrating out $\bfbet$ as $\theta \rightarrow \infty$ results in the REML estimates.
+While this is not terribly useful for general linear mixed effect modeling, it helps us think about REML as it relates to Bayesian analysis and it allows us to extend REML in settings
+where residuals are less well defined, like generalized linear mixed models.
+
+
+\subsubsection{Inference for $\bfbet$}
+Estimates of the variance components can be inserted into $\bfV$ to obtain:
+$$\hat \bfV  =  \sum_{h=0}^k \hat \sigma^2_h \bfZ_{(h)} \bfZ_{(h)}' .$$
+We can use this to estimate:
+$$
+\hat \bfbet = (\bfX' {\hat \bfV}^{-1} \bfX)^{-1} \bfX' {\hat \bfV}^{-1} \bfy. 
+$$
+This is sometimes called the estimated generalized least-squares.
+An approximate estimate of the variance-covariance matrix for $\hat \bfbet$ is
+$$\cov (\hat \bfbet)  =   (\bfX' {\hat \bfV}^{-1} \bfX)^{-1} .$$
+Note this ignores the variability due to the estimation of $\bfV$.
+For large samples this extra variability is negligible, but it can be substantial for smaller samples.
+If the sample size is small it can be preferable to use the parametric bootstrap methods to approximate the distribution of the test statistics.
+
+\subsubsection{Likelihood Ratio Tests}
+We can compare two nested models $m_0$ and $m_1$ using the likelihood ratio test statistic:
+$$
+-2 \log(LR(\bfy)) = -2(\ell(\hat \bfbet_0, \hat \bfV_0 | \bfy ) - \ell(\hat \bfbet_1, \hat \bfV_1 | \bfy )), 
+$$
+where $\hat \bfbet_0$, $\hat \bfV_0$  and $\hat \bfbet_1$, $\hat \bfV_1$ are the estimates for the parameters under the two models. 
+This test statistics is asymptotically distributed as a $\chi^2$ with degrees of freedom equal to the difference in number of parameters between the two models. 
+If the models differ in their fixed effects, it is not possible to use REML estimates in the likelihood ratio statistics.
+REML estimates the random effects by considering linear combinations of the data that remove the fixed effects and therefore the two likelihood functions are not comparable. 
+Note this asymptotic result is based on some technical assumptions that are not always satisfied in practice. 
+In particular, the parameters under the null model cannot lie on the boundary of the parameter space. 
+This is a problem for testing variance components, which are constrained to be positive (or positive definite), when the null hypothesis is they are equal to zero. 
+
+
+\subsubsection{Testing Variance Components}
+Consider the model:
+ $$
+y_{ij} = \beta_0 + u_i + \beta_1 x_{ij} + \epsilon_{ij}.
+$$
+where $u_i \sim_{iid} N(0, \sigma^2_u)$ and $\epsilon_{ij} \sim_{iid} N(0, \sigma^2_\epsilon)$.
+Suppose we want to test whether the intercepts of the individuals $i$ are significantly different from one another.
+This is equivalent to testing 
+$$H_0: \sigma^2_u = 0 \,\,\,\, versus \,\,\,\, H_a : \sigma^2_u > 0.$$
+Under certain independence assumptions, the asymptotic distribution when $H_0$ is true implies that there is a $50\%$ chance that $\hat \sigma^2_u=0$. 
+This leads to the following approximate result:
+$$
+-2 \log(LR(\bfy)) \sim 0.5 \chi^2_0 + 0.5 \chi^2_1
+$$
+where $\chi^2_0$ is a point mass at $0$.
+This results assumes that $\bfy$ can be partitioned into subvectors that are independent.
+This assumption does not necessarily hold for all mixed models.
+The asymptotic distribution for general mixed models is more difficult.
+
+
+%Let $\bH_X$ be the hat matrix for $\bX$. Then note that
+%$$
+%\be=(\bI - \bH_X) \bY = (\bI - \bH_X) \bZ \bU + (\bI - \bH_X) \beps
+%$$
+%Then, we can calculate the marginal distribution for $\beps$ as
+%singular normal with mean $(\bI - \bH_X) \bZ \bSigma_U \bZ^t (\bI - \bH_X) + \sigma^2 (\bI - \bH_X)$. 
+%Taking any full rank sub-vector of the $\beps$ and maximizing the marginal likelihood
+%for $\bSigma_U$ and $\sigma^2$ is called restricted maximum likelihood (REML). 
+%REML estimates tend to be less biased than the ML estimates. For example, if 
+%$y_i \sim_{iid} N(\mu, \sigma^2)$, maximizing the likelihood for 
+%any $n-1$ of the $e_i = y_i - \bar y$ yields the unbiased variance estimate (divided by $n-1$)
+%rather than the biased variance estimate obtained via maximum likelihood.
+%REML estimates are often the default for linear mixed effect model programs. 
+%
+%An alternative way to derive the REML estimates is via Bayesian thinking. Consider a 
+%model where $\bY ~|~\bbeta \sim N(\bX \bbeta, \bZ \bSigma_u \bZ^t +\sigma^2 \bI)$ 
+%and $\bbeta \sim N(0, \theta \bI)$. Calculating the mode for $\bSigma_u$ and $\sigma^2$
+%after having integrated out $\bbeta$ as $\theta \rightarrow \infty$ results in the REML estimates.
+%While this is not terribly useful for general linear mixed effect modeling, it helps us think
+%about REML as it relates to Bayesian analysis and it allows us to extend REML in settings
+%where residuals are less well defined, like generalized linear mixed models.
+
+
+\subsection{Prediction}
+
+Consider generally trying to predict $U$ from observed data $Y$. 
+Let $f_{uy}$, $f_u$, $f_y$, $f_{u|y}$ and $f_{y|u}$ be the
+joint, marginal and conditional densities respectively. Let
+$\theta(Y)$ be our estimator of $U$. Consider
+evaluating the prediction error via the expected squared loss
+$$
+E[(U -\theta(Y))^2]
+$$
+We now show that this is  minimized at $\theta(Y) = E[U ~|~ Y]$. 
+Note that
+\begin{align*}
+&E[(u -\theta(y))^2] \\ 
+&\,\, = E[(u - E[u | y] + E[u | y] - \theta(y))^2] \\
+&\,\, = E[(u - E[u | y])^2] - 2 E[(u - E[u | y]) (E[u | y] - \theta(y))] \\
+&\,\ \, \, \, \, + E[(E[u | y] - \theta(y))^2] \\
+&\,\ = E[(u - E[u | y])^2] + E[(E[u | y] - \theta(y))^2] \\
+&\,\  \geq E[(u - E[u | y])^2].
+\end{align*}
+Here note that $E(E[(u - E[u | y]) (E[u | y] - \theta(y))] |y) = 0$.
+
+This argument should seem familiar. (In fact, Hilbert space results generalize these
+kinds of arguments into one theorem.) Therefore, $E[U~|~Y]$ is the best
+predictor. Note, that it is always the best predictor, regardless of the settting.
+Furthermore, in the context of linear models, this predictor is both linear (in $\bY$)
+and unbiased. We mean unbiased in the sense of:
+$$
+E[ U - E[U ~|~ Y]] = 0.
+$$
+Therefore, even in the more restricted class of linear estimators, in the
+case of mixed models, $E[U ~|~ Y]$ remains best. 
+
+A complication arises in that we do not know the variance components. As
+that is the case, we must plug in the estimates (either REML or ML). 
+The BLUPs lose their optimality properties then and are thus often called
+EBLUPs (for empirical BLUPs). 
+
+Prediction of this sort relates to so-called empirical Bayesian prediction 
+and shrinkage estimation. In your more advanced classes on decision theory,
+you'll learn about loss functions and uniform desirability of shrinkage
+estimators over the straightforward estimators. (In our case the straightforward
+estimator is the one that treats the random
+effects as if fixed.) This line of thinking yields yet another use for random effect models, where
+we might apply them merely for the benefits of shrinkage,
+but don't actually think of our random effects as if random. Consider
+settings like genomics. The genes being studied are exactly the quantities
+of interest, not a random sample from a population of genes. However, it
+remains useful to treat effects associated with genes as if random to 
+obtain the benefits of shrinkage.
+
+
+% \subsection{P-splines}
+
+\subsection{Regression splines}
+The application to splines has been a very successful, relatively new, use of 
+mixed models. To discuss the methodology, we need to introduce splines briefly.
+We will only overview this area and focus on regression splines, while acknowledging
+that other spline bases may be preferable. 
+
+Let $(a)_+ = a$ if $a > 0$ and $0$ otherwise. Let $\xi$ be a known
+knot location. Now consider the model:
+$$
+E[y_i] = \beta_0 + \beta_1 x_i + \gamma_1 (x_i - \xi)_+.
+$$
+For $x_i$ values less than or equal to $\xi$, we have 
+$$
+E[y_i] = \beta_0 + \beta_1 x_i
+$$
+and for $x_i$ values above $\xi$ we have
+$$
+E[y_i] = (\beta_0 + \gamma_1 xi) + (\beta_1 + \gamma_1) x_i.
+$$
+Thus, the response function $f(x) = \beta_0 = \beta_1 x + \gamma_1 (x - \xi)_+$
+is continuous at $\xi$ and is a line before and after. This allows us to create
+"hockey stick" models, with a line below $\xi$ and a line with a different slope
+afterwards. Furthermore, we could expand the model as 
+$$
+E[y_i] = \beta_0 + \beta_1 x_i + \sum_{k=1}^K \gamma_k (x_i - \xi_k)_+.
+$$
+where $\xi_k$ are knot points. Not the model is a spiky, but flexible, 
+function that is linear between the knots and meets at the knots.
+
+To make the fit less spiky, we want continuous differentiability at the knot
+points. First note that the function $(x)_+^p$ has $p-1$ continuous derivatives at 0. 
+To see this, take the limit to zero 
+of the derivatives from the right and the left. Thus, the function
+$$
+f(x) = \beta_0 + \beta_1 x + \beta_2 x^2 + \sum_{k=1}^K \gamma_k (x_i - \xi_k)_+^2
+$$
+will consist of parabolas between the knot points and
+will have one continuous derivative at the knot points. This will fit 
+a smooth function that can accommodate a wide variety of data shapes. 
+
+
+\subsection{Coding example}
+\begin{verbatim}
+> library(SemiPar)
+> library(lme4)
+> library(ggplot2)
+> data(pig.weights)
+
+> ggplot(pig.weights, aes(x = num.weeks, y = weight, group = id.num)) + 
+  geom_point() + geom_path() +
+  labs(x = "Week", y = "Weight")
+  
+> pig.mixed = lmer(weight ~ (1 | id.num) + num.weeks, data = pig.weights)
+> summary(pig.mixed)
+
+> pig.weights$pig.mixed.fit = fitted(pig.mixed)
+> ggplot(pig.weights, aes(x = num.weeks, y = weight, group = id.num)) + 
+  geom_point() + geom_path(alpha = .2) +
+  labs(x = "Week", y = "Weight") +  
+  geom_line(aes(y = pig.mixed.fit), color = "blue", alpha = .5)
+
+\end{verbatim}
+
+

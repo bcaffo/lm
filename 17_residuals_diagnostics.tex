@@ -1,0 +1,311 @@
+\section{Residuals and diagnostics}
+
+Now with some distributional results under our belt, we can discuss distributional
+properties of the residuals. Note that, as a non-full rank linear transformation of
+normals, the residuals are singular normal. When $\by \sim N(\bX \bbeta, \sigma^2 \bI)$, the mean of the residuals is $\bzero$, variance of the residuals is given by
+$$
+\Var(\be) = \Var\{(\bI - \bH_\bX)\by\} = \sigma^2 (\bI - \bH_\bX).
+$$
+As a consequence, we see that the diagonal elements of $\bI - \bH_\bX \geq 0$
+and thus the diagonal elements of $\bH_\bX$ must be less than one. (A fact that
+we'll use later). In addition, we see that although the errors may have equal variance and be uncorrelated the residuals do not.
+
+
+\subsection{The hat matrix}
+
+Let us study the hat matrix $$\bfH = \bfX (\bfX'\bfX)^{-1} \bfX'$$ in more detail.
+Recall it is symmetric and idempotent.
+In the continuation we write the $(i,j)^{th}$ element of $\bfH$ as $h_{ij}$.
+
+
+Since $\mathrm{rank}(\bfH) = \mathrm{trace}(\bfH),$ it follows that
+$\ \sum h_{ii} = \tilde{p}$.
+If we assume there is an intercept in the model, then $\ \bfH \bfJ_n =
+\bfJ_n,\ $ and hence $\ \sum_i h_{ij} = \sum_j h_{ij} = 1$.
+
+\btheo
+Assume we have an intercept in the model.  Let ${\cal X}$ be the $n
+\times (p-1)$ mean-centered design matrix (without the intercept term).
+Let $\ ({\cal X}'{\cal X})_{jk} =
+\sum_i(x_{ij}-\bar{x}_j) (x_{ik}-\bar{x}_k)$, and redefine $\bfx_i'$
+to be the $i$th row of $\bfX$ without the one for the intercept. Then
+the following holds: 
+\begin{itemize}
+\item[(a)] 
+$h_{ii} = \frac{1}{n} + (\bfx_i - \bar{\bfx})' ({\cal X}'{\cal
+X})^{-1} (\bfx_i - \bar{\bfx}).\ $ This means in particular that each
+$h_{ii}$ is bounded below by $\frac{1}{n}.$
+\item[(b)] 
+Let $r_i$ be the number of rows of $\bfX$ that are identical to its
+$i$th row. Then $\ h_{ii} \leq \frac{1}{r_i}.$
+\end{itemize}
+\etheo
+
+Note, as $n$ increases $h_{ii}$ tends to decrease.
+The term $(\bfx_i - \bar{\bfx})' ({\cal X}'{\cal X})^{-1} (\bfx_i - \bar{\bfx})$ corresponds to a corresponds to a Mahalanobis distance, roughly estimating the distance between $\bfx_i$ and  $\bar{\bfx}$.
+
+
+
+
+\bsexa
+Consider the case of simple linear regression.
+Here ${\cal X} = (x_1, x_2, \dots x_n)'$.
+Then, 
+$$\ h_{ii} = \frac{1}{n} + \frac{(x_i-\bar{x})^2}{\sum_k(x_k-\bar{x})^2}\ $$ 
+Note $h_{ii} = \frac{1}{n}$ if and only if $x_i = \bar{x}$.
+\eexa
+
+\subsection{Studentized Residuals}
+
+It is important to note that the variance of the residuals is not constant, as
+$$
+Var(e_i) = \sigma^2(1-h_{ii}).
+$$ 
+Since $h_{ii} \le 1$, the variance will be small if $h_{ii}$ is close to $1$.
+In general, this will be true if the observation lies far away from the mean.
+This can be problematic, as the model is less likely to hold for these observations.
+
+Another problem with the residuals is that they have the units of $\by$ and thus are
+not comparable across experiments. Taking 
+$$r_i = \frac{e_i}{s\sqrt{1-h_{ii}}}$$ 
+i.e., standardizing the residuals by their estimated standard deviation, solves these problems. However, the resulting quantities are not comparable to
+$t$-statistics since the numerator elements (the residuals) are not independent of $s^2$.
+The residuals standardized in this way are called ``studentized'' residuals. 
+Studentized residuals are a standard part of most statistical software.
+
+\subsection{Coding example}
+\begin{verbatim}
+> data(mtcars)
+> y = mtcars$mpg
+> x = cbind(1, mtcars$hp, mtcars$wt)
+> n = nrow(x); p = ncol(x)
+> hatmat =  x %*% solve(t(x) %*% x) %*% t(x)
+> residmat =  diag(rep(1, n)) - hatmat
+> e = residmat %*% y
+> s = sqrt(sum(e^2) / (n - p))
+> rstd = e / s / sqrt(diag(residmat))
+> # compare with rstandard, r's function
+> # for calculating standarized residuals
+> cbind(rstd, rstandard(lm(y ~ x - 1)))
+          [,1]        [,2]
+1  -1.01458647 -1.01458647
+2  -0.62332752 -0.62332752
+3  -0.98475880 -0.98475880
+4   0.05332850  0.05332850
+5   0.14644776  0.14644776
+6  -0.94769800 -0.94769800
+...
+\end{verbatim}
+
+\subsection{PRESS residuals}
+\label{sec:press}
+
+Consider the model $\by \sim N(\bW \bgamma, \sigma^2 \bI)$
+where $\gamma = [\bbeta' ~ \Delta_i]$, 
+$\bW = [\bX ~ \bdelta_i]$ where $\bdelta_i$ is a vector of all zeros
+except a 1 for row $i$. This model has a shift in position $i$, for 
+example if there is an outlier at that position. This is called the mean-shift outlier model.
+The least squares criterion can be written as
+\begin{equation}
+\label{rstud}
+\sum_{k\neq i} \left(y_k - \sum_{j = 1}^p x_{kj} \beta_j \right)^2
++ \left(y_i - \sum_{j=1}^p x_{ij} \beta_j - \Delta_i\right)^2.
+\end{equation}
+Consider holding $\bbeta$ fixed, then we get that the estimate of
+$\Delta_i$ must satisfy
+$$
+\Delta_i = y_i - \sum_{j=1}^p x_{ij} \beta_j
+$$
+and thus the right hand term of \eqref{rstud} is 0. Then we obtain $\bbeta$ by minimizing
+$$
+\sum_{k\neq i} \left(y_k - \sum_{j = 1}^p x_{kj} \beta_j \right)^2.
+$$
+Therefore $\hat \bbeta$ is exactly the least squares estimate having
+deleted the $i^{th}$ data point; notationally, $\hat\bbeta_{(i)}$. Thus, $\hat \delta_i$ 
+is a form of residual obtained when deleting
+the $i^{th}$ point from the fitting then comparing it to the fitted value, 
+$$	
+\hat \Delta_i = y_i - \sum_{j=1}^p x_{ij} \hat \beta_{(i),j}.
+$$
+Notice that the fitted value at the $i^{th}$ data point is then 
+$\sum_{j=1}^p x_{ij} \hat \beta_{(i),j} + \hat \Delta_i = \ y_i$ and thus
+the residual is zero. The term $\hat \Delta_i$ is called the PRESS residual, the
+difference between the observed value and the fitted value with that point deleted.
+
+Since the residual at the $i^{th}$ data point is zero, the estimated variance from
+this model is exactly equal to the variance estimate having removed the
+$i^{th}$ data point. The $t$ test for $\delta_i$ is then a form of 
+standardized residual, that exactly follows a $t$-distribution under the null
+hypothesis that $\delta_i = 0$. 
+
+\subsection{Computing PRESS residuals}
+
+It is interesting to note that PRESS residuals don't actually require recalculating the
+model with the $i^{th}$ datapoint deleted. Let $\bX' = [\bz_1 ~ \ldots ~ \bz_n]$
+so that $\bz_i$ is the $i^{th}$ row of the matrix $\bz$ (hence column $i$ of $\bz'$). 
+We use $\bz$ for the rows, since we've already reserved $\bx$ for the columns of $\bX$. 
+Notice, then that 
+$$
+\bfX' \bfX = \sum_{i=1}^n \bz_i \bz_i'.
+$$
+Thus, $\bfX_{(i)}' \bfX_{(i)}$, the x transpose x matrix with the $i^{th}$ data
+point deleted is simply
+$$
+\bX_{(i)}' \bX_{(i)} = \bX' \bX - \bz_i \bz_i'.
+$$
+We can appeal to the Sherman, Morrison, Woodbury theorem for the inverse
+$$
+(\bX_{(i)}' \bX_{(i)})^{-1}
+= (\bfX' \bfX)^{-1} + \frac{(\bfX' \bfX)^{-1} \bz_i \bz_i' (\bfX' \bfX)^{-1}}{1 - \bz_i' (\bfX' \bfX)^{-1} \bz_i}
+$$
+Define $h_{ii}$ as diagonal element $i$ of $\bfX (\bfX' \bfX)^{-1} \bfX'$ which is equal to
+$\bz_i' (\bfX' \bfX)^{-1} \bz_i$. (To see this, pre and post multiply this matrix by a 
+vector of zeros with a one in the position $i$, an operation which grabs the $i^{th}$ diagonal entry.)
+Furthermore, note that $\bX' \by = \sum_{i=1}^n \bz_i y_i$ so that
+$$
+\bX_{(i)}' \by_{(i)} = \bX' \by - \bz_i y_i.
+$$
+Then we have that the predicted value for the $i^{th}$ data point where it was not used in the fitting is:
+\begin{eqnarray*}
+\hat y_{(i),i} & = & \bz_i' (\bX_{(i)}' \bX_{(i)})^{-1} \bX_{(i)}' \by_{(i)}\\
+& = & \bz_i' \left((\bfX' \bfX)^{-1} + \frac{(\bfX' \bfX)^{-1} \bz_i \bz_i' (\bfX' \bfX)^{-1}}{1 - h_{ii}} \right)(\bX' \by - \bz_i y_i) \\
+& = & \hat y_i + \frac{h_{ii}}{1 - h_{ii}} \hat y_i - h_{ii} y_i - \frac{h_{ii}^2 y_i}{1 - h_{ii}} \\
+& = & \frac{\hat y_i}{1 - h_{ii}} + y_i - \frac{y_i}{1 - h_{ii}}
+\end{eqnarray*}
+So that we wind up with the equality: 
+$$
+y_i - \hat y_{(i), i} = \frac{y_i - \hat y_i}{1 - h_{ii}} = \frac{e_i}{1 - h_{ii}}
+$$
+In other words, the PRESS residuals are exactly the ordinary residuals divided by $1 - h_{ii}$. 
+
+\subsection{Externally studentized residuals}
+It's often useful to have standardized residuals where a data point in question didn't
+influence the residual variance. The normalized
+PRESS residuals are, as seen in \ref{sec:press}.  However, the PRESS residuals are 
+leave one out residuals, and thus the $i^{th}$ point was deleted for the fitted value. An alternative
+strategy is to normalize the ordinary residuals by dividing by a standard deviation estimate
+calculated with the $i^{th}$ data point deleted. That is,
+$$
+\frac{e_i}{s_{(i)}\sqrt{1 - h_{ii}}}.
+$$
+In this statistic, observation $i$ hasn't had the opportunity to impact the variance estimate.
+Note the internally and externally studentized residuals are monotonically
+related through
+$$t_i = r_i \sqrt{\frac{n-p-1}{n-p-r_i^2}}.$$
+
+Given that the PRESS residuals are $\frac{e_i}{1 - h_{ii}}$, their variance is
+$\sigma^2 / \sqrt{1 - h_{ii}}$. Then we have that the press residuals normalized (divided
+by their standard deviations) are 
+$$
+\frac{e_i}{\sigma \sqrt{1 - h_{ii}}}
+$$
+If we use the natural variance estimate for the PRESS residuals, the estimated variance calculated with
+the $i^{th}$ data point deleted, then the normalized PRESS residuals are the same as the
+externally standardized residuals. As we know from above, these also arise out of the $t$-test for the
+mean shift outlier model from Section \ref{sec:press}. 
+
+\subsection{Coding example}
+First let's use the \texttt{swiss} dataset to show how to calculate
+the ordinary residuals and show that they are the same as those
+output by \texttt{resid}.
+\begin{verbatim}
+> y = swiss$Fertility
+> x = cbind(1, as.matrix(swiss[,-1]))
+> n = nrow(x); p = ncol(x)
+> hatmat = x %*% solve(t(x) %*% x) %*% t(x)
+> ## ordinary residuals
+> e = (diag(rep(1, n)) - hatmat) %*% y
+> fit = lm(y ~ x)
+> ## show that they're equal by taking the max absolute difference
+> max(abs(e - resid(fit)))
+[1] 4.058975e-12
+\end{verbatim}
+Next, we calculate the standardized residuals and show how to get
+them automatically with \texttt{rstandard}.
+\begin{verbatim}
+> ## standardized residuals
+> s = sqrt(sum(e ^ 2) / (n - p))
+> rstd = e / s / sqrt(1 - diag(hatmat))
+> ## show that they're equal by taking the max absolute difference
+> max(abs(rstd - rstandard(fit)))
+[1] 6.638023e-13
+\end{verbatim}
+Next, let's calculate the PRESS residuals both by
+leaving out the $i^{th}$ observation (in this case observation 6)
+and by the shortcut formula.
+\begin{verbatim}
+> i = 6
+> yi = y[i]
+> yihat = predict(fit)[i]
+> hii = diag(hatmat)[i]
+> ## fitted model without the ith data point
+> y.minus.i = y[-i]
+> x.minus.i = x[-i,]
+> beta.minus.i = solve(t(x.minus.i) %*% (x.minus.i)) %*% t(x.minus.i) %*% y.minus.i
+> yhat.i.minus.i = sum(x[i,] * beta.minus.i)
+> pressi = yi - yhat.i.minus.i
+> c(pressi, e[i] / (1 - hii))
+           Porrentruy 
+ -17.96269  -17.96269 
+\end{verbatim}
+Now show that the \texttt{rstudent} (externally studentized) residuals and normalized
+PRESS residuals are the same.
+\begin{verbatim}
+> ## variance estimate with i deleted
+> e.minus.i = y.minus.i - x.minus.i %*% beta.minus.i
+> s.minus.i = sqrt(sum(e.minus.i ^ 2) / (n - p  - 1))
+> ## show that the studentized residual is the PRESS residual standardized
+> ei / s.minus.i / sqrt(1 - hii)
+Porrentruy 
+ -2.367218 
+> rstudent(fit)[i]
+        6 
+-2.367218 
+\end{verbatim}
+Finally, show that the mean shift outlier model residuals give the PRESS and
+the rstudent residuals.
+\begin{verbatim}
+> delta = rep(0, n); delta[i] = 1
+> w = cbind(x, delta)
+> round(summary(lm(y ~ w - 1))$coef, 3)
+                  Estimate Std. Error t value Pr(>|t|)
+w                   65.456     10.170   6.436    0.000
+wAgriculture        -0.210      0.069  -3.067    0.004
+wExamination        -0.323      0.242  -1.332    0.190
+wEducation          -0.895      0.174  -5.149    0.000
+wCatholic            0.113      0.034   3.351    0.002
+wInfant.Mortality    1.316      0.376   3.502    0.001
+wdelta             -17.963      7.588  -2.367    0.023
+\end{verbatim}
+So notice that the the estimate for \texttt{wdelta} is the PRESS residual
+while the \texttt{t value} is the externally studentized residual.
+
+\subsection{Leverage}
+
+ The term $h_{ii}$ from the hat matrix is called the leverage of the $i^{th}$ observation. The leverage of a observation measures its ability to move the regression model all by itself by simply moving in the $y$-direction. The leverage measures the amount by which the predicted value would change if the observation was shifted one unit in the $y$-direction.
+The leverage is always between $0$ and $1$.
+A point with close to zero leverage has little effect on the regression model.
+If a point has leverage equal to $1$ the line must follow the observation perfectly. 
+The $h_{ii}$ depends only on $\bfX$, though a knowledge of $\bfy$ is required for a full interpretation.
+
+
+\subsubsection{Cook's Distance}
+
+Cook’s distance measures the aggregate influence of the $i^{th}$ value on all $n$ fitted values.
+It is defined by
+$$ 
+D_i = 
+\frac{(\hat{\bfbet}_{(i)}-\hat{\bfbet})' \bfX'\bfX
+(\hat{\bfbet}_{(i)}-\hat{\bfbet})}{\tilde{p}\hat{\sigma}^2} = 
+\frac{(\hat{\bfY}_{(i)}-\hat{\bfY})' 
+(\hat{\bfY}_{(i)}-\hat{\bfY})}{\tilde{p}\hat{\sigma}^2},
+$$ 
+where $\hat{\bfbet}_{(i)}$ are the parameter estimates obtained after
+deleting observation $i$, and $\hat{\bfY}_{(i)}$ are the corresponding
+fitted values.
+
+An alternative expression for the Cook's distance is  $\ D_i =
+\frac{r_i^2}{p} 
+\left(\frac{h_{ii}}{1-h_{ii}}\right).$
+The value of $D_i$ depends on two functions, the size of the residuals $e_i$ and the leverage value $h_{ii}$. Hence, an observation can be influential by having a large residual and/or a large leverage.
+Typically, points with $D_i$ greater than $1$ are classified as influential.

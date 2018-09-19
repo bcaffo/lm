@@ -1,0 +1,141 @@
+\section{Bases}
+
+
+Recall that any set of linearly independent vectors forms a basis,
+specifically for the space spanned by linear combinations. Therefore,
+least squares is projecting our data into the space created by
+the basis defined by the columns of our design matrix. Of note,
+certain bases are of particular importance as the spaces that
+they create are contextually meaningful for many scientific
+problems. The most notable example are Fourier bases. In this
+case, we project our data into the space spanned by harmonic
+functions. In problem where the study of periodicities is 
+of interest, this is of tremendous use.
+
+\subsection{Introduction to full rank bases}
+
+
+When our $\bX$ matrix is $n\times n$ of rank $n$, then the least squares
+fitted values $\bX (\bX' \bX)^{-1} \bX' \by = \bX \bbeta = \hat \by$ is simply a linear reorganization
+of $\by$ as it's projecting it from $\mathbb{R}^n$ to $\mathbb{R}^n$. 
+Despite not summarizing $\by$ in any meaningful way, this is often
+a very meaningful thing to do, particularly when the basis is orthonormal.
+This full rank linear transformation of $\by$ is simply called a 
+``transform''. Notable bases then get named as their name then ``transform''. 
+The best examples include the Fourier transform and the Wavelet transform.
+Often, because we're applying the transform to vectors with discrete
+indices, rather than continuous functions, the label ``discrete'' is
+affixed, such as the discrete Fourier transform. Looking back to
+our Hilbert space discussion from earlier the extension to continuous
+spaces is conceptually straightforward. 
+
+Let $\bX = [\bx_1 ~ \ldots ~ \bx_n]$ be our basis so that 
+$\xtx = I$. In this case note that 
+$$
+\hat \bbeta
+= \bX' \by 
+= 
+\left(
+\begin{array}{c}
+ \ip{\bx_1}{\by} \\
+ \vdots \\
+ \ip{\bx_n}{\by}
+\end{array}
+\right).
+$$
+Thus, our coefficients are exactly the inner products of the basis elements (columns of $\bX$) and the outcome. Our fitted values are
+$$
+\hat \by = \bX \hat \bbeta = \sum_{i=1}^n \bx_i \ip{\bx_i}{\by}.
+$$
+Consider deleting columns from $\bX$, say 
+$$
+\bW = [\bx_{i_1} \ldots \bx_{i_p}]
+$$
+and minimizing $||\by - \bW \bgamma||^2$. Since $\bW$ is also orthonormal (but not full rank) we get that 
+$$
+\hat \bgamma = \sum_{j=1}^p \ip{\bx_{i_j}}{\by} ~~~
+\mbox{and} ~~~
+\hat \by = \sum_{j=1}^p \bx_{i_j} \ip{\bx_{i_j}}{\by}
+=  \sum_{j=1}^p \bx_{i_j} \beta_{i_j}.
+$$
+That is, the coefficients from the model with columns removed are identical
+to the coefficients from the full model. Transforms are often then
+accomplished by getting the full transform and using a subset of the 
+coefficients to get the fitted values. 
+
+
+\subsection{Principal component bases}
+
+
+One orthonormal basis is always at our disposal, the principal component basis. 
+Consider the case where $\bX$ has $p > n$ columns of full row rank.
+Let $\bX = \bU \bD \bV'$ be the singular value decomposition of $\bX$ so
+that $\bU$ is $n \times n$, so that, $\bU' \bU = \bI$ and $\bV'$
+is $n\times p$ so that $\bV' \bV = \bI$ and $\bD$ is diagonal containing
+$n$ singular values. The matrix $\bU$ is a full rank version of the
+column space of $\bX$. Notice that minimizing
+$$
+||\by - \bX \bbeta||^2
+$$
+has $n$ equations and $p>n$ unknowns and that
+$$
+||\by - \bX \bbeta||^2
+= 
+||\by -  \bU \bD \bV' \bbeta||^2
+$$
+So that by defining $\bgamma = \bD \bV' \bbeta$ and minimizing 
+$$
+||\by -  \bU \bgamma||^2.
+$$
+we have a full rank design matrix created out of the columns of $\bX$ since
+$\bU = \bX \bV \bD^{-1}$. 
+The fitted values are merely $\bU' \by$.
+
+Note, if $\bX$ has been centered, then 
+$$
+\frac{1}{n-1} \bX' \bX = \frac{1}{n-1} \bV \bD^2 \bV'
+$$
+is the covariance matrix between the columns of $\bX$. Furthermore,
+notice that the total variability represented by the trace of the covariance
+matrix is, 
+$$\frac{1}{n-1} \mbox{tr}(\bX' \bX)
+= \frac{1}{n-1} \mbox{tr}(\bV \bD^2 \bV')
+=\frac{1}{n-1} \mbox{tr}(\bD^2 \bV' \bV)
+= \frac{1}{n-1} \mbox{tr}(\bD^2)
+$$
+The sum of the squared singular values equals the total variability in the
+design matrix. 
+The singular
+vectors and values are typically ordered in the terms of decreasing
+variability. Therefore, keeping only a few of them represents a dimension
+reduction that preserves the greatest amount of variability.
+
+Thus, we once one calculates $\bU' \bY$ we have all possible submodel
+fits of the columns of $\bU$, where $\bU$ is an meaningful summary
+of $\bX$. Typically one takes a few of the first columns of $\bU$
+so that the related eigenvalues explain a large proportion of the
+total variability. We haven't discussed an intercept. However, 
+one usually mean centers $\bY$ and $\bX$ first.
+
+
+\subsection{Coding example}
+
+The following code goes through calculation of SVD and eigenvalue 
+decompositions.
+
+\begin{verbatim}
+data(swiss)
+y = swiss$Fertility
+x = as.matrix(swiss[,-1])
+n = nrow(x)
+decomp = princomp(x, cor = TRUE)
+plot(cumsum(decomp$sdev^2) / sum(decomp$sdev^2), type = "l")
+decomp2 = eigen(cor(x))
+xnorm = apply(x, 2, function(z) (z - mean(z)) / sd(z))
+decomp3 = svd(xnorm)
+round(rbind(decomp2$vectors, decomp$loadings, decomp3$v),3)
+round(rbind(decomp2$values, decomp$sdev^2, decomp3$d ^ 2 / (n - 1)), 3)
+plot(decomp3$u[,1], decomp$scores[,1])
+plot(decomp3$u[,1], xnorm %*% decomp2$vectors %*% diag(1 / sqrt(decomp2$values))[,1])
+\end{verbatim}
+

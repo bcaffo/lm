@@ -1,0 +1,467 @@
+\section{Effects of Departures from Assumptions}
+
+\subsection{Under and overfitting}
+
+In linear models, we can characterize different forms of model misspecification. For this chapter consider the following: \\ \ \\
+\noindent
+Model 1: $\by = \bX_1 \bbeta_1 + \beps$ \\ \ \\ 
+\noindent
+Model 2: $\by = \bX_1 \bbeta_1 + \bX_2 \bbeta_2 + \beps$ \\ \ \\
+where the $\beps$ are assumed iid normals with variance $\sigma^2$. 
+We further differentiate between the assumed model and the true model. 
+If we assume Model 1 and Model 2 is true, we have underfit the model (i.e., omitted variables that were necessary). 
+In contrast, if we assume Model 2 and Model 1 is true, we have overfit the model (i.e., included variables that were
+unnecessary). 
+
+\subsubsection{Impact of underfitting}
+Let us begin by considering underfitting the model. That is we errantly act as if Model 1 is true, but in fact Model 2 is true.
+Such a situation would arise if there were unmeasured or unknown confounders. Then consider the
+bias of our estimate of $\bbeta_1$. 
+\begin{eqnarray*}
+E[\hat \bbeta_1] &=& E[(\bX_1' \bX_1)^{-1} \bX_1' \by]\\
+&=& (\bX_1' \bX_1)^{-1} \bX_1' (\bX_1 \bbeta_1 + \bX_2 \bbeta_2)\\
+&=& \bbeta_1 + (\bX_1' \bX_1)^{-1} \bX_1' \bX_2 \bbeta_2.
+\end{eqnarray*}
+
+Thus, $(\bX_1' \bX_1)^{-1} \bX_1' \bX_2 \bbeta_2$ is the bias in estimating $\bbeta_1$. Notice
+that there is no bias if $\bX_1' \bX_2 = \bzero$. Consider the case where both design matrices
+are centered. Then $\frac{1}{n-1}\bX_1' \bX_2$ is the empirical 
+variance/covariance matrix between the columns of $\bX_1$ and $\bX_2$. Thus, if our omitted
+variables are uncorrelated with our included variables, then no bias exists. One way
+to try to force this in practice is to randomize the levels of the variables in $\bX_1$.
+Then, the empirical correlation will be low with high probability. This is very commonly
+done when $\bX_1$ contains only a single treatment indicator.
+
+
+
+\bexa
+Suppose we fit $$\bfy=\beta_0+\beta_1\bfx +\bfeps,$$ when the true model is $$\bfy = \beta_0 + \beta_1\bfx + \beta_2 \bfx^2 + \bfeps.$$
+In this situation
+$$
+(\bfX'\bfX)^{-1}=
+{1\over \sum(x_i-\bar{x})^2}
+\left(\begin{array}{cc}
+	\sum x_i^2/n&-\bar{x}\\
+	-\bar{x}&1
+\end{array}\right)
+$$
+and
+$$
+\bfX'\bfZ
+=\left(\begin{array}{ccc}1&\ldots&1\\x_1&\ldots&x_n\end{array}\right)
+\left(\begin{array}{c}x_1^2\\\vdots\\x_n^2\end{array}\right)
+=\left(\begin{array}{c}\sum x_i^2\\\sum x_i^3\end{array}\right).
+$$
+Therefore the bias in $\hat{\bfbet}$ is
+$$
+(\bfX'\bfX)^{-1}\bfX'\bfZ\beta_2
+={\beta_2\over\sum(x_i-\bar{x})^2}
+\left(\begin{array}{c}
+	(\sum x_i^2)^2/n-\bar{x} \sum x_i^3 \\
+	-\bar{x} \sum x_i^2 + \sum x_i^3
+\end{array}\right).
+$$
+\eexa
+
+\bsexa
+\label{exa.dep1}
+ Suppose we fit 
+$\ y_{ij}=\mu_i+\varepsilon_{ij},\ $ 
+when the true model is 
+$\ y_{ij}=\mu_i+\eta z_{ij}+\varepsilon_{ij},\ $ 
+with $\ i=1,2,\ j=1,\ldots,n_i.\ $  In other words, we are comparing two groups, but ignore the covariate
+$z$. In matrix form the true model is $\
+\bfy=\bfX_1\bfbet+\bfX_2\bfeta+\bfeps,\ $ or \\
+\begin{eqnarray*}
+\left(\begin{array}{c}
+	y_{11}\\\vdots\\ y_{1n_1}\\y_{21}\\\vdots\\y_{2n_2}
+	\end{array}\right)
+=\left(\begin{array}{cc}
+	1&0\\\vdots&\vdots\\1&0\\
+	0&1\\\vdots&\vdots\\0&1
+	\end{array}\right)
+\left(\begin{array}{c}\mu_1\\\mu_2\end{array}\right)
++\left(\begin{array}{c}
+	z_{11}\\\ldots\\z_{1n_1}\\z_{21}\\\ldots\\z_{2n_2}
+	\end{array}\right)\eta
++\left(\begin{array}{c}
+	\varepsilon_{11}\\\ldots\\\varepsilon_{1n_1}\\
+	\varepsilon_{21}\\\ldots\\\varepsilon_{2n_2}
+	\end{array}\right).
+\end{eqnarray*}
+Then the bias in $\ (\hat{\mu}_1,\hat{\mu}_2)'\ $ is given by 
+$\ (\bfX_1'\bfX_1)^{-1}\bfX_1'\bfX_2 \eta =  \left(\begin{array}{c}\bar{z}_1\\\bar{z}_2\end{array}\right)\ \eta.\ $
+Hence, the group comparison given by $\ \hat{\mu}_1-\hat{\mu}_2 $ is unbiased if
+$\ \bar{z}_1=\bar{z}_2.$
+\eexa
+
+
+This example illustrates the effect of randomization.
+Suppose we randomly assign experimental units (for example patients)
+to the two groups.  Then $\bar{z}_1\approx\bar{z}_2$ for any covariate
+$z$, as long as groups are fairly large.  Thus, randomization controls
+for bias due to unfitted covariates.
+
+
+Our theoretical standard errors for the $\hat \bbeta_1$ are still correct in that
+$$
+\Var(\hat \bbeta_1) = (\bX_1' \bX_1)^{-1} \sigma^2.
+$$
+However, we still have to estimate $\sigma^2$. 
+
+We can also see the  impact of underfitting on the bias of residual variance estimation.
+\begin{eqnarray*}
+E[(n- p_1) s^2] & = & E[\by' (\bI -  \bX_1 (\bX_1' \bX_1)^{-1} \bX_1' \by] \\
+& = &(\bX_1\bbeta_1 + \bX_2 \bbeta_2)'\{\bI -  \bX_1 (\bX_1' \bX_1)^{-1} \bX_1'\} (\bX_1\bbeta_1 + \bX_2 \bbeta_2) \\
+& + & \mathrm{trace}[\{\bI -  \bX_1 (\bX_1' \bX_1)^{-1} \bX_1' \} \sigma^2] \\
+& = & \bbeta_2' \bX_2' \{\bI -  \bX_1 (\bX_1' \bX_1)^{-1} \bX_1'\} \bX_2 \bbeta_2 + (n - p_1) \sigma^2
+\end{eqnarray*}
+Therefore $s^2$ is biased upward. It makes sense that we would tend to overestimate the residual
+variance if we've attributed to the error structure variation that is actually structured and
+due to unmodeled systematic variation.
+
+
+\subsubsection{Impact of overfitting}
+Consider now fitting Model 2 when, in fact, Model 1 is true. There
+is no bias in our estimate of $\bbeta_1$, since we have fit the correct model;
+it's just $\bbeta_2 = \bzero$.  
+
+For $\var(\hat{\bfbet}_1)$ we have
+$$
+\var(\hat{\bfbet})
+= \sigma^2(\bfX'\bfX)^{-1}
+= \sigma^2\left(\begin{array}{cc}
+	\bfX'_1\bfX_1&\bfX'_1\bfX_2\\
+	\bfX'_2\bfX_1&\bfX'_2\bfX_2
+\end{array}\right)^{-1}
+= \sigma^2\left(\begin{array}{cc}
+	(\bfX'_1\bfX_1)^{-1}+\bfF\bfE^{-1}\bfF'&-\bfF\bfE^{-1}\\
+	-\bfE^{-1}\bfF'&\bfE^{-1}
+\end{array}\right),
+$$
+where 
+$$
+\bfF=(\bfX'_1\bfX_1)^{-1}\bfX'_1\bfX_2,
+$$
+and
+$$
+\bfE
+= \bfX'_2\bfX_2-\bfX'_2\bfX_1(\bfX'_1\bfX_1)^{-1}\bfX'_1\bfX_2
+= \bfX'_2(\bfI-\bfP_{{\cal R}(\bfX_1)})\bfX_2.
+$$
+Therefore,
+$$
+\var(\hat{\bfbet}_1)=\sigma^2[(\bfX'_1\bfX_1)^{-1}+\bfF\bfE^{-1}\bfF'],
+$$
+compared with $\sigma^2(\bfX'_1\bfX_1)^{-1}$ which would result from
+fitting the true model $E[\bfy]=\bfX_1\bfbet_1$.
+In the above, $\ \bfF\bfE^{-1}\bfF'\ $ is positive definite unless $\
+\bfX'_1\bfX_2=\zero.$
+
+Therefore, the variance assuming Model 2 will always be greater than the variance assuming Model 1.
+Note that at no point did we utilize which model was actually true. Thus we arrive at an
+essential point, adding more regressors into a linear model necessarily increases the
+standard error of the ones already included. This is called ``variation inflation''. The
+estimated variances need not go up, since $\sigma^2$ will go down as we include variables. 
+However, the central point is that one concern with including unnecessary regressors
+is inflating a component of the standard error needlessly. 
+
+%Further note that $\sigma^2$ drops out in the ratio of the variances. We can thus exactly calculate the percentage increase in variance caused by including regressors. A particularly useful such summary is the variance inflation factor (VIF). 
+
+
+If we fit Model 2, but Model 1 is correct, then our variance estimate is 
+unbiased. We've fit the correct model, we just allowed the possibility that
+$\bbeta_2$ was non-zero when it is exactly zero. Therefore $s^2$ is unbiased
+for $\sigma^2$. However, recall too that
+$$
+\frac{(n-p_1 - p_2)s^2_2}{\sigma^2} \sim \chi^2_{n-p_1 - p_2},
+$$
+where the subscript 2 on $s^2_2$ is used to denote the fitting where Model 2 was assumed.
+Similarly,
+$$
+ \frac{(n-p_1)s^2_1}{\sigma^2} \sim \chi^2_{n-p_1},
+$$
+where $s_1^2$ is the variance assuming Model 1 is true. Using the fact that the variance
+of a Chi squared is twice the degrees of freedom, we get that
+$$
+\frac{\Var(s_2^2)}{\Var(s_1^2)} = \frac{(n - p_1)^2}{(n - p_1 - p_2)^2}.
+$$
+Thus, despite both estimates being unbiased, the variance of the estimated variance
+under Model 2 is higher.
+
+
+%\subsubsection{Summary}
+%The lesson in this subsection is that overfitting does not introduce
+%bias into regression coefficient estimates, but it does inflate their
+%variances. In comparison to underfitting, we have the following:
+%\begin{center}
+%\begin{tabular}{cllll}
+%\rule{30mm}{0mm}
+%&&Effect of Underfitting\rule{5mm}{0mm}
+%&&Effect of Overfitting\\[1ex]
+%\hline
+%&&&&\\
+%$\hat{\bfbet}$&&biased&&unbiased\\
+%$\hat{\bfy}$&&biased&&unbiased\\
+%$s^2$&&biased upward&&unbiased\\[1ex]
+%$\var(\hat{\bfbet})$&&still $\sigma^2(\bfX'\bfX)^{-1}$&&$>$ 
+%than necessary\\[2ex]
+%\hline
+%\end{tabular}
+%\end{center}
+
+
+
+\subsection{Effects of a Mis-Specified Covariance Matrix}
+
+Assume that we have specified $\ E[\bfy] = \bfX\bfbet\ $ correctly,
+but suppose that $\ \var(\bfeps) = \sigma^2\bfV,\ $ when we assume that
+$\ \var(\bfeps)=\sigma^2\bfI.$
+
+In the full rank case the parameter estimates
+are still unbiased, but 
+$$
+\var(\hat{\bfbet})
+= \sigma^2(\bfX'\bfX)^{-1}\bfX'\bfV\bfX(\bfX'\bfX)^{-1}.
+$$
+Also, in most cases $s^2$ is biased, since
+$$
+E[s^2] = {\sigma^2\over n-p}\tr[\bfV(\bfI-\bfH)].
+$$
+
+
+\bsexa
+The effect of non-constant variance in the two-sample t-test:
+
+Assume the model $\ \ y_{ij}=\mu_i+\varepsilon_{ij},\ \
+\var(\varepsilon_{ij})=\sigma_i^2,\ \ i=1,2,\ \ j=1,\ldots,n_i.\ $ The
+usual $t$-statistic for forming a confidence interval for
+$\ \mu_1-\mu_2\ $ is
+$$
+T={\bar{y}_1-\bar{y}_2-(\mu_1-\mu_2)\over
+	S(n_1^{-1}+n_2^{-1})^{1/2}},
+$$
+where
+$$
+s^2={1\over n-2}\sum_i\sum_j(y_{ij}-\bar{y}_i)^2
+={(n_1-1)s_1^2+(n_2-1)s_2^2\over n-2}.
+$$
+
+Here, $n=n_1+n_2$, and $s_i^2$ is the sample variance in the $i$th
+group.  Now, if $\sigma_1^2=\sigma_2^2$ and $\varepsilon_{ij}$ is
+normally distributed, then $\ T \sim t_{n-2} \approx N(0,1)\ $ for
+large $n$.  However, assume that $\sigma_1^2\neq\sigma_2^2$. Then,
+heuristically, $\ s^2 \approx {1\over n}(n_1\sigma_1^2 +
+n_2\sigma_2^2)\ $ for large $n$, and $T$ is approximately normally
+distributed with mean 0 and
+$$
+\var(T)
+\approx
+{\var(\bar{y}_1-\bar{y}_2)\over
+	{1\over n}(n_1\sigma_1^2+n_2\sigma_2^2)(n_1^{-1}+n_2^{-1})}
+= {n_1^{-1}\sigma_1^2+n_2^{-1}\sigma_2^2\over
+	{1\over n}(n_1\sigma_1^2+n_2\sigma_2^2)(n_1^{-1}+n_2^{-1})}
+= {{\sigma_1^2\over\sigma_2^2}+{n_1\over n_2}\over
+	{n_1\over n_2}{\sigma_1^2\over\sigma_2^2}+1}.
+$$
+
+In other words, $\var(T) \approx 1$ and therefore $T \approx N(0,1)$
+for large $n$ if either $\sigma_1^2 = \sigma_2^2$ (i.e. the equal
+variance assumption holds), or if $n_1 = n_2$ (i.e. the sample sizes
+are equal, regardless of equality of variances).
+\eexa
+
+\bexa (cont.)
+Recall the 95\% confidence interval for $\mu_1-\mu_2$:
+$$
+\mbox{CI} = 
+[\ 
+\bar{y}_1-\bar{y}_2-t_{n-2}^{.025}s(n_1^{-1}+n_2^{-1})^{1/2}\ ,\
+\bar{y}_1-\bar{y}_2+t_{n-2}^{.025}s(n_1^{-1}+n_2^{-1})^{1/2}
+\ ].
+$$
+The error rate of this confidence interval is
+$$
+P(\mu_1-\mu_2 \not\in \mbox{CI}) = 
+P(|T|>t_{n-2}^{.025}) \approx 
+P(|N(0,v)|>t_{n-2}^{.025}),
+$$
+where $v=({\sigma_1^2\over\sigma_2^2}+{n_1\over n_2})/ ({n_1\over
+n_2}{\sigma_1^2\over\sigma_2^2}+1)$.
+
+Some values of the error rate based on the above normal approximation
+are given in the table below.  The error rate does not deviate too far
+from the nominal value of 0.05 unless both the sample sizes and the
+variances differ substantially between groups.
+\begin{center}
+\begin{tabular}{crlllllll}
+$\downarrow$&&\multicolumn{7}{c}{$\sigma_1^2/\sigma_2^2$}\\[1ex]
+\cline{3-9}
+\\
+$n_1/n_2$&
+&\multicolumn{1}{c}{${1\over 8}$}
+&\multicolumn{1}{c}{${1\over 4}$}
+&\multicolumn{1}{c}{${1\over 2}$}
+&\multicolumn{1}{c}{1}
+&\multicolumn{1}{c}{2}
+&\multicolumn{1}{c}{4}
+&\multicolumn{1}{c}{8}\\[2ex]
+%\hline
+\cline{3-9}
+\\
+%1&&.05&.05&.05&.05&.05\\
+%2&&.12&.08&.05&.029&.014\\
+%5&&.22&.12&.05&.014&.002\\[1ex]
+${1\over 2}$ && 0.011 & 0.016 & 0.028 & 0.050 & 0.080 & 0.110 & 0.133\\
+1 && 0.050 & 0.050 & 0.050 & 0.050 & 0.050 & 0.050 & 0.050\\
+2 && 0.133 & 0.110 & 0.080 & 0.050 & 0.028 & 0.016 & 0.011\\
+4 && 0.237 & 0.179 & 0.110 & 0.050 & 0.016 & 0.004 & 0.001\\
+8 && 0.331 & 0.237 & 0.133 & 0.050 & 0.011 & 0.001 & 0.000\\[1ex]
+\hline
+\end{tabular}
+\end{center}
+
+\eexa
+
+
+\subsection{Effects of Non-normality}
+
+Finally, let us suppose we have correctly specified the model: 
+$$\ \
+\bfy=\bfX\bfbet+\bfeps,\ \ E[\bfeps]=\zero,\ \
+\var(\bfeps)=\sigma^2\bfI,\ \ $$ but suppose that $\bfeps$ is not
+necessarily multivariate normal.
+
+We have seen previously that $\hat{\bfbet}$ is unbiased, and
+$\var(\hat{\bfbet})=\sigma^2(\bfX'\bfX)^{-1}$, without requiring any
+distributional assumptions.  
+Thus, normality is not required to fit a linear model.
+However, normality of the coefficient estimates $\hat \bfbet$ is needed to compute confidence intervals and perform tests. 
+As $\hat \bfbet$ is a weighted sum of $\bfy$, the Central Limit Theorem guarantees that it will be normally distributed if the sample size is large enough.
+Thus, tests and confidence intervals can be based on the associated t-statistic in these settings.
+However, in many settings, bootstrap procedures may be more appropriate.
+
+
+
+
+%\subsection{Variance inflation}
+%Now consider $\mbox{Var}(\hat \bbeta_1) = \xtxinv \sigma^2$, where
+%$\bX = [\bX_1 ~ \bX_2]$. Recall, that the estimate for $\hat \bbeta_1$ can be
+%obtained by regression of $\be_{\bX_1 | \bX_{2}}$ on $\be_{\by | \bX_{2}}$. Thus,
+%$$
+%\hat \bbeta_1
+%= (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \be_{\bX_1 | \bX_2}^t \be_{\by | \bX_2}
+%$$
+%Let $\bH_{\bX_2}$ be the hat matrix for $\bX_2$. Thus,
+%\begin{eqnarray*}
+%\Var(\hat \bbeta_1) & = &
+%(\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \be_{\bX_1 | \bX_2}^t (\bI - \bH_{\bX_2}) \be_{\bX_1 | \bX_2} (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \sigma^2 \\
+%& = & (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \sigma^2 -
+%(\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \be_{\bX_1 | \bX_2}^t \bH_{\bX_2} \be_{\bX_1 | \bx_2}(\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \sigma^2 \\
+%& =  &  (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \sigma^2.
+%\end{eqnarray*}
+%The latter term drops out since 
+%$$
+%\be_{\bX_1 | \bX_2}^t \bH_{\bX_2} = \bX_1^t (\bI - \bH_{X_2}) \bH_{\bX_2} = 0.
+%$$
+%Consider any linear contrast $\bq^t \bbeta_1$ then
+%\begin{eqnarray*}
+%\Var(\bq^t \hat \bbeta_1)& = &\bq^t (\be_{\bX_1 | \bX_2}^t \be_{\bX_1 | \bX_2})^{-1} \bq \sigma^2 \\
+%& = & \bq^t  (\bX_1^t\bX_1 - \bX_1^t \bH_{\bX_2} \bX_1)^{-1} \bq \sigma^2 \\
+%& = &\bq^t \{(\bX_1^t\bX_1)^{-1} + \bW\}\bq \sigma^2
+%\end{eqnarray*}
+%where $\bW$ is a symmetric matrix. This latter identity can be obtained via the Woodbury theorem.
+%Thus we can say that
+%$$
+%\Var(\bq^t \hat \bbeta_1) = \bq^t \{(\bX_1^t\bX_1)^{-1} + \bW\}\bq \sigma^2 
+%\geq \bq^t(\bX_1^t\bX_1)^{-1} \bq \sigma^2
+%$$
+%Therefore, the variance assuming Model 2 will always be greater than the variance assuming Model 1.
+%Note that at no point did we utilize which model was actually true. Thus we arrive at an
+%essential point, adding more regressors into a linear model necessarily increases the
+%standard error of the ones already included. This is called ``variation inflation''. The
+%estimated variances need not go up, since $\sigma^2$ will go down as we include variables. 
+%However, the central point is that one concern with including unnecessary regressors
+%is inflating a component of the standard error needlessly. 
+%
+%Further note that $\sigma^2$ drops out in the ratio of the variances. We can thus
+%exactly calculate the percentage increase in variance caused by including regressors.
+%A particularly useful such summary is the variance inflation factor (VIF). 
+
+%
+%\subsection{Variance inflation factors}
+%Assume that $\bX_1$ is a vector and that the intercept has been regressed out of 
+%both of $\bX_1$ and $\bX_2$. Recall from above that the variance for $\hat \beta_1$ assuming
+%Model 2 is (note $\beta_1$ is a scalar since we're assuming $\bX_1$ is a vector)
+%\begin{eqnarray*}
+%\Var(\hat \beta_1) & = & (\be_{\bX_1 | \bX_2}' \be_{\bX_1 | \bX_2})^{-1} \sigma^2.\\
+%& = & \frac{\sigma^2}{\bX_1' (\bI - \bH_{\bX_2}) \bX_1} \\
+%& = & \frac{\sigma^2}{\bX_1' \bX_1'} \times \frac{\bX_1' \bX_1}{\bX_1' (\bI - \bH_{\bX_2}) \bX_1}
+%\end{eqnarray*}
+%Recall from partitioning sums of squares (remember that we've removed the intercept from both)
+%$$
+%\bX_1'\bX_1 = \bX_1' \bH_{\bX_2} \bX_1 + \bX_1' (\bI - \bH_{\bX_2}) \bX_1
+%$$
+%and that $$\frac{\bX_1^t \bH_{\bX_2} \bX_1}{\bX_1^t\bX_1}$$ is the $R^2$ value for $\bX_1$
+%as an outcome and $\bX_2$ as a predictor. Let's call it $R^2_1$ so as not to confuse
+%it with the $R^2$ calcualted with $\bY$ as an outcome. Then we can write
+%$$
+%\Var(\beta_1) =  \frac{\sigma^2}{\bX_1^t \bX_1^t} \frac{1}{1 - R^2_1}.
+%$$
+%Note that $R^2 = 1$ if $\bX_2$ is orthogonal $\bX_1$. Thus,
+%$$
+%\frac{1}{1 - R^2_1}
+%$$
+%Is the relative increase in variability in estimating $\beta_1$
+%comparing the data as it is to the ideal case where $\bX_1$ is orthogonal to $\bX_2$. 
+%Similarly, since $\frac{\sigma^2}{\bX_1^t \bX_1^t}$ is the variance if $\bX_2$ is omitted
+%from the model. So $1 / (1 - R^2_1)$ is also the increase in the variance by adding the
+%other regressors in $\bX_2$.
+%
+%This calculation can be performed for each regressor in turn. The $1 / (1 - R^2)$ value
+%for each regressor as an outcome with the remainder as predictors are the so-called
+%Variance Inflation Factors (VIFs). They give information about how much addition
+%variance is incurred by multicolinearity among the regressors.
+%
+%
+%\subsection{Coding example}
+%
+%Let's look at variance inflation factors for the \texttt{swiss} dataset.
+%\begin{verbatim}
+%> library(car)
+%> data(swiss)
+%> fit4 = lm(Fertility ~ ., data = swiss)
+%> vif(fit4)
+%Agriculture      Examination        Education         Catholic Infant.Mortality 
+%   2.284129         3.675420         2.774943         1.937160         1.107542 
+%\end{verbatim}
+%Thus, consider examination. The VIF of 3.7 suggest there's almost four times as
+%much variability in estimating the Examination coefficient by the inclusion of the
+%other variables. We can show the calculation of these statistics manually as such.
+%
+%\begin{verbatim}
+%1 / (1 - summary(lm(Examination ~ . - Fertility, data = swiss))$r.squared)
+%[1] 3.67542
+%\end{verbatim}
+%
+%Consider comparing the estimated standard errors for the examination variable
+%\begin{verbatim}
+%> summary(lm(Fertility ~ Examination, data = swiss))$coef
+%             Estimate Std. Error   t value     Pr(>|t|)
+%(Intercept) 86.818529  3.2576034 26.651043 3.353924e-29
+%Examination -1.011317  0.1781971 -5.675275 9.450437e-07
+%> summary(lm(Fertility ~ ., data = swiss))$coef
+%                   Estimate  Std. Error   t value     Pr(>|t|)
+%(Intercept)      66.9151817 10.70603759  6.250229 1.906051e-07
+%Agriculture      -0.1721140  0.07030392 -2.448142 1.872715e-02
+%Examination      -0.2580082  0.25387820 -1.016268 3.154617e-01
+%Education        -0.8709401  0.18302860 -4.758492 2.430605e-05
+%Catholic          0.1041153  0.03525785  2.952969 5.190079e-03
+%Infant.Mortality  1.0770481  0.38171965  2.821568 7.335715e-03
+%\end{verbatim}
+%Here the increase in variance is \texttt{(0.25387820 / 0.1781971)} squared which is approximately
+%2. This is much less than is predicted by the VIF because it involves the estimated
+%variance rather than the actual variance. 
+
+
+

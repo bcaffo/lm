@@ -1,0 +1,425 @@
+\section{The normal distribution}
+
+%\href{https://www.youtube.com/watch?v=bI2YDQ8ABiA&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=44}{Watch this before beginning.}
+
+
+\subsection{The univariate normal distribution}
+A random variable $Z$ follows a standard normal distribution if its
+density is 
+$$
+f(z) = \frac{1}{\sqrt{2\pi}} \exp(-z^2/2).
+$$
+We write the associated distribution function as $F$. 
+A standard normal variate has mean 0 and variance 1. 
+All odd numbered moments are 0. The non-standard
+normal variate, say $X$, having mean $\mu$ 
+and standard deviation $\sigma$ can be obtained
+as $X = \mu + \sigma Z$. Conversely, 
+$(X - \mu) / \sigma$ is standard normal if
+$X$ is any non-standard normal. The
+non-standard normal density is:
+$$
+f \left( \frac{x - \mu}{\sigma}\right) /\sigma
+$$
+with distribution function $F \left( \frac{x - \mu}{\sigma}\right)$.
+
+\subsection{The multivariate normal distribution}
+
+Suppose $Z_1, Z_2, \ldots Z_n$ are independent identically distributed (i.i.d.) standard normal random variables. The joint density of $\bfz = (Z_1, Z_2, \ldots Z_n)'$
+is then given by
+\begin{eqnarray*}
+f_{\bfz}(\bfz) &=& \prod_{i=1}^p  \frac{1}{\sqrt{2\pi}} \exp(-z_i^2/2) \\
+&=&  (2\pi)^{-p/2} \exp(-\bfz'\bfz/2) 
+\end{eqnarray*}
+This is the multivariate standard normal distribution for a 
+random vector $\bz$ with  mean $\bzero$ and variance $\bI$.  We write this as $\bfz \sim N_p ({\bzero}, \bfI)$.
+
+Non standard normal variates, say $\bx$, can be obtained as 
+$\bx = \bmu + \bSigma^{1/2} \bz$ where $E[\bx] = \bmu$
+and $\Var(\bfx) = \bSigma^{1/2}\bSigma^{1/2} = \bSigma$, which is assumed
+to be positive definite. 
+Conversely, one can go backwards with 
+$\bz = \bSigma^{-1/2} (\bx - \bmu)$. The non-standard
+multivariate normal distribution is given by
+$$
+(2\pi)^{-n/2} |\bSigma|^{-1/2} \exp\left\{ -\frac{1}{2}(\bx - \bmu)' \bSigma^{-1} (\bx - \bmu) \right\}.
+$$
+Commit this density to memory.  In this setting, we say that $\bfx \sim N_n (\bmu, \bSigma)$.
+
+The normal distribution is nice to work with in that
+all full row rank linear transformations of the normal are
+also normal. That is, if $\ba + \bA \bx$ is normal if $\bA$ is
+full row rank. Also, all conditional and submarginal distributions
+of the multivariate normal are also normal. (We'll discuss the
+conditional distribution more later.)
+
+\subsection{Moment generating functions}
+
+Given a vector $\bfmu$ and a positive
+semidefinite matrix $\bfSigma$, $\bfy \sim N_n(\bfmu,\bfSigma)$ if the moment generating function (m.g.f.) of $\bfy$ is
+$$M_\bfy(\bft) \equiv E[e^{\bft'\bfy}] = \exp\{
+	\bfmu'\bft+{1\over 2}\bft'\bfSigma\bft \}.$$
+
+\vb
+Here are two important properties of moment generating functions:
+\begin{itemize}
+\item  If two random vectors have the same moment generating function, they have the same density.
+\item Two random vectors are independent if and only if their joint moment generating function factors into the product of their two separate moment generating functions.
+\end{itemize}
+
+\subsection{Properties of the multivariate normal distribution}
+
+Let  $\bfy \sim N_p(\bfmu,\Sigma)$, and let $\bf a$ be a $p \times 1$ vector, $\bfb$ a $k \times 1$ vector, and  $\bfC$ a $k \times p$ matrix with rank$=k \le p$, then,
+\begin{itemize}
+\item $x =  \bfa'\bfy  \sim N(\bfa'\bfmu,\bfa'\Sigma\bfa)$.
+
+\vb
+\item $\bfx =  \bfC\bfy + \bfb \sim N_p(\bfC\bfmu +\bfb,\bfC\Sigma\bfC')$.
+\end{itemize}
+
+
+\bexa
+Let $\ \bfz=(Z_1,Z_2)' \sim N_2(\bf0,\bfI),\ $ and let $\bfA$ be the
+linear transformation matrix
+$$\bfA=\left(\begin{array}{rr}1/2&-1/2\\-1/2&1/2\end{array}\right).$$
+Let $\bfy=(Y_1,Y_2)'$ be the linear transformation
+$$\bfy=\bfA\bfz=
+	\left(\begin{array}{c}(Z_1-Z_2)/2\\(Z_2-Z_1)/2\end{array}\right).$$
+%Note that $\bfA=\bfA'=\bfA^2$ so $\bfA$ is a projection matrix
+%(it projects from the plane onto the line defined by $Y_1+Y_2=0$.
+Now $\ \bfy \sim N({\bf 0},\bfSigma)\ $ where
+$\bfSigma=\bfA\bfA'$.
+\eexa
+
+
+
+\bstheo
+\label{theo.mvn1}
+Let $\ {\bf y}\sim N_n(\bfmu,\sigma^2 \bfI),\ $ and let $\bfT$ be an
+orthogonal constant matrix.  Then $\ \bfT\bfy\sim
+N_n(\bfT\bfmu,\sigma^2\bfI)$.
+\etheo
+
+
+Theorem \ref{theo.mvn1} says that mutually independent normal random
+variables with common variance remain mutually independent with common
+variance under orthogonal transformations.  Orthogonal matrices
+correspond to rotations and reflections about the origin, i.e., they
+preserve the vector length:
+$$||\bfT\bfy||^2=(\bfT\bfy)'(\bfT\bfy) =
+\bfy'\bfT'\bfT\bfy=\bfy'\bfy=||\bfy||^2.$$
+
+
+
+
+\vb
+
+
+\bstheo
+If $\bfy \sim N_n(\bfmu,\bfSigma)$, then any $p \times 1$ subvector of $\bfy$ has a $p$-variate normal
+distribution.
+\estheo
+
+It follows that if  $\bfy \sim N_n(\bfmu,\bfSigma)$ then $Y_i \sim N(\mu_i,\sigma^2_i)$ for $i=1, \ldots n$. Thus, joint normality implies marginal normality. The converse is not necessarily true.
+
+\subsection{Singular normal}
+%\href{https://www.youtube.com/watch?v=JGoX7lokhyc&index=45&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
+
+What happens if the $\bA$ in the previous section is not of full
+row rank? Then $\Var(\bfX) = \bA\bSigma \bA'$ is not full rank.
+There are redundant elements of the vector $\bX$ in that if
+you know some of them, you know the remainder. 
+
+An example is our residuals. The matrix $(\bI - \bfX (\bfX'\bfX)^{-1} \bfX)$ is not of full
+rank (it's rank is $n-p$). For example, if we include an
+intercept, the residuals must sum to 0. Know any $n-1$ of
+them and you know the $n^{th}$. A contingency for this
+is to define the singular normal distribution. A
+singular normal random variable is any random variable
+that can be written as $\bA \bz + \bb$ for a matrix $\bA$
+and vector $\bb$ and standard normal vector $\bz$. 
+As an example, consider the case where $\by \sim N(\bX \bbeta, \sigma^2 \bI)$.
+Then the residuals, defined as 
+$$\{\bI - \hatmat\} \by = \{\bI - \hatmat\}(\bX\bbeta + \frac{1}{\sigma} \bz)$$
+are a linear transformation of iid normals. Thus the residuals are singular normal. 
+
+The singular normal is such that all linear combinations and all submarginal and conditional distributions
+are also singular normal. The singular normal doesn't necessarily
+have a density function, because of the possibility of redundant
+entries. For example, the vector $(Z ~ Z)$, where $Z$ is a standard normal,
+doesn't have a joint density since the covariance matrix is $\bone_{2\times 2}$,
+which isn't invertible.
+
+The normal is the special case of the singular normal where the covariance
+matrix is full rank. 
+
+
+\subsection{Independence}
+
+Let $\bf\sim N_n(\bfmu,\bfSigma)$ be partitioned as follows:
+$$\bfy=\left(\begin{array}{c}\bfy_1 \\ \bfy_2 \end{array}\right),$$
+where $\bfy_1$ is $p\times 1$ and $\bfy_2$ is $q\times 1$, ($p+q=n$).
+Then, the mean and covariance matrix are correspondingly partitioned as
+\begin{eqnarray*}
+\bfmu=\left(\begin{array}{c}\bfmu_1 \\ \bfmu_2 \end{array}\right)
+& \quad \mbox{and} \quad &
+\bfSigma
+=\left(\begin{array}{cc}
+	\bfSigma_{11} & \bfSigma_{12}\\
+	\bfSigma_{21} & \bfSigma_{22}
+\end{array}\right)
+=\left(\begin{array}{cc}
+	\var(\bfY_1) & \cov(\bfY_1,\bfY_2) \\
+	\cov(\bfY_2,\bfY_1) & \var(\bfY_2)
+\end{array}\right).
+\end{eqnarray*}
+
+The marginal distributions are $\ \bfY_1 \sim
+N_p(\bfmu_1,\bfSigma_{11})\ $ and $\ \bfY_2 \sim
+N_q(\bfmu_2,\bfSigma_{22})$.
+
+\vb
+If $$\bfy=\left(\begin{array}{c}\bfy_1 \\ \bfy_2 \end{array}\right)$$ is $N_{p+q}(\bfmu, \Sigma)$, then 
+$\bfy_1$ and $\bfy_2$ are independent if $\ \Sigma_{12} = {\bf \zero}$.
+%Note, in this setting uncorrelated implies independent, that is  $\bfY_1$ and $\bfY_2$ are independent if and only if $\ \bfSigma_{12} = \bfSigma'_{21}=\zero$.
+However, if $\ \bfY_1 \sim N_p(\bfmu_1,\bfSigma_{11})\ $ and $\ \bfY_2 \sim N_q(\bfmu_2,\bfSigma_{22})$, and $\ \bfSigma_{12} = \bfSigma'_{21}=\zero$, this does not necessarily mean that $\bY_1$ and $\bY_2$ are independent. We also need $\bfY$ to be jointly normal. It follows that if $\ \bfy \sim N_p(\bfmu, \Sigma)\ $, then any two individual variables $y_i$ and $y_j$ are independent if $\sigma_{ij}=0$.
+
+
+\subsection{Conditional distributions}
+
+%\href{https://www.youtube.com/watch?v=2VTf-XNmfAk&index=47&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
+
+%
+%\bstheo
+%If $\bfSigma$ is often of positive definite, then the conditional distribution
+%of $\bfY_1$ given $\bfY_2$ is
+%$$\bfY_1|\bfY_2=\bfy_2 \sim
+%N_p(\bfmu_1 + \bfSigma_{12}\bfSigma_{22}^{-1}(\bfy_2 - \bfmu_2),
+%\bfSigma_{11}-\bfSigma_{12}\bfSigma_{22}^{-1}\bfSigma_{21}).$$
+%\etheo
+
+
+The conditional distribution of a normal is often of interest.
+Let $\bX = [\bX_1' ~ \bX_2']'$ be comprised of an $n_1 \times 1$
+and $n_2 \times 1$ matrix where $n_1 + n_2  = n$. Assume that
+$\bX \sim N(\bmu, \bSigma)$ where $\bmu = [\bmu_1' ~ \bmu_2']'$
+and 
+$$
+\left[
+\begin{array}{cc}
+\bSigma_{11} & \bSigma_{12} \\
+\bSigma_{12}' & \bSigma_{22}
+\end{array}
+\right].
+$$
+Consider now the conditional distribution of $\bX_1 ~|~ \bX_2$. 
+A clever way to derive this (shown to me by a student in my class)
+is as follows let $\bZ = \bX_1 + \bA \bX_2$
+where $\bA = - \bSigma_{12}\bSigma_{22}^{-1}$. Then note that
+the covariance between $\bX_2$ and $\bZ$ is zero (HW).
+
+Thus the distribution of $\bZ ~|~ \bX_2$ is equal
+to the distribution of $\bZ$ and that it is normally distributed
+being a linear transformation of normal variates. Thus we know both
+$$
+E[\bZ ~|~ \bX_2 = \bx_2] = E[\bX_1 ~|~ \bX_2 = \bx_2] + \bA E[\bX_2 ~|~ \bX_2 = \bx_2]
+= E[\bX_1 ~|~ \bX_2 = \bx_2] + \bA \bx_2
+$$
+and
+$$
+E[\bZ ~|~ \bX_2 = \bx_2] = E[\bZ] = \bmu_1 + \bA \bmu_2.
+$$
+Setting these equal we get that
+$$
+E[\bX_1 ~|~ \bX_2] = \bmu_1 + \bSigma_{12}\bSigma_{22}^{-1} (\bx_2 - \bmu_2).
+$$
+As a homework, using the same technique to derive the conditional variance
+$$
+\Var(\bZ ~|~ \bX_2 = \bx_2) = \bSigma_{11} - \bSigma_{12} \bSigma_{22}^{-1} \bSigma_{12}'.
+$$
+
+\subsection{An important example}
+Consider the vector 
+$(\bY ~ \bX')'$ where $\bY$ is $1\times 1$ and $\bX$ is $p\times 1$. Assume that 
+the vector is normal with $E[\bY] = \mu_y$, $E[\bX] = \bmu_x$ and the variances
+are $\sigma^2_y$ ($1\times 1$) and $\bSigma_x$ ($p\times p$) 
+and covariance $\brho_{xy}$ ($p \times 1$).
+
+Consider now predicting $\bY$ given $\bX = \bx$. Clearly a good estimate
+for this would be $E[\bY ~|~ \bX = \bx]$. Our results
+suggest that $\bY ~|~ \bX = \bx$ is normal with mean:
+$$
+\mu_y + \brho_{xy}' \bSigma_x^{-1} (\bx - \bmu_x)
+= \mu_y - \bmu_x \bSigma_x^{-1}\brho_{xy} + \bx' \bSigma_x^{-1} \brho_{xy}
+= \beta_0 + \bx' \bbeta
+$$
+where $\beta_0 = \mu_y - \bmu_x \bSigma_x^{-1}\brho_{xy}$ and $\beta = \bSigma_x^{-1} \brho_{xy}$. That is, the conditional mean in this case mirrors the
+linear model. The slope is defined exactly as the inverse of the variance/covariance matrix
+of the predictors times the cross correlations between the predictors and the response.
+We discussed the empirical version of this in Section \ref{sec:lslin} where we saw that the empirical coefficients are the inverse of the empirical variance of the predictors times the empirical correlations between the predictors and response.  A similar mirroring occurs for the intercept as well. 
+
+This correspondence simply says that empirical linear model estimates mirror the population parameters if both the predictors and response are jointly normal. It also yields
+a motivation for the linear model in some cases where the joint normality of the
+predictor and response is conceptually reasonable. Though we note that often such
+joint normality is not reasonable, such as when the predictors are binary, even
+though the linear model remains well justified. 
+
+\subsection{A second important example}
+Consider our partitioned variance matrix. 
+$$
+\bSigma = \left[
+\begin{array}{cc}
+\bSigma_{11} & \bSigma_{12} \\
+\bSigma{12}' & \bSigma_{22}
+\end{array}
+\right].
+$$
+The upper diagonal element of $\bSigma^{-1}$ is given by $\bK_{11} = (\bSigma_{11} - \bSigma_{12} \bSigma_{22}^{-1} \bSigma_{12}')^{-1}$, which is the inverse of $\Var(\bX_1 ~|~ \bX_2)$. Suppose that $\bX_1 = (X_{11} ~ X_{12})'$. Then this result suggests that
+$X_{11}$ is independent of $X_{12}$ given $\bX_2$ if the $(1,2)$ off diagonal element
+of $\bSigma^{-1}$ is zero. To see this, recall that independence and absence of correlation are
+equivalent in the multivariate normal. Hence, if $X_{11}$ is independent of $X_{12}$ given $\bX_2$ then $\bK_{11}^{-1}$ is diagonal, and so must $\bK_{11}$.
+There's nothing in particular about the
+first two positions, so we arrive at the following remarkable fact: whether or not
+the off diagonal elements of $\bSigma^{-1}$ are zero determines the conditional
+independence of those random variables given the remainder. This forms the
+basis of so-called Gaussian graphical models. The graph defined by ascertaining
+which elements of $\bSigma^{-1}$ are zero is called a conditional independence graph.
+
+
+\subsection{Normal likelihood}
+
+%\href{https://www.youtube.com/watch?v=HqlMCQwvjYw&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=46}{Watch this video before beginning.}
+
+Let $\by \sim N(\bX \bbeta, \sigma^2 \bI)$ then note that 
+minus twice the log-likelihood is:
+$$
+n\log(\sigma^2) + ||\by - \bX \bbeta||^2 / 2\sigma^2
+$$
+Holding $\sigma^2$ fixed we see that minmizing minus twice
+the log likelihood (thus maximizing the likelihood) yields
+the least squares solution:
+$$
+\hat \bbeta = \xtxinv \bX' \by.
+$$
+Since this doesn't depend on $\sigma$ it is the MLE. 
+Taking derivatives and setting equal to zero we
+see that 
+$$
+\hat \sigma^2 = ||\by - \bX \bbeta||^2 / n
+$$
+(i.e. the average of the squared residuals). We'll
+find that there's a potentially preferable unbiased
+estimate given by
+$$
+s^2 = ||\by - \bX \bbeta||^2 / (n - p).
+$$
+
+This model can be written in a  likelihood equivalent fashion
+of  
+$$
+\by = \bX \bbeta + \beps
+$$
+where $\beps \sim N(0, \sigma^2 \bI)$. However, one
+must be careful with specifying linear models this way.
+For example, if one wants to simulate $Y = X + Z$ where $X$ and $Z$ are generated
+independently, one can not equivalently simulate $X$
+by generating $Y$ and $Z$ independently and taking $Z - Y$.
+(Note $Y$ and $Z$ are correlated in the original simulation specification.)
+Writing out the distributions explicitly removes all doubt. 
+Thus the linear notation, especially when there are random effects, is sort
+of lazy and imprecise (though everyone, your author included, uses it). 
+
+
+Let's consider another case, suppose that $\by_1, \ldots, \by_n$ are iid $p$ vectors
+$N(\bmu, \bSigma)$. Then, disregarding constants, minus twice the log likelihood is
+$$
+n \log|\bSigma| + \sum_{i=1}^n (\by_i - \bmu)' \bSigma^{-1} (\by_i - \bmu).
+$$
+Assume that $\bSigma$ is known, then using our derivative rules from earlier,
+we can minimize this to obtain the MLE for $\bmu$
+$$
+\hat \mu = \bar \by 
+$$
+and the following for $\bSigma$
+$$
+\hat \bSigma = \frac{1}{n} \sum_{i=1}^n (\by_i - \bar \by) (\by_i -\bar \by)'
+$$
+
+
+Consider yet another case $\by \sim N(\bX\bbeta, \bSigma)$ with known $\bSigma$.
+Minus twice the log-likelihood is:
+$$
+\log |\bSigma| + (\by - \bX \bbeta)' \bSigma^{-1} (\by - \bX \bbeta).
+$$
+Using our matrix rules we find that
+$$
+\hat \bbeta = (\bX' \bSigma^{-1} \bX)^{-1} \bX' \bSigma^{-1}\by. 
+$$
+This is the so-called generalized least squares estimate. 
+
+
+
+
+
+\subsection{Bayes calculations}
+We assume a slight familiarity of Bayesian calculations and inference for this section.
+In a Bayesian analysis, one multiplies the likelihood times a prior distribution
+on the parameters to obtain a posterior. The posterior distribution is then used for
+inference. Let's go through a simple example.
+Suppose that $\by ~|~ \mu \sim N(\bmu \bone_n, \sigma^2 I)$ and
+$\mu ~|~ N(\mu_0, \tau^2)$ where $\by$ is $n \times 1$ and $\mu$ is a scalar. The
+normal distribution placed on $\mu$ is called the "prior" and $\mu_0$ and $\tau^2$ 
+are assumed to be known. For this example, let's assume that $\sigma^2$ is also
+known. The goal is to calculate
+$\mu ~|~ \by$, the posterior distribution. This is done by multiplying prior times
+likelihood. Since, operarting generically,
+$$
+f(\mbox{Param} | \mbox{Data}) = \frac{f(\mbox{Param}, \mbox{Data})}{f(\mbox{Data})} 
+\propto f(\mbox{Data} | \mbox{Param}) f(\mbox{Param}) = \mbox{Likelihood} \times \mbox{Prior}.
+$$
+Here, the proportional symbol, $\propto$, is with respect to the parameter.
+
+Consider our problem, retaining only terms involving $\mu$ we have that minus twice the natural log of the
+distribution of  $\mu ~|~ \by$ is given by
+\begin{eqnarray*}
+&   & -2 \log(f(\by ~|~ \mu)) - 2 \log(f(\mu)) \\
+& = & ||\by - \mu \bone_n||^2 / \sigma^2  + (\mu - \mu_0)^2 / \tau^2 \\
+& = & -2 \mu n \bar y / \sigma^2 + \mu^2 n / \sigma^2 + \mu^2 / \tau^2 - 2 \mu \mu_0 / \tau^2 \\
+& = & -2 \mu \left(
+\frac{\bar y}{\sigma^2 / n} + \frac{\mu_0}{\tau^2}\right)
++ \mu^2 \left(
+\frac{1}{\sigma^2 / n} + \frac{1}{\tau^2}
+\right)
+\end{eqnarray*}
+This is recognized as minus twice the log density of a normal distribution for $\mu$ with variance
+of 
+$$
+\Var(\mu ~|~ \by) =
+\left(
+\frac{1}{\sigma^2 / n} + \frac{1}{\tau^2}
+\right)^{-1}
+=\frac{\tau^2 \sigma^2 / n}{\sigma^2 / n + \tau^2}
+$$
+and mean of
+$$
+E[\mu ~|~ \by] = \left(
+\frac{1}{\sigma^2 / n} + \frac{1}{\tau^2}
+\right)^{-1}
+\left(
+\frac{\bar y}{\sigma^2 / n} + \frac{\mu_0}{\tau^2}\right)
+= p \bar y + (1 - p) \mu_0
+$$
+where 
+$$
+p = \frac{\tau^2}{\tau^2 + \sigma^2 /n }.
+$$
+Thus $E[\mu ~|~ \by]$ is a mixture of the empirical mean and the prior mean. How much 
+the means are weighted depends on the ratio of the variance of the mean ($\sigma^2/n$)
+and the prior variance ($\tau^2$). As we collect more data ($n \rightarrow \infty$), or if the
+data is not noisy
+($\sigma \rightarrow 0$) or we have a lot of prior uncertainty ($\tau \rightarrow \infty$) the empirical mean dominates. In contrast as we become more certain a priori
+($\tau \rightarrow 0$) the prior mean dominates.
+
+

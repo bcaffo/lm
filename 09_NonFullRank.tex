@@ -1,0 +1,320 @@
+\section{Design Matrices of Less Than Full Rank}
+
+\vb
+
+
+Recall the least squares criteria:
+\begin{eqnarray}
+f({\bfbet}) &=& || \bfy - \bfX {\bfbet} ||^2. \nonumber 
+\end{eqnarray}
+The solution is obtained by solving the so-called normal equations:
+$$\bfX' \bfX \hat {\bfbet} = \bfX' \bfy.$$
+Note that the matrix $\bfX' \bfX$ retains the same rank as $\bfX$. 
+If it is a full rank $p\times p$ matrix and invertible, we can solve the normal equations as:
+\begin{equation}
+\hat {\bfbet} = (\bfX' \bfX)^{-1} \bfX' \bfy. \nonumber
+\end{equation}
+However, if the $n\times p$ design matrix $\bfX$ has rank $r<p$, there is not a unique solution
+$\hat{\bfbet}$ to the normal equations.  
+
+Here we describe three ways to find
+\emph{a} solution $\hat{\bfbet}$ and \emph{the} orthogonal projection
+$\hat{\bfY}$:
+\begin{enumerate}
+\item Reducing the model to one of full rank.
+\item Finding a generalized inverse $(\bfX'\bfX)^-$.
+\item Imposing identifiability constraints.
+\end{enumerate}
+
+\vb
+
+\subsection{Reducing the Model to One of Full Rank}
+
+Let $\bfX_1$ consist of $r$ linearly independent columns from $\bfX$
+and let $\bfX_2$ consist of the remaining columns.  Then
+$\mathbf{X_2=X_1F}$ because the columns of $\bfX_2$ are linearly
+dependent on the columns of $\bfX_1$.
+$$
+\mathbf{X=(X_1, X_2)=(X_1, X_1F)=X_1(I_{r\times r}, F)}.
+$$
+
+This is a special case of the rank factorization $ \mathbf{X=KL}, $ where
+rank$(\mathbf{K}_{n\times r})=r$ and rank$(\mathbf{L}_{r\times p})=r$.
+Now, we can write: $\bfX\bfbet=\mathbf{KL}\bfbet=\mathbf{K}\bfalp.$
+
+Since $\mathbf K$ has full rank, the least squares estimate of
+$\bfalp$ is $\ \hat{\bfalp}=\mathbf{(K'K)^{-1}K'y}\ $ and the
+orthogonal projection is $\ \hat{\bfy} = \mathbf{K}\hat{\bfalp} =
+\mathbf{K(K'K)^{-1}K'y}.\ $ Therefore, $\ \mathbf{P=K(K'K)^{-1}K'},\ $
+or equivalently $\ \mathbf{P=X_1(X'_1X_1)^{-1}X'_1}$.
+
+\bexa
+(One-way ANOVA with 2 groups).
+
+Consider the model:
+$$
+y_{ij} = \mu + \alpha_i +  \epsilon_{ij}  \hskip1cm {\mbox{for}} \; \;  j = 1,\ldots n_i; \;\; i = 1,2
+$$
+or
+$$
+\left( \begin{array}{c}
+y_{11} \\ \vdots \\ y_{1n_1} \\
+y_{21} \\ \vdots \\ y_{2n_2}
+\end{array} \right) =
+\left( \begin{array}{ccc}
+1 & 1 & 0\\ 
+\vdots& \vdots &\vdots\\ 
+1 & 1 & 0\\
+1 & 0 & 1\\ 
+\vdots & \vdots& \vdots \\ 
+1 & 0 & 1 
+\end{array} \right)
+\left( \begin{array}{c} \mu\\ \alpha_1 \\ \alpha_2 \end{array} \right) +
+\left( \begin{array}{c}
+\varepsilon_{11} \\ \vdots \\ \varepsilon_{1n_1} \\
+\varepsilon_{21} \\ \vdots \\ \varepsilon_{2n_2}
+\end{array} \right)
+$$
+
+\vb
+
+Let $\bfX_1$ consist of the first 2 columns of $\bfX$. Then
+$$
+\bfX=\bfX_1\left(\begin{array}{rrr}1&0&1\\0&1&-1\end{array}\right),
+$$
+and $\bfX\bfbet=\bfX_1\bfalp$, where
+$$
+\bfalp =
+\left(\begin{array}{c}\mu+\alpha_2\\\alpha_1-\alpha_2\end{array}\right).
+$$
+
+Then 
+\begin{eqnarray*}
+\hat{\bfalp}
+	 & = & \left(\begin{array}{cc}n&n_1\\n_1&n_1\end{array}\right)^{-1}
+		\left(\begin{array}{c}
+			\sum_j y_{1j}+\sum_j y_{2j}\\\sum_j y_{1j}
+		\end{array}\right)\\
+	 &=&  \left(\begin{array}{cc}
+		n_2^{-1}&-n_2^{-1}\\-n_2^{-1}&n_1^{-1}+n_2^{-1}
+		\end{array}\right)
+		\left(\begin{array}{c}
+			\sum_j y_{1j}+\sum_j y_{2j}\\\sum_j y_{1j}
+		\end{array}\right)\\
+	 & = & \left(\begin{array}{c}
+			\bar{y}_2\\\bar{y}_1-\bar{y}_2
+		\end{array}\right),
+\end{eqnarray*}
+
+and hence
+$
+\ \hat{\bfy}=\bfX_1\hat{\bfalp}= (\bar{y}_{1\cdot}, \ldots,
+\bar{y}_{1\cdot}, \bar{y}_{2\cdot}, \ldots, \bar{y}_{2\cdot})'.
+$
+
+\eexa
+
+\newpage
+\subsection{Generalized Inverse}
+
+\vb
+\bsdefi 
+For an $m \times n$ matrix $\bfA$, a generalized inverse of $\bfA$ is an $n
+\times m$ matrix $\bfA^{-}$ satisfying $\ \bfA\bfA^{-}\bfA = \bfA$.
+\esdefi 
+
+Note that a generalized inverse always exists but is not unique except when $\bfA$ is nonsingular, in which case $\bfA^{-} = \bfA^{-1}$.
+
+%\btheo
+%\label{theo.ls2}
+%Let $\mbox{rank}(\bfX)=r<p$ and $\ \bfP=\bfX(\bfX'\bfX)^-\bfX',\ $
+%where $(\bfX'\bfX)^-$ is a generalized inverse of $\bfX'\bfX.$ 
+%\begin{itemize}
+%\item[(a)]
+%$\bfP$ and $\bfI-\bfP$ are projection matrices.
+%\item[(b)]
+%rank$(\bfI-\bfP)=\tr(\bfI-\bfP)=n-r$.
+%\item[(c)]
+%$\bfX'(\bfI-\bfP)=\zero$.
+%\end{itemize}
+%\etheo
+
+
+Let $\mathbf{X=(X_1, X_2)}$, where $\bfX_1$ consists of $r$ linearly
+independent columns from $\bfX$.  Then a generalized inverse of
+$\bfX'\bfX$ is
+$$
+(\bfX'\bfX)^-=
+\left(\begin{array}{cc}
+	(\bfX'_1\bfX_1)^{-1}&\zero\\
+	\zero&\zero
+\end{array}\right).
+$$
+
+Thus, a solution to the normal equations is $\ \hat{\bfbet}=(\bfX'\bfX)^-
+\bfX'\bfy\ $ with fitted values $\ \hat{\bfy}=\bfX\hat{\bfbet}=\bfX(\bfX'\bfX)^-
+\bfX'\bfy=\bfP\bfy,\ $ where $\ \bfP=\bfX(\bfX'\bfX)^-\bfX'.\ $ Note
+that this also gives $\ \bfP=\bfX_1(\bfX'_1\bfX_1)^{-1}\bfX'_1.\ $
+
+This result is a special case of the following theorem.
+\btheo
+Let the matrix $\bfW_{p\times p}$ have rank $r$ and be partitioned as
+$$
+\bfW=\left(\begin{array}{cc} \bfA&\bfB\\ \bfC&\bfD \end{array}\right),
+$$
+where $\bfA$ has rank $r$.  Then a generalized inverse of $\bfW$ is
+$$
+\bfW^-=\left(\begin{array}{cc} \bfA^{-1}&\zero\\ 
+\zero&\zero \end{array}\right).
+$$
+\etheo
+
+\bexa 
+(One-way ANOVA with 2 groups, continued). We have
+$$
+\bfX'\bfX=
+\left(\begin{array}{ccc}
+	n & n_1 & n_2 \\
+	n_1 & n_1 & 0 \\
+	n_2 & 0 & n_2 
+\end{array}\right).
+$$
+
+If $\bfX_1$ consists of the first 2 columns of $\bfX$, then
+$$
+(\bfX'_1\bfX_1)^{-1}=
+\left(\begin{array}{cc}n&n_1\\n_1&n_1\end{array}\right)^{-1}
+=\left(\begin{array}{cc} n_2^{-1}&-n_2^{-1}\\-n_2^{-1}&n_1^{-1}+n_2^{-1}
+	\end{array}\right).
+$$
+
+and generalized inverse of $\bfX'\bfX$ is
+$$
+(\bfX'\bfX)^-=
+\left(\begin{array}{ccc}
+	n_2^{-1} & -n_2^{-1} & 0 \\
+	-n_2^{-1} & n_1^{-1}+n_2^{-1} & 0 \\
+	0 & 0 & 0
+\end{array}\right).
+$$
+
+Now a solution to the normal equations is
+$$
+\hat{\bfbet}
+=
+\left(\begin{array}{ccc}
+	n_2^{-1} & -n_2^{-1} & 0 \\
+	-n_2^{-1} & n_1^{-1}+n_2^{-1} & 0 \\
+	0 & 0 & 0
+\end{array}\right)
+\left(\begin{array}{c}
+	\sum_j y_{1j}+\sum_j y_{2j} \\
+	\sum_j y_{1j} \\
+	\sum_j y_{2j}
+\end{array}\right)
+=
+\left(\begin{array}{c}
+	\bar{y}_2\\\bar{y}_1-\bar{y}_2\\0
+\end{array}\right),
+$$
+and $\ \hat{\bfy}=\bfX\hat{\bfbet} =(\bar{y}_{1\cdot}, \ldots,
+\bar{y}_{1\cdot}, \bar{y}_{2\cdot}, \ldots, \bar{y}_{2\cdot})',\ $ as
+before.
+
+\eexa
+
+
+\bsdefi 
+A matrix $\bfA^{+}$ satisfying the following conditions is called the Moore-Penrose inverse:
+\begin{enumerate}
+\item $\bfA \bfA^{+} \bfA = \bfA$ 
+
+\item $\bfA^{+} \bfA \bfA^{+} = \bfA^{+}$
+
+\item  $ (\bfA^{+} \bfA)' = \bfA^{+} \bfA$
+ 
+\item  $ (\bfA \bfA^{+})' = \bfA \bfA^{+}$
+\end{enumerate}
+\esdefi
+$\bfA^{+}$ is unique.
+Using the Moore-Penrose inverse provides the minimum norm solution to the least squares problem.
+Note it is sometimes referred to as the pseudo-inverse.
+
+\subsection{Imposing Identifiability Constraints}
+
+A final approach is to impose $s = p-r$ constraints on $\bfbet$ in order to make $\bfbet$ uniquely
+determined (identifiable), i.e.~such that for any $\bfthe\in{\cal
+R}(\bfX)$, there is a unique $\bfbet$ satisfying
+$$
+\bfX\bfbet=\bfthe
+\quad
+\mbox{ and }
+\quad
+\mathbf{H}\bfbet=\zero.
+$$ 
+
+This can be written
+$$
+\left(\begin{array}{c} \bfthe \\ \zero \end{array}\right)
+= \left(\begin{array}{c} \bfX \\ \mathbf{H} \end{array}\right) \bfbet
+\equiv \mathbf{G}\bfbet.
+$$ 
+
+Now when is there a unique solution?
+
+\btheo
+A unique solution exists if and only if $\mathbf G$ has rank $p$ and
+the rows of $\mathbf H$ are linearly independent of the rows of
+$\bfX$.
+\estheo
+
+\bstheo
+A unique solution exists if and only if $\mathbf G$ has rank $p$ and
+$\mathbf H$ has rank $p-r$.
+\etheo
+
+To estimate $\bfbet$, we solve $\ \hat{\bfy}=\bfX\hat{\bfbet}\ $ and
+$\ \mathbf{H}\hat{\bfbet}=\zero\ $, i.e.~we solve the augmented
+normal equations $\ \bfX'\bfX\hat{\bfbet} = \bfX'\bfy\ $ and $\
+\mathbf{H'H} \hat{\bfbet} = \zero.\ $ This gives us  $\
+(\bfX'\bfX+\mathbf{H'H}) \hat{\bfbet}= (\mathbf{G'G})
+\hat{\bfbet}=\bfX'\bfy.\ $ Therefore,
+$$
+\hat{\bfbet}=(\mathbf{G'G})^{-1}\bfX'\bfy,
+\
+\mbox{and}
+\
+\hat{\bfy}=\bfX\hat{\bfbet}=\bfP\bfy,
+\
+\mbox{where}
+\
+\bfP=\bfX(\mathbf{G'G})^{-1}\bfX'.
+$$
+
+\bexa
+(One-way ANOVA with 2 groups, cont.) 
+
+Set the constraint $\alpha_1+\alpha_2=0$, i.e.
+$$
+\mathbf{H}\bfbet\equiv (0, 1, 1)
+	\left(\begin{array}{c}\mu\\\alpha_1\\\alpha_2\end{array}\right)=0.
+$$
+
+Suppose $n_1=n_2=m$.  Then it can be shown that
+$$
+\hat{\bfbet}=
+	\left(\begin{array}{c}
+		\bar{Y}_{\cdot\cdot}\\
+		{1\over 2}(\bar{Y}_{1\cdot}-\bar{Y}_{2\cdot})\\
+		{1\over 2}(\bar{Y}_{2\cdot}-\bar{Y}_{1\cdot})\\
+	\end{array}\right)
+$$ 
+
+satisfies the normal equations, and clearly satisfies the constraint
+$\alpha_1+\alpha_2=0$.  Therefore, we have as before $\
+\hat{\bfY}=\bfX\hat{\bfbet} =(\bar{Y}_{1\cdot}, \ldots,
+\bar{Y}_{1\cdot}, \bar{Y}_{2\cdot}, \ldots, \bar{Y}_{2\cdot}) '$.
+
+\eexa
+
+

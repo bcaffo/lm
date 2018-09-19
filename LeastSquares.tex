@@ -1,0 +1,325 @@
+\documentclass[11pt]{article}
+
+\usepackage{style751,times,theorem}
+\usepackage[dvips]{graphicx}
+
+\setlength{\oddsidemargin}{-0.00in}
+\setlength{\textwidth}{6.5in}
+%\setlength{\topmargin}{-0.0in}
+%\setlength{\textheight}{9.25in}
+\setlength{\parskip}{1ex plus0.5ex minus0.2ex} 
+
+\parindent0em
+
+\pagestyle{plain}
+
+{\theorembodyfont{\rmfamily} \theoremstyle{plain} \newtheorem{defi}{Definition:}[section]}
+{\theorembodyfont{\rmfamily} \theoremstyle{plain} \newtheorem{theo}[defi]{Theorem:}}
+{\theorembodyfont{\rmfamily} \theoremstyle{plain} \newtheorem{exa}[defi]{Example:}}
+{\theorembodyfont{\rmfamily} \theoremstyle{plain} \newtheorem{note}[defi]{Note:}}
+
+\newcommand{\bdefi}{\vb\begin{defi}}
+\newcommand{\edefi}{\end{defi}\vb}
+\newcommand{\bsdefi}{\begin{defi}}
+\newcommand{\esdefi}{\end{defi}}
+\newcommand{\btheo}{\vb\begin{theo}}
+\newcommand{\etheo}{\end{theo}\vb}
+\newcommand{\bstheo}{\begin{theo}}
+\newcommand{\estheo}{\end{theo}}
+\newcommand{\bexa}{\vb\begin{exa}}
+\newcommand{\eexa}{\end{exa}\vb}
+\newcommand{\bsexa}{\begin{exa}}
+\newcommand{\esexa}{\end{exa}}
+\newcommand{\bnote}{\vb\begin{note}}
+\newcommand{\enote}{\end{note}\vb}
+\newcommand{\bsnote}{\begin{note}}
+\newcommand{\esnote}{\end{note}}
+
+\begin{document}
+
+
+	
+\section{Least Squares Estimation}
+
+\vb
+
+Recall the linear model $ \mathbf{Y=X\bfbet + \bfeps}:$
+$$
+\left( \begin{array}{c} Y_1 \\ Y_2 \\ \vdots \\ Y_n \end{array} \right) =
+\left( \begin{array}{ccccc}
+x_{10} & x_{11} & \cdots & x_{1,p-1} \\ 
+x_{20} & x_{21} & \cdots & x_{2,p-1} \\ 
+\vdots & \vdots & \vdots & \vdots \\ 
+x_{n0} & x_{n1} & \cdots & x_{n,p-1}
+\end{array} \right)
+\left(\begin{array}{c}\beta_0\\\beta_1\\\vdots\\\beta_{p-1}
+	\end{array}\right) +
+\left(\begin{array}{c}\varepsilon_1\\\varepsilon_2\\\vdots\\\varepsilon_n
+	\end{array}\right) 
+$$
+
+\bdefi
+An estimate $\hat{\bfbet}$ is a least-squares estimate of $\bfbet$ if
+it minimizes the length $||\bfY - \bfX\bfbet||$ over all $\bfbet$.
+\esdefi
+
+\bnote
+Let $\ \bfx_0,\bfx_1,\ldots,\bfx_{p-1}\ $ be the columns of $\bfX$.
+Then $\ \bfX\bfbet = \beta_0\bfx_0 + \beta_1\bfx_1 + \ldots
+\beta_{p-1}\bfx_{p-1} \in \cal{R}(\bfX),\ $ the range (column space)
+of $\bfX$.  Hence a least-squares estimate can be found by minimizing
+$\ ||\bfY - \bfmu||\ $ over $\bfmu\in\cal{R}(\bfX)$.
+\enote
+
+\bstheo 
+$\bfY$ can be uniquely decomposed as $\ \bfY = \hat{\bfY} +
+\hat{\bfeps}\ $ where $\ \hat{\bfY}\in\cal{R}(\bfX),\ \mbox{\boldmath $\hat{\epsilon}$}
+\in [\cal{R}(\bfX)]^\perp,$ and $ \ [\cal{R}(\bfX)]^\perp \mbox{ is the orthogonal
+complement of }\cal{R}(\bfX) = \{\bfa:\bfX'\bfa=\zero\}.$
+\etheo
+
+\bsdefi
+$\hat{\bfY}$ (sometimes written as $\hat{\bfmu}$) is the orthogonal
+projection of $\bfY$ onto $\cal{R}(\bfX)$.  It is also called the
+fitted vector or vector of fitted values.  The residual vector is $\
+\hat{\bfeps}=\bfY - \hat{\bfY} = \bfY - \bfX\hat{\bfbet}.$
+
+\esdefi
+\begin{center}
+{\footnotesize
+\setlength{\unitlength}{0.15ex}
+\begin{picture}(400,180)(0,0)
+\put(80,90){\line(3,2){120}}
+\put(200,170){\line(3,-2){120}}
+\put(80,90){\line(3,-2){120}}
+\put(200,10){\line(3,2){120}}
+\thicklines
+\put(180,90){\vector(3,4){58}}
+\put(180,90){\vector(1,0){60}}
+\put(240,90){\vector(0,1){78}}
+\put(210,70){$\hat{\bfY}$}
+\put(245,125){$\hat{\bfeps}$}
+\put(190,130){$\bfY$}
+\end{picture}}
+\end{center}
+
+\btheo
+The orthogonal projection solves the least-squares minimization
+problem.
+\estheo
+\begin{center}
+{\footnotesize
+\setlength{\unitlength}{0.15ex}
+\begin{picture}(400,180)(0,0)
+\put(80,90){\line(3,2){120}}
+\put(200,170){\line(3,-2){120}}
+\put(80,90){\line(3,-2){120}}
+\put(200,10){\line(3,2){120}}
+\thicklines
+\put(180,90){\vector(3,4){58}}
+\put(180,90){\vector(1,0){60}}
+\put(180,90){\vector(2,-1){40}}
+\put(240,90){\vector(0,1){78}}
+\put(220,70){\line(1,5){19}}
+\put(220,70){\line(1,1){19}}
+\put(190,130){$\bfY$}
+\put(210,95){$\hat{\bfY}$}
+\put(245,125){$\bfY-\hat{\bfY}$}
+\put(190,70){$\bfmu$}
+\end{picture}}
+\end{center}
+
+
+\btheo
+A least squares estimate is a solution to the normal equations: $\
+\bfX'\bfX\bfbet = \bfX'\bfY.$
+\etheo
+
+\bsdefi
+The residual sum of squares is defined by
+$$
+RSS =
+\hat{\bfeps}'\hat{\bfeps} =
+(\bfY-\bfX\hat{\bfbet})'(\bfY-\bfX\hat{\bfbet}) =
+%\bfY'\bfY - \bfY'\bfX\hat{\bfbet} - \hat{\bfbet}'\bfX'\bfY + 
+%\hat{\bfbet}'\bfX'\bfX\hat{\bfbet} =
+\bfY'\bfY - \hat{\bfbet}'\bfX'\bfX\hat{\bfbet}.
+$$
+\edefi
+
+\btheo
+If $\ \mbox{rank}(\bfX^{n\times p})=p,\ $ then $\
+\mbox{rank}(\bfX'\bfX)=p,\ $ so $\ (\bfX'\bfX)^{-1}\ $ exists. In this
+case the normal equations have the unique solution
+$$\hat{\bfbet}=(\bfX'\bfX)^{-1}\bfX'\bfY.$$
+The orthogonal projection is
+$$\hat{\bfY}=\bfX\hat{\bfbet}=\bfX(\bfX'\bfX)^{-1}\bfX'\bfY=\bfP\bfY,$$
+where 
+$$\bfP=\bfX(\bfX'\bfX)^{-1}\bfX'.$$
+\etheo
+
+\btheo
+\label{theo.ls}
+Let $\ \mbox{rank}(\bfX^{n\times p})=p,\ $ and $\
+\bfP=\bfX(\bfX'\bfX)^{-1}\bfX'.\ $ Then
+\begin{itemize}
+\item[(a)]
+$\bfP$ and $\bfI-\bfP$ are projection matrices.
+\item[(b)]
+rank$(\bfI-\bfP)=\tr(\bfI-\bfP)=n-p$.
+\item[(c)]
+$\bfP\bfX=\bfX$.
+\end{itemize}
+\etheo
+
+\bsnote
+$\bfP$ is projection onto $\cal{R}(\bfX)$.  $\ \bfI-\bfP$ is
+projection onto $[\cal{R}(\bfX)]^\perp$.  The residual vector becomes
+$$\hat{\bfeps}=\bfY-\hat{\bfY}=(\bfI-\bfP)\bfY,$$ 
+and the residual sum of squares
+$$RSS=\hat{\bfeps}'\hat{\bfeps}=\bfY'(\bfI-\bfP)\bfY.$$
+\enote
+
+\bdefi
+For $\bfA_{m \times n}$, a generalized inverse of $\bfA$ is an $n
+\times m$ matrix $\bfA^{-}$ satisfying $\ \bfA\bfA^{-}\bfA = \bfA$.
+\edefi
+
+\bstheo
+In general, the projection onto $\cal{R}(\bfX)$ is $\bfP\bfY$, where
+$\bfP = \bfX(\bfX'\bfX)^{-}\bfX'$.
+\etheo
+
+
+
+\newpage
+	
+\section{Properties of Least Squares Estimates}
+
+\vb
+
+\bnote
+The basic distributional assumptions of the linear model are
+\begin{itemize}
+\item[(a)] 
+The errors are unbiased: $ E[\bfeps]=\zero.$
+\item[(b)] 
+The errors are uncorrelated with common variance: $
+\cov(\bfeps)=\sigma^2\bfI.$
+\end{itemize}
+These assumptions imply that $\ E[\bfY] = \bfX\bfbet\ $ and $\
+\cov(\bfY) = \sigma^2\bfI.$
+\enote
+
+\btheo
+If $\bfX$ is of full rank, then
+\begin{itemize}
+\item[(a)]
+The least squares estimate is unbiased: $\ E[\hat{\bfbet}] = \bfbet.$
+\item[(b)]
+The covariance matrix of the least squares estimate is $\
+\cov(\hat{\bfbet}) = \sigma^2 (\bfX'\bfX)^{-1}.$
+\end{itemize}
+\estheo
+
+\btheo
+\label{theo.ls2}
+Let $\mbox{rank}(\bfX)=r<p$ and $\ \bfP=\bfX(\bfX'\bfX)^-\bfX',\ $
+where $(\bfX'\bfX)^-$ is a generalized inverse of $\bfX'\bfX.$ 
+\begin{itemize}
+\item[(a)]
+$\bfP$ and $\bfI-\bfP$ are projection matrices.
+\item[(b)]
+rank$(\bfI-\bfP)=\tr(\bfI-\bfP)=n-r$.
+\item[(c)]
+$\bfX'(\bfI-\bfP)=\zero$.
+\end{itemize}
+\etheo
+
+\bnote
+In general, $\hat{\bfbet}$ is not unique so we consider the properties
+of $\hat{\bfmu}$, which is unique.  It is an unbiased estimate of the
+mean vector $\bfmu=E[\bfY]=\bfX\bfbet$:
+$$ 
+E[\hat{\bfmu}] = E[\bfP\bfY] = \bfP E[\bfY] = \bfP\bfX\bfbet =
+\bfX\bfbet = \bfmu,
+$$
+since $\bfP\bfX=\bfX$ by Theorem \ref{theo.ls2} (c).
+\esnote
+
+\btheo
+Let $\hat{\bfmu}$ be the least-squares estimate.  For any linear
+combination $\bfc'\bfmu$, $\ \bfc'\hat{\bfmu}$ is the unique estimate
+with minimum variance among all linear unbiased estimates.
+\estheo
+
+\bsnote
+The above shows that $\hat{\bfmu}$ is optimal in the sense of having
+minimum variance among all linear estimators.  This result is the
+basis of the Gauss-Markov theorem on the estimation of estimable
+functions in ANOVA models, which we will study in a later lecture.
+\esnote
+
+\bsnote
+We call $\bfc'\hat{\bfmu}$ the Best Linear Unbiased Estimate (BLUE) of
+$\bfc'\bfmu$.
+\enote
+
+\newpage
+
+\btheo
+If rank$(\bfX_{n\times p})=p$, then $\bfa'\hat{\bfbet}$ is the BLUE of
+$\bfa'\bfbet$ for any $\bfa$.
+\estheo
+
+\bsnote
+The Gauss-Markov theorem will generalize the above to the less than
+full rank case, for the set of estimable linear combinations
+$\bfa'\bfbet$.
+\enote
+
+\bdefi
+Let rank($\bfX)=r$. Define 
+$$S^2 = (\bfY-\bfX\hat{\bfbet})'(\bfY-\bfX\hat{\bfbet})/(n-r) =
+RSS/(n-r).$$
+This is a generalization of the sample variance.
+\esdefi
+
+\bstheo
+$S^2$ is an unbiased estimate of $\sigma^2$.
+\etheo
+
+\bnote
+If we assume that $\bfeps$ has a multivariate normal distribution in
+addition to the assumptions $\ E[\bfeps]=\zero\ $ and $\
+\cov(\bfeps)=\sigma^2\bfI,\ $ i.~e.~if we assume $\ \bfeps\sim
+N_n(\zero, \sigma^2\bfI),\ $ we have $\ \bfY\sim N_n(\bfX\bfbet,
+\sigma^2\bfI)$.
+\esnote
+
+\btheo
+Let $\ \bfY\sim N_n(\bfX\bfbet, \sigma^2\bfI),\ $ where $\
+\mbox{rank}(\bfX_{n \times p})=p$. Then
+\begin{itemize}
+\item[(a)]
+$\hat{\bfbet}\sim N_p(\bfbet,\sigma^2(\bfX'\bfX)^{-1})$,
+\item[(b)]
+$(\hat{\bfbet}-\bfbet)'(\bfX'\bfX)(\hat{\bfbet}-\bfbet)/\sigma^2
+\sim \chi^2_p$,
+\item[(c)]
+$\hat{\bfbet}$ is independent of $S^2$,
+\item[(d)]
+$RSS/\sigma^2=(n-p)S^2/\sigma^2 \sim \chi^2_{n-p}$.
+\end{itemize}
+\etheo
+
+
+
+
+
+
+\end{document}
+
+
+
+

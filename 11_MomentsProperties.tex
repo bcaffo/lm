@@ -1,0 +1,380 @@
+\section{Properties of Least Squares Estimates}
+
+\vb
+In this section we continue working with the linear model: $\mathbf{y=X\bfbet + \bfeps}.$ 
+However, we now add a couple of additonal assumptions. Let us begin by assuming that $E(\bfeps) = \zero$ and $\var(\bfeps) = \sigma^2 \bfI$. Equivalently, this can be expressed as as $E(\bfy) = \bfX \bfbet$ and $\var(\bfy) = \sigma^2 {\bf I}$. Under this assumption the linear model expresses how the mean of the random vector $\bfy$ changes as a function of the explanatory variables $\bfX$. It also assumes that the observations $y_i$ and $y_j$ are uncorrelated for $i \neq j$.
+
+It is important to note that the least squares estimator $\hat  \bfbet = (\bfX' \bfX)^{-1} \bfX' \bfy$ was derived without making these assumptions. Therfore, even if $E(\bfy) \neq \bfX \bfbet$ does not hold, the linear model can still be fit to the data. However, the resulting estimate may have poor properties. In contrast, we will show that under the assumptions above, the estimates $\bfbet$ have some very good properties. We begin by noting that the least-squares estimator is a random vector, and thus we can compute its expected value and variance.
+
+\btheo
+If $\bfX$ is of full rank, then
+\begin{itemize}
+\item[(a)]
+The least squares estimate is unbiased, i.e., $\ E[\hat{\bfbet}] = \bfbet.$
+\item[(b)]
+The variance-covariance matrix of the least squares estimate is $\
+\var(\hat{\bfbet}) = \sigma^2 (\bfX'\bfX)^{-1}.$
+\end{itemize}
+\estheo
+
+
+\bexa
+To illustrate, consider the case of simple linear regression.
+We seek to compute the variance-covariance matrix.
+Using the the matrix $(\bfX'\bfX)^{-1}$ we obtain:
+\begin{eqnarray*}
+\var(\hat{\bfbet}) &=& \sigma^2 (\bfX'\bfX)^{-1} \\
+&=& \frac{\sigma^2}{\sum_i (x_i - {\bar x})^2}
+\left[
+\begin{array}{cc}
+\sum_i x_i^2/n & -{\bar \bfx}\\
+-{\bar \bfx} & 1
+\end{array}
+\right] .
+\end{eqnarray*}
+
+\vb
+Thus, we have that
+$$
+\var(\hat{\beta}_0) = \frac{\sigma^2\sum_i x_i^2/n}{\sum_i (x_i - {\bar x})^2},
+$$
+$$
+\var(\hat{\beta}_1) = \frac{\sigma^2}{\sum_i (x_i - {\bar x})^2},
+$$
+and
+$$
+\cov(\hat{\beta}_0,\hat{\beta}_1) = \frac{-\sigma^2 {\bar \bfx}}{\sum_i (x_i - {\bar x})^2}
+$$
+\esexa
+
+Studying $\var(\hat{\beta}_1)$, we note that there are three aspects of the scatter plot affect the variance of the regression slope: (i) the spread around the regression line; (ii) the spread of the $\bfx$ values; and (iii) the sample size $n$. Here less scatter around the line indicates the slope will be more consistent from sample to sample, a large variance of $\bfx$ provides a more stable regression, and having a larger sample size provides more consistent estimates.
+
+
+%\label{theo.ls2}
+%Let $\mbox{rank}(\bfX)=r<p$ and $\ \bfP=\bfX(\bfX'\bfX)^-\bfX',\ $
+%where $(\bfX'\bfX)^-$ is a generalized inverse of $\bfX'\bfX.$ 
+%\begin{itemize}
+%\item[(a)]
+%$\bfP$ and $\bfI-\bfP$ are projection matrices.
+%\item[(b)]
+%rank$(\bfI-\bfP)=\tr(\bfI-\bfP)=n-r$.
+%\item[(c)]
+%$\bfX'(\bfI-\bfP)=\zero$.
+%\end{itemize}
+%\etheo
+%
+%\bnote
+%In general, $\hat{\bfbet}$ is not unique so we consider the properties
+%of $\hat{\bfmu}$, which is unique.  It is an unbiased estimate of the
+%mean vector $\bfmu=E[\bfY]=\bfX\bfbet$:
+%$$ 
+%E[\hat{\bfmu}] = E[\bfP\bfY] = \bfP E[\bfY] = \bfP\bfX\bfbet =
+%\bfX\bfbet = \bfmu,
+%$$
+%since $\bfP\bfX=\bfX$ by Theorem \ref{theo.ls2} (c).
+%\esnote
+%
+%\btheo
+%Let $\hat{\bfmu}$ be the least-squares estimate.  For any linear
+%combination $\bfc'\bfmu$, $\ \bfc'\hat{\bfmu}$ is the unique estimate
+%with minimum variance among all linear unbiased estimates.
+%\estheo
+
+%\bsnote
+%The above shows that $\hat{\bfmu}$ is optimal in the sense of having
+%minimum variance among all linear estimators.  This result is the
+%basis of the Gauss-Markov theorem on the estimation of estimable
+%functions in ANOVA models, which we will study in a later lecture.
+%\esnote
+%
+%\bsnote
+%We call $\bfc'\hat{\bfmu}$ the Best Linear Unbiased Estimate (BLUE) of
+%$\bfc'\bfmu$.
+%\enote
+%
+%\newpage
+%
+%\btheo
+%If rank$(\bfX_{n\times p})=p$, then $\bfa'\hat{\bfbet}$ is the BLUE of
+%$\bfa'\bfbet$ for any $\bfa$.
+%\estheo
+%
+%\bsnote
+%The Gauss-Markov theorem will generalize the above to the less than
+%full rank case, for the set of estimable linear combinations
+%$\bfa'\bfbet$.
+%\enote
+%
+%\bdefi
+%Let rank($\bfX)=r$. Define 
+%$$S^2 = (\bfY-\bfX\hat{\bfbet})'(\bfY-\bfX\hat{\bfbet})/(n-r) =
+%RSS/(n-r).$$
+%This is a generalization of the sample variance.
+%\esdefi
+%
+%\bstheo
+%$S^2$ is an unbiased estimate of $\sigma^2$.
+%\etheo
+%
+%\bnote
+%If we assume that $\bfeps$ has a multivariate normal distribution in
+%addition to the assumptions $\ E[\bfeps]=\zero\ $ and $\
+%\cov(\bfeps)=\sigma^2\bfI,\ $ i.~e.~if we assume $\ \bfeps\sim
+%N_n(\zero, \sigma^2\bfI),\ $ we have $\ \bfY\sim N_n(\bfX\bfbet,
+%\sigma^2\bfI)$.
+%\esnote
+%
+%\btheo
+%Let $\ \bfY\sim N_n(\bfX\bfbet, \sigma^2\bfI),\ $ where $\
+%\mbox{rank}(\bfX_{n \times p})=p$. Then
+%\begin{itemize}
+%\item[(a)]
+%$\hat{\bfbet}\sim N_p(\bfbet,\sigma^2(\bfX'\bfX)^{-1})$,
+%\item[(b)]
+%$(\hat{\bfbet}-\bfbet)'(\bfX'\bfX)(\hat{\bfbet}-\bfbet)/\sigma^2
+%\sim \chi^2_p$,
+%\item[(c)]
+%$\hat{\bfbet}$ is independent of $S^2$,
+%\item[(d)]
+%$RSS/\sigma^2=(n-p)S^2/\sigma^2 \sim \chi^2_{n-p}$.
+%\end{itemize}
+%\etheo
+
+
+\btheo
+({\bf Gauss-Markov Theorem}). If $E(\bfy) = \bfX \bfbet$ and $\var(\bfy) = \sigma^2 {\bf I}$, then the least squares estimator $\hat{\bfbet}$ is the best linear unbiased estimators (BLUE).
+\estheo
+
+\noindent {\bf Proof:}
+Consider an alternative linear estimator $\bfb = \bfA \bfy$ of $\bfbet$. As it is a linear estimator we can express it as follows: $\bfA = (\bfX' \bfX)^{-1} \bfX' + \bfD$ where $\bfD$ is a non-zero matix.
+For $\bfA \bfy$ to be an unbiased estimator
+of $\bfbet$, it must hold that $E(\bfA \bfy) = \bfbet$. This can be expressed as:
+\begin{eqnarray*}
+E(\bfb) &=& \bfA E( \bfy)\\
+&=& E(((\bfX' \bfX)^{-1} \bfX' + \bfD) \bfX' \bfbet \\
+&=& ((\bfX' \bfX)^{-1} \bfX' + \bfD)E(\bfy)\\
+&=& ((\bfX' \bfX)^{-1} \bfX' + \bfD)\bfX \bfbet\\
+&=& \bfbet + \bfD\bfX \bfbet
+\end{eqnarray*}
+This provides a condition for $\bfb$ to be an unbiased estimator: $\bfD \bfX = \bf 0$.
+
+Now,
+\begin{eqnarray*}
+\var(\bfb) &=& \sigma^2 \bfA \bfA' \\
+&=& \sigma^2 [(\bfX' \bfX)^{-1}\bfX'  + \bfD][(\bfX' \bfX)^{-1}\bfX' + \bfD]'\\
+&=& \sigma^2  [(\bfX' \bfX)^{-1}\bfX' \bfX (\bfX' \bfX)^{-1} + (\bfX' \bfX)^{-1}\bfX'\bfD' + \bfD\bfX(\bfX' \bfX)^{-1} + \bfD \bfD']\\
+&=&\sigma^2 (\bfX' \bfX)^{-1} + \sigma^2 \bfD \bfD'\\
+&=&\var({\hat \bfbet})+ \sigma^2 \bfD \bfD'\\
+\end{eqnarray*}
+Since $ \bfD \bfD'$ is positive definite, the variance of $\var(\bfb)$ exceeds that of $\var({\hat \bfbet})$.
+
+\bigskip
+
+Note that here `best' implies minimum variance, and `linear' that the estimators are linear functions of $\bfy$ Remarkably, the results holds for any distribution of $\bfy$.
+It is important to consider unbiased estimators, since we could always minimize the variance
+by defining an estimator to be constant (hence variance $0$). If one
+removes the restriction of unbiasedness, then minimum variance cannot
+be the definition of `best'. Often one then looks to mean squared
+error, the squared bias plus the variance, instead. 
+
+\vb
+We can extend these results to linear contrasts of $\bbeta$ 
+to say that $\bq' \hat \bbeta$ is the {\it best}
+estimator of $\bq' \bbeta$ in the sense of minimizing the variance among
+linear (in $\bY$) unbiased estimators.
+
+\btheo
+If $E(\bfy) = \bfX \bfbet$ and $\var(\bfy) = \sigma^2 {\bf I}$, the best linear unbiased estimators of $\bq'{\bf \beta}$ is $\bq'{\hat {\bf \beta}}$, where ${\hat {\bf \beta}}$ is the least-squares estimator ${\hat {\bf \beta}} = (\bfX'\bfX)^{-1} \bfX' \bfy$.
+\estheo
+
+
+
+%\href{https://www.youtube.com/watch?v=oeN8IzLFHls&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=43}{Watch this video before beginning.}
+
+%Now that we have moments, we can discuss mean and variance properties of the 
+%least squares estimators. Particularly, note that if $Y$ satisfies
+%$E[\bY] = \bX \bbeta$ and $\Var(Y) = \sigma^2 \bI$ then, $\hat \bbeta$ 
+%satisfies: 
+%$$E[\hat \bbeta] = \xtxinv \bX^t E[\bY] = \xtxinv \xtx \bbeta = \bbeta.$$
+%Thus, under these conditions $\hat \bbeta$ is unbiased. In addition, we have
+%that 
+%$$
+%\Var(\hat \bbeta) = \Var\{\xtxinv \bX^t \bY\} = \xtxinv \bX^t \Var(\bY) \bX \xtxinv
+%= \xtxinv \sigma^2. 
+%$$
+
+
+\noindent {\bf Proof:} Consider estimating $\bq' \bbeta$.
+Clearly, $\bq' \hat \bbeta$ is both unbiased and linear in $\bY$. 
+Also note that $\Var(\bq' \hat \bbeta) = \bq' (\bX' \bX)^{-1} \bq \sigma^2$. 
+Let $\bk' \bY$ be another linear unbiased estimator, so that
+$E[\bk' \bY] = \bq' \bbeta$. But, $E[\bk' \bY] = \bk' \bX \bbeta$. 
+It follows that since  $\bq' \bbeta = \bk' \bX \bbeta$ must hold for all possible $\bbeta$, we have that
+$\bk' \bX = \bq'$. Finally note that
+$$
+\Cov(\bq' \hat \bbeta, \bk' \bY)
+= \bq' \xtxinv \bX' \bk' \sigma^2.
+$$
+Since $\bk' \bX = \bq'$, we have that
+$$
+\Cov(\bq' \hat \bbeta, \bk' \bY) = \Var(\bq' \bbeta).
+$$
+Now we can execute the proof easily. 
+\begin{eqnarray*}
+\Var(\bq' \hat \bbeta - \bk' \bY) & = & 
+\Var(\bq' \hat \bbeta) + \Var(\bk' \bY) - 2 \Cov(\bq' \hat \bbeta, \bk' \bY) \\
+& = & \Var(\bk' \bY) - \Var(\bq' \hat \bbeta) \\ 
+& \geq & 0.
+\end{eqnarray*}
+Here the final inequality arises as variances have to be non-negative. Then we have
+that $\Var(\bk' \bY) \geq \Var(\bq' \hat \bbeta)$ proving the result.
+
+Notice, normality was not required at any point in the proof, only restrictions
+on the first two moments. In following sections, we'll see the consequences of
+assuming normality.
+
+
+\subsection{Estimating $\sigma^2$}
+
+We can devise an unbiased estimator for $\sigma^2$ based on the least-squares estimator $\hat{\bf \beta}$. 
+Let us define 
+$$s^2 = (\bfY-\bfX\hat{\bfbet})'(\bfY-\bfX\hat{\bfbet})/(n-r).$$
+This is a generalization of the sample variance.
+
+
+\bstheo
+$s^2$ is an unbiased estimate of $\sigma^2$.
+\etheo
+
+
+\bstheo
+An unbiased estimate of $\var({\hat \bf \beta})$ is given by
+$$
+\hat \var({\hat \bf \beta}) = s^2 (\bfX' \bfX)^{-1}.
+$$
+\etheo
+
+
+
+\subsection{Model misspecification}
+
+Any linear model is only as good as the specified design matrix.  Incorrect specification can lead to bias and model misfit, resulting in power loss and an inflated false positive rate.  Problems can arise if either irrelevant explanatory variables are included, or relevant variables are omitted. Here we study biases due to model misspecification.
+
+Assume, for example, that a correctly specified regression model would be
+$$\bfy =\bfX_1 \bbeta_1 + \bfX_1 \bbeta_2 + \epsilon.$$
+Suppose we erroneously fit the model:
+$$\bfy =\bfX_1 {\bfbet_1} + \epsilon.$$ This implies we are under-fitting the model.
+Then the least-squares estimator is given by ${{\hat \bfbet_1}} = (\bfX_1'™ \bfX_1)^{-1} \bfX_1'€™ \bfy$.
+Computing the expectation, we see that 
+\begin{eqnarray*}
+E({{\hat \bfbet_1}}) &=&E( (\bfX_1'€™ \bfX_1)^{-1} \bfX_1'™ \bfy)\\
+&=& (\bfX_1'€™ \bfX_1)^{-1} \bfX_1'€™ E(\bfy)\\
+&=& (\bfX_1'€™ \bfX_1)^{-1} \bfX_1'€™(\bfX_1 \bfbet_1 + \bfX_2 \bfbet_2)\\
+&=& \bfbet_1  + (\bfX_1' \bfX_1)^{-1} \bfX_1'™ \bfX_2 \bfbet_2
+\end{eqnarray*}
+In addition,  $$\var(\hat \bfbet_1) = \sigma^2 (\bfX_1' \bfX_1)^{-1}.$$
+The estimate of $\bfbet$ is biased. However, note that the bias disappears if $\bfbet_2=0$ or $\bfX_1' \bfX_2=0$. 
+
+The estimate of $\sigma^2$ is also biased, with $$E(s^2) = \sigma^2 + \frac{1}{n-p}  \bbeta_2' \bfX_2' (\bI - \bfX_1 (\bfX_1' \bfX_1)^{-1} \bfX_1') \bfX_2 \bbeta_2.$$
+
+If in contrast, irrelevant variables are included (over-fitting), the parameters will remain unbiased.
+However, the variance-covariance matrix of $\bfbet_1$ will be inflated effecting subsequent inference.
+
+To see this, assume that the correctly specified model is
+$$\bfy =\bfX_1 {\bfbet_1} + \epsilon.$$
+However, suppose we instead use the model:
+\begin{eqnarray*}
+\bfy &=& \bfX_1 \bfbet_1 + \bfX_2 \bfbet_2 + \epsilon \\
+&=& \bfX \bfbet + \epsilon 
+\end{eqnarray*}
+where $\bfX = [\bfX_1 \, \, \bfX_2]$ and $\bfbet = [\bfbet_1 \, \, \bfbet_2]'.$
+Now, one can show:
+\begin{eqnarray*}
+E({\hat \bfbet_1}) &=& \bfbet_1\\
+E(s^2) &=& \sigma^2\\
+\var({\hat \bfbet_1}) &=& \sigma^2 (\bfX_1' \bfX_1)^{-1} \\
++   && \sigma^2(\bfX_1' \bfX_1)^{-1}(\bfX_1' \bfX_2)[\bfX_2' (\bfI-\bfP_{\bfX_1} )\bfX_2]^{-1} \bfX_2' \bfX_1 (\bfX_1' \bfX_1')^{-1}
+\end{eqnarray*}
+
+%\section{Estimable Functions and the Gauss-Markov Theorem}
+%
+%\vb
+%
+%\subsection*{A quick review:}
+%
+%\bdefi
+%We defined the Best Linear Unbiased Estimate (BLUE) of a parameter
+%$\theta$ based on data $\bfY$
+%\begin{itemize}
+%\vspace*{-2mm}
+%\item[(a)] is a linear combination of $\bfY$ (i.~e.~equals $\bfb'\bfY$),
+%\item[(b)] is unbiased (i.~e.~$E[\bfb'\bfY]=\theta$), 
+%\item[(c)] has the smallest variance among all such unbiased linear
+%estimators.
+%\end{itemize}
+%\esdefi
+%
+%\bstheo
+%For any linear combination $\bfc'E[\bfY]$, $\bfc'\hat{\bfY}$ is the
+%BLUE of $\bfc'E[\bfY]$, where $\hat{\bfY}$ is the least-squares
+%orthogonal projection of $\bfY$.
+%\estheo
+%
+%\bstheo
+%If rank$(\bfX_{n\times p})=p$, then $\bfa'\hat{\bfbet}$ is the BLUE of
+%$\bfa'\bfbet$ for any $\bfa$.
+%\estheo
+%
+%\bsnote
+%In the less than full rank case, there is not a unique way to estimate
+%$\bfbet$. However, we will see that certain linear combinations of
+%the components of $\bfbet$ can be unbiasedly estimated.
+%\enote
+%
+%\bdefi
+%A linear combination $\bfa'\bfbet$ is estimable if it has a linear
+%unbiased estimate, i.e., $\bfb'\bfY$ for some $\bfb$ such that
+%$E[\bfb'\bfY] = \bfa'\bfbet$ for all $\bfbet$.
+%\edefi
+%
+%\bstheo
+%$\bfa'\bfbet$ is estimable if and only if $\bfa \in {\cal R}(\bfX')$.
+%\estheo
+%
+%\bstheo
+%If $\bfa'\bfbet$ is estimable, there is a unique $\bfb_*\in{\cal
+%R}(\bfX)$ such that $\bfa=\bfX'\bfb_*$.
+%\etheo
+%
+%\bsnote
+%In the full rank case any $\bfa'\bfbet$ is estimable. In particular, $
+%\bfa'\hat{\bfbet}=\bfa'(\bfX'\bfX)^{-1}\bfX'\bfY\equiv\bfb'\bfY $ is a
+%linear unbiased estimate of $\bfa'\bfbet$.  In this case we also know
+%that $\bfa'\hat{\bfbet}$ is the BLUE.
+%\enote
+%
+%\bstheo
+%(Gauss-Markov): If $\bfa'\bfbet$ is estimable, then
+%\begin{itemize}
+%\vspace*{-2mm}
+%\item[(a)]
+%$\bfa'\hat{\bfbet}$ is unique (i.e.~the same for all solutions
+%$\hat{\bfbet}$ to the normal equations),
+%\item[(b)]
+%$\bfa'\hat{\bfbet}$ is the BLUE of $\bfa'\bfbet$.
+%\end{itemize}
+%\etheo
+%
+%\bstheo
+%If $\bfa'\bfbet$ is estimable then $\bfa'(\bfX'\bfX)^- \bfX'\bfX =
+%\bfa'$ for any generalized inverse $(\bfX'\bfX)^-$.
+%\estheo
+%
+%\bstheo
+%If $\bfa'\bfbet$ is estimable, then $\var(\bfa'\hat{\bfbet}) =
+%\sigma^2\bfa'(\bfX'\bfX)^-\bfa.$
+%\etheo
+
+
+
+

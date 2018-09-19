@@ -1,0 +1,353 @@
+\section{Linear regression}
+
+%\href{https://www.youtube.com/watch?v=0PLufpySIcs&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=14}{Watch this video before beginning.}
+
+Next we consider the case of simple linear regression. 
+This entails minimizing:
+\begin{equation}
+\label{eq:line}
+|| \by - (\beta_0 \bfJ_n + \beta_1 \bx) ||^2
+\end{equation}
+over $\beta_1$ and $\beta_2$. 
+We can think about the problem in two ways.
+First, the space $$\Gamma = \{\beta_0 \bone_n + \beta_1 \bx ~|~ \beta_0, \beta_1 \in \mathbb{R}\}$$
+is a two dimensional subspace of $\mathbb{R}^n$. Therefore, the least squares
+equation finds the projection of the observed data point 
+onto two dimensional subspace spanned by the two vectors $\bone_n$ and $\bx$.
+
+Second, we can consider the scatterplot
+of points $(x_i, y_i)$. The goal is to find the best fitting line
+of the form $y = \beta_0 + \beta_1 x$ by minimizing the sum of the
+squared vertical distances between the points and the fitted line. 
+Here $\beta_1$ is referred to as the slope, and $\beta_0$ as the intercept.
+The slope $\beta_1$ has units `y-units per x-units'. 
+The intercept corresponds to the value of $y$ when $x=0$, and is not always meaningful if the $0$ lies outside the range of reasonable values for $x$.
+
+We begin by rewriting the least squares criterion as follows:
+\begin{equation}
+f(\beta_0, \beta_1) = || \by - (\beta_0 \bfJ_n + \beta_1 \bx) ||^2 = \sum_{i=1}^n (y_i - \beta_0 - \beta_1 x_i)^2.
+\end{equation}
+The least squares estimates can be found by differentiating $f$ with respect to $\beta_0$ and $\beta_1$ and setting the partial derivatives equal to $0$, i.e.
+\begin{eqnarray}
+\frac{\partial f(\beta_0, \beta_1)}{\partial \beta_0} &=& -2 \sum_{i=1}^n (y_i - \beta_0 - \beta_1 x_i) =0\\
+\frac{\partial f(\beta_0, \beta_1)}{\partial \beta_0} &=& -2 \sum_{i=1}^n x_i(y_i - \beta_0 - \beta_1 x_i) =0.
+\end{eqnarray}
+The values of $\hat \beta_0$ and $\hat \beta_0$ that minimize $f$ are given by the solution to the normal equations:
+\begin{eqnarray}
+\sum_{i=1}^n y_i &=& n  \hbeta_0 + \hbeta_1 \sum_{i-1}^n x_i\\
+\sum_{i=1}^n x_iy_i &=& \hbeta_0 \sum_{i-1}^n x_i + \hbeta_1 \sum_{i-1}^n x_i^2.
+\end{eqnarray}
+Solving the normal equations gives us the following estimates:
+\begin{equation}
+{\hat \beta_1} = \frac{ \sum_{i-1}^n (x_i- \bar x)(y_i - \bar y)}{\sum_{i=1}^n (x_i- \bar x)^2} 
+\end{equation}
+and
+\begin{equation}
+{\hat \beta_0} = \bar \bfy - \hat \beta_1 \bar \bfx .
+\end{equation}
+
+Note we can also write $\hat \beta_1$ as follows:
+\begin{equation}
+{\hat \beta_1} = \frac{(\bx- \bar x \bJ_n)' (\bfy - \bar y \bJ_n)}{(\bx- \bar x \bJ_n)'(\bx- \bar x \bJ_n)}.
+\end{equation}
+
+To check whether $\hbeta_0$ and $\hbeta_1$ correspond to the minimum of $f$, it suffices to check whether the Hessian matrix is positive definite.The Hessian matrix can be expressed as
+$$
+\left( \begin{array}{cc}
+\frac{\partial f}{\partial \beta_0^2} & \frac{\partial f}{\partial \beta_0 \beta_1} \\ 
+\frac{\partial f}{\partial \beta_0 \beta_1} & \frac{\partial f}{\partial \beta_1^2} \\ 
+\end{array} \right)  =
+\left( \begin{array}{cc}
+2n & 2 \sum x_i \\ 
+2 \sum x_i & 2 \sum x_i^2 \\ 
+\end{array} \right)
+$$
+The matrix is positive definite if $n > 0$ and the  determinant is $>0$. This corresponds to $\sum (x_i - \bar x)^2 >0$, which holds if not all values of $x_i$ are the same. If this does not hold, simple linear regression is not meaningful, so this is a reasonable assumption. 
+
+Note that we can rewrite the estimated slope as follows:
+$$\hat \beta_1 = \hat \rho_{xy} \frac{\hat \sigma_y}{\hat \sigma_x}.$$
+Thus, the best fitting line has a slope equal
+to the correlation times the ratio of the standard deviations. If we reverse the role of $\bfx$
+and $\bfy$, we simply invert the ratio of the standard deviations. Thus we also note, that if we
+center and scale our data first so that the resulting vectors have mean $0$ and variance $1$,
+our slope is exactly the correlation between the vectors.
+
+\bnote
+These estimates generalize the single parameter models previously discussed.
+\enote
+
+%Given what we've done already, it's surprisingly easy to minimize
+%\eqref{eq:line}. Consider fixing $\beta_1$ and minimizing
+%with respect to $\beta_0$.
+%$$
+%|| \by - \beta_1 \bx  - \beta_0 \bone_n ||^2
+%$$
+%Let $\hat \beta_0 (\beta_1)$ be the least squares minimum for $\beta_0$
+%for a given $\beta_1$. 
+%By our results from mean only regression we know that
+%\begin{equation*}
+%\label{eq:intercept}
+%\hat \beta_0 (\beta_1) = \frac{1}{n}(\by - \beta_1 \bx) \bone_n = \bar y - \beta_1 \bar x.
+%\end{equation*}
+%Therefore, plugging this into the least squares equation, we know that
+%\begin{equation}
+%\label{eq:ls2}
+%\eqref{eq:line} \geq 
+%|| \by -  \bar y \bone_n + \beta_1 (\bx  - \bar x \bone_n) ||^2= || \tilde \by - \beta_1 \tilde \bx||^2,
+%\end{equation}
+%where $\tilde \by$ and $\tilde \bx$ are the centered versions of $\by$ and
+%$\bx$, respectively. We know from the last chapter \eqref{eq:ls2} is minimized 
+%by 
+%$$\hat \beta_1 = \hat \rho_{xy} \frac{\hat \sigma_y}{\hat \sigma_x}.$$
+%Plugging this into $\hat \beta_0(\hat \beta_1)$ we get that
+%$$
+%\hat \beta_0 = \bar y - \beta_1 \bar x.
+%$$
+%
+%Therefore, the slope estimate from including an intercept is identical to that of
+%regression through  the origin after centering the data. The intercept simply
+%forces the line through the average of the Y's and X's.
+
+\subsection{Coding example}
+%\href{https://www.youtube.com/watch?v=fLITbjrkQks&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=15}{Watch this video before beginning.}
+
+Refering back to the \texttt{diamond} example from the previous section. Let us compute $\beta_0$ and $\beta_1$ in two differnt ways.
+
+\begin{verbatim}
+> library(UsingR)
+> data(diamond)
+> x = diamond$carat
+> y = diamond$price
+> beta1 = cor(x, y) * sd(y) / sd(x)
+> beta0 = mean(y) - beta1 * mean(x)
+> c(beta0, beta1)
+[1] -259.6259 3721.0249
+> # versus estimate with lm
+> coef(lm(y ~ x))
+(Intercept)           x 
+  -259.6259   3721.0249 
+\end{verbatim}
+
+\subsection{Fitted values}
+%\href{https://www.youtube.com/watch?v=QwYzfLOAQbo&index=16&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
+The term $y_i = \beta_0 + \beta_1 x_i$, for $i = 1, \dots n$ is called the fitted value for the $i^{th}$ observation.
+We define $\hat \bfy = (\hat y_1, \ldots, \hat y_n)'$ to be the vector of fitted values. 
+This can be expressed as  $\hat \bfy = \hat \beta_0 {\bf J}_n+ \hat \beta_1 \bfx$.
+Whereas $\by$ lives in $\mathbb{R}^n$, $\hat \by$ lives in $\Gamma$, the two dimensional
+linear subspace of $\mathbb{R}^n$ spanned by the two vectors, $\bfJ_n$ and $\bx$. 
+We can think of our least squares as minimizing 
+$$
+|| \by - \hat \by|| 
+$$
+over all $\hat \by \in \Gamma$. The fitted values are the orthogonal projection
+of the observed data onto this linear subspace.
+
+\subsection{Coding example}
+%\href{https://www.youtube.com/watch?v=sFbhaImWA7c&index=17&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
+
+Compute the predicted values for the \texttt{diamond} data in two different ways.
+\begin{verbatim}
+> yhat = beta0 + beta1*x
+> yhat
+ [1]  372.9483  335.7381  372.9483  410.1586  670.6303  335.7381  298.5278
+ [8]  447.3688  521.7893  298.5278  410.1586  782.2611  335.7381  484.5791
+[15]  596.2098  819.4713  186.8971  707.8406  670.6303  745.0508  410.1586
+[22]  335.7381  372.9483  335.7381  372.9483  410.1586  372.9483  410.1586
+[29]  372.9483  298.5278  372.9483  931.1020  931.1020  298.5278  335.7381
+[36]  335.7381  596.2098  596.2098  372.9483  968.3123  670.6303 1042.7328
+[43]  410.1586  670.6303  670.6303  298.5278  707.8406  298.5278
+
+> fit = lm(y~x)
+
+> max(abs(yhat-predict(fit)))
+[1] 0
+
+\end{verbatim}
+
+Let us now compute the predicted value for $x=0.20$ in two ways.
+\begin{verbatim}
+> beta0 + beta1 * .20
+[1] 484.5791
+
+> predict(lm(y ~ x), newdata = data.frame(x = .2))
+       1 
+484.5791 
+\end{verbatim}
+
+\subsection{Residuals}
+%\href{https://www.youtube.com/watch?v=F5yP2GxXeaI&index=18&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
+A residual, denoted $e_i$, is the difference between the observed and the predicted value of $y_i$, i.e. 
+$e_i = y_i - \hat y_i$. 
+The residuals show how far the individual data points fall from the regression function.
+We define $\bfe = (e_1, \ldots, e_n)'$ to be the vector of residuals, which can also be expressed as  $\bfe =  \bfy - \hat \bfy$
+Geometrically speaking, the residuals are the orthogonal vector pointing
+to $\by$ from $\hat \by$. Least squares can be thought of as minimizing
+the sum of the squared residuals. The quantity
+$||\be||^2 $ is called the sum of the squared errors while $\frac{1}{n-2}||\be||^2$ is
+called the mean squared error or the residual variance.
+
+\bnote
+The regression line and the residuals have the following properties:
+\begin{itemize}
+\item The sum of the residuals is zero.
+\item The sum of the squared residuals is a minimum of $f$.
+\item $\bfy' \bfJ_n = \hat \bfy' \bfJ_n$
+\item $\bfx' \bfe = 0$ and $\hat \bfy' \bfe = 0$
+\item The regression line always goes through the point $(\bar x, \bar y)$.
+\end{itemize}
+\enote
+
+\subsection{Coding example}
+
+Compute the residuals for the {\tt diamond} data set  in two different ways and compare.
+\begin{verbatim}
+> e = y-yhat
+ [1] -17.9483176  -7.7380691 -22.9483176 -85.1585661 -28.6303057   6.2619309
+ [7]  23.4721795  37.6311854 -38.7893116  24.4721795  51.8414339  40.7389488
+[13]   0.2619309  13.4209369  -1.2098087  40.5287002  36.1029250 -44.8405542
+[19]  79.3696943 -25.0508027  57.8414339   9.2619309 -20.9483176  -3.7380691
+[25] -19.9483176  27.8414339 -54.9483176   8.8414339 -26.9483176  16.4721795
+[31] -22.9483176 -13.1020453 -12.1020453  -0.5278205   3.2619309   2.2619309
+[37]  -1.2098087 -43.2098087 -27.9483176 -23.3122938 -15.6303057  43.2672091
+[43]  32.8414339   7.3696943   4.3696943 -11.5278205 -14.8405542  17.4721795
+
+> max(abs(e - resid(fit)))
+[1] 0
+\end{verbatim}
+
+
+\subsection{Connecting the pieces}
+
+Here is an alternative approach towards estimating the parameters of the simple linear regression model that links back to the single variable regression models discussed in the previous chapter. 
+
+Consider fixing $\beta_1$ and minimizing the least square criteria 
+$$
+|| \by - \beta_1 \bx  - \beta_0 \bfJ_n ||^2
+$$
+with respect to $\beta_0$.
+Let $\hat \beta_0 (\beta_1)$ be the least squares minimum for $\beta_0$ for a given value of $\beta_1$.  Note $\beta_0$ is now a function of $\beta_1$.
+Following the results from mean only regression we know that
+\begin{equation*}
+\label{eq:intercept}
+\hat \beta_0 (\beta_1) = \frac{1}{n}(\by - \beta_1 \bx) \bfJ_n = \bar y - \beta_1 \bar x.
+\end{equation*}
+Therefore, plugging this into the least squares equation, we know that
+\begin{equation}
+\label{eq:ls2}
+|| \by - \beta_1 \bx  - \beta_0 \bfJ_n ||^2 \geq 
+|| \by -  \bar y \bfJ_n + \beta_1 (\bx  - \bar x \bfJ_n) ||^2= || \tilde \by - \beta_1 \tilde \bx||^2,
+\end{equation}
+where $\tilde \by$ and $\tilde \bx$ are the centered versions of $\by$ and
+$\bx$, respectively. We know from previously that \eqref{eq:ls2} is minimized by 
+$$
+{\hat \beta_1} = \frac{<\tilde \bx, \tilde \by>}{<\tilde \bx, \tilde \bx>} = \frac{(\bx- \bar x \bJ_n)' (\bfy - \bar y \bJ_n)}{(\bx- \bar x \bJ_n)'(\bx- \bar x \bJ_n)}.
+$$
+
+
+Plugging this into $\hat \beta_0(\hat \beta_1)$ we get that
+$$
+\hat \beta_0 = \bar y - \hat \beta_1 \bar x.
+$$
+
+Note, the slope estimate when including an intercept is identical to that of
+regression through the origin after centering the data. The intercept simply
+forces the line through $(\bar x, \bar y)$.
+
+
+\subsection{Regression by Successive Orthogonalization}
+Consider two vectors $\bfx$ and $\bfz$ that are orthogonal, i.e. $\bfx' \bfz = 0$. Then, regressing $\bfy$ on $\bfx$ and $\bfz$ separately gives the same
+coefficients as regressing $\bfy$ on $\bfx$ and $\bfz$ together. This can be seen by re-expressing the least-squares criteria as follows:
+$$
+|| \by - (\beta \bfx + \gamma \bfz) ||^2 = 
+(\by - \beta \bfx)' (\by - \beta \bfx)' + (\by - \gamma \bfz)' (\by - \gamma \bfz)'  -  \by'\by
+$$
+Thus, maximizing the least-squares criteria can be perfomred for each variable seperately.
+
+We can apply these ideas to the previosly discussed simple linear regression model.
+Note the vector $\bx - {\bar x} \bfJ_n$ is orthognal to the vector $\bfJ_n$. 
+
+The projection of $\bfy$ onto ${\bf u}_1$ can be expressed as  $\hat \bfy_1 = {\hat \alpha_0} \bfJ_n$ where ${\hat \alpha_0} = {\bar y}$. Similarly, the projection of $\bfy$ onto ${\bf u}_2$ can be expressed as  $\hat \bfy_1 =  {\hat \alpha_1} (\bfx - {\bar x}\bfJ_n)$ where 
+$$
+{\hat \alpha_1} = \frac{(\bfx- \bar x \bfJ_n)' \bfy}{(\bfx- \bar x \bfJ_n)'(\bfx- \bar x \bfJ_n)} = \frac{(\bfx- \bar x \bfJ_n)' (\bfy - \bar y \bfJ_n)}{(\bfx- \bar x \bfJ_n)'(\bfx- \bar x \bfJ_n)}.
+$$
+Now note that ${\hat \alpha_1} = {\hat \beta_1}$ from before.
+Thus, we can write 
+\begin{eqnarray}
+{\hat \bfy} &=& {\hat \bfy}_1 + {\hat \bfy}_2 \nonumber \\
+&=& {\bar y}  \bfJ_n + {\hat \beta_1} (\bfx - {\bar x}\bfJ_n) \nonumber\\
+&=& ({\bar y}  - {\hat \beta_1} {\bar x}) \bfJ_n + {\hat \beta_1} \bfx  \nonumber
+\end{eqnarray}
+Setting ${\hat \beta_0} = {\bar y}  - {\hat \beta_1} {\bar x}$ provides the familiar solution.
+
+
+We will see later that this results holds for the more general case consisting of linear regression with multiple explanatory variables.
+
+
+\subsection{Extension to other spaces}
+% \href{https://www.youtube.com/watch?v=ax1M0bgi-6E&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=20}{Watch this video before beginning.}
+
+It is interesting to note that nothing we've discussed is intrinsic
+to $\mathbb{R}^n$. Any space with a norm and inner product and
+absent of extraordinary mathematical pathologies would suffice.  Hilbert spaces are perhaps the most directly extendable. 
+
+As an example, let's develop linear regression for
+a space of (Lebesgue) square integrable functions. That is, let $y$ be in the space
+of functions from $[0,1] \rightarrow \mathbb{R}$ with finite squared itegral.
+Define the inner product as $\ip{f}{g} = \int_0^1 f(t)g(t)dt$. Consider
+finding the best approximation to $y$ from the function $x$ (also in that space). 
+
+Thus, we want to minimize:
+$$
+|| y - \beta_1 x ||^2 = 
+\int_0^1 \{y(t) - \beta_1 x(t)\}^2 dt.
+$$
+You might have guessed that the solution will be $\hat \beta = \frac{\ip{y}{x}}{\ip{x}{x}} = \frac{\ip{y}{x}}{||x||^2}.$
+Let's show it (knowing that this is the solution):
+\begin{eqnarray*}
+|| y - \beta_1 x ||^2 & = & 
+|| y - \hat \beta_1 x + \hat \beta_1 x  - \beta_1 x ||^2 \\
+& = & || y - \hat \beta_1 \bar x ||^2
+- 2 \ip{ y - \hat \beta_1 x }{\hat \beta_1 x - \beta_1 x}
++ ||\hat \beta_1 x - \beta_1 x||^2 \\
+& \geq & 
+|| y - \hat \beta_1 \bar x ||^2
+- 2 \ip{ y - \hat \beta_1 x}{\hat \beta_1 x - \beta_1 x}\\
+& = & || y - \hat \beta_1 \bar x ||^2
+- 2 \hat \beta_1 \ip{y}{x} + 2 \beta_1 \ip{y}{x} + 2
+\hat \beta_1^2 ||x||^2 - 2 \hat \beta_1 \beta_1 ||X||^2 \\
+& = & || y - \hat \beta_1 \bar x ||^2 %
+-  2 \frac{\ip{y}{x}^2}{||x||^2} + 2 \beta_1 \ip{y}{x} %
++ 2 \frac{\ip{y}{x}^2}{||x||^2} %
+- 2 \beta_1 \ip{y}{x} \\
+& = & || y - \hat \beta_1  x ||^2
+\end{eqnarray*}
+Therefore, $\hat \beta_1$ is the least squares estimate.
+
+We can extend this to include an intercept. Let $j$ be a function
+that is constant at 1. 
+Let $\bar y = \int_0^1 y(t)dt$ be the average of $y$ over
+the domain and define $\bar x$ similarly.
+Then consider minimizing (over $\beta_0$ and $\beta_1$)
+$$
+|| y - \beta_0 j - \beta_1 x ||^2
+$$
+First, hold $\beta_1$ fixed. By our previous result, we
+have that the minimizer must satisfy:
+$$
+\beta_0 = <y - \beta_1 x, j> / ||j||^2 = 
+\bar y - \beta_1 \bar x.
+$$
+Plugging this back into our least squares equation we
+obtain that:
+\begin{eqnarray*}
+|| y - \beta_0 j - \beta_1 x ||^2 & \geq &
+|| y - \bar y - \beta_1 (x - \bar x)||^2 \\
+& = & || \tilde y - \beta_1 \tilde x||^2
+\end{eqnarray*}
+where $\tilde y$ and $\tilde x$ are the centered functions.  
+We know that this is minimized
+
+

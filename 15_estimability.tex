@@ -1,0 +1,335 @@
+\section{Parameter estimability and penalties}
+
+In this section we consider parameter estimability and penalties. 
+
+\subsection{Estimability}
+
+This section draws heavily from the wonderful book by \cite{searle2012linear}.
+
+We define a linear combination of the parameters, $\bq' \bbeta$, as being estimable
+if it is equal to a linear combination of the expected value of $\by$. In other words,
+$\bq' \bbeta$ is estimable if it is equal to $\bt' E[\by]$ for some value of $\bt$.
+
+Estimability is perhaps most useful when $\bX$ is over-specified (i.e., not full rank). For example,
+consider an ANOVA model
+$$
+y_{ij} = \mu + \beta_i + \epsilon_{ij}.
+$$
+Verify for yourself that the $\bX$ matrix from this model is not full rank. 
+
+Because $\bt' E[\by] = \bt' \bX \bbeta$ for all possible $\bbeta$, $\bq = \bt' \bX$ and
+we obtain that estimable contrasts are necessarily linear combinations of the rows
+of the design matrix. 
+
+The most useful result in estimability is the invariance properties of estimable contrasts. Consider an not full rank design matrix.
+Then any solution to the normal equations:
+$$
+\bX' \bX \bbeta = \bX' \by
+$$
+will minimize the least squares criteria (or equivalently maximize the likelihood
+under spherical Gaussian assumptions). (If you don't see this, verify it yourself using
+the tools from the first few chapters.) Since $\bX$ is not full rank, this will
+have and infinite number of solutions. Let $\hat \bbeta$ and $\tilde \bbeta$ be any two such
+solutions. For estimable quantities, $q' \hat \bbeta = q' \tilde \bbeta$. 
+That is, the particular solution to the normal doesn't matter for estimable quantities. This should be
+clear given the definition of estimability. Recall that least squares projects
+onto the plane defined by linear combinations of the columns of $\bX$. The projection,
+$\hat \by$, is unique, while the particular linear combination is not in this case.
+
+To discuss further. Suppose $\bq' \hat \bbeta \neq \bq' \tilde \bbeta$
+for two solutions to the normal equations, $\hat \bbeta$ and $\tilde \bbeta$
+and estimable $\bq' \bbeta$. Then $\bt' \bX \hat \bbeta \neq \bt' \bX \tilde \bbeta$. Let
+$\hat \by$ be the projection of $\by$ on the space of linear combinations of the columns of $\bX$.
+However, since both are projections, $\hat \by = \bX \hat \bbeta = \bX \tilde \bbeta$. 
+Multiplying by $\bt'$ then yields a contradiction.
+
+\subsection{Why it's useful}
+
+Consider the one way ANOVA setting again. 
+$$
+y_{ij} = \mu + \beta_i + \epsilon_{ij}.
+$$
+For $i = 1, 2$, $j = 1, \ldots, J$. 
+One can obtain parameter identifiability by setting $\beta_2 = 0$, $\beta_1 = 0$, $\mu = 0$ or $\beta_1 + \beta_2 = 0$ (or one of infinitely many other linear contrasts). 
+These constraints don't change the column space of the $\bX$ matrix. (Thus the projection stays the same.)
+Recall that $\hat y_{ij} = \bar y_i$. Estimable functions are linear combinations of $E[Y_{ij}] = \mu + \beta_i$. So, note that
+$$
+E[y_{21}] - E[y_{11}] = \beta_2 - \beta_1
+$$
+is estimable and it will always be estimated by $\bar y_2 - \bar y_1$. Thus, regardless of which linear constraints one puts on the
+model to achieve identifiability, the difference in the means will have the same estimate. 
+
+This also gives us a way to go between estimates with different constraints without refitting the models. Since for two sets
+of constraints we have:
+$$
+\bar y_i  = \hat \mu + \hat \beta_i = \tilde \mu + \tilde \beta_i,
+$$
+yielding a simple system of equations to convert between estimates with different constraints.
+
+
+\subsection{Linear constraints}
+Consider performing least squares under the full row rank linear constraints 
+$$
+\bK' \bbeta = \bz.
+$$
+One could obtain these estimates using Lagrange multipliers
+$$
+||\by - \bX \bbeta||^2 + 2 \blambda' (\bK' \bbeta - \bZ)
+= \by' \by - 2\bbeta^2 \bX' \by + \bbeta' \bX' \bX \bbeta + 2 \blambda' (\bK' \bbeta - \bz).
+$$
+Taking a derivative with respect to lambda yields
+\begin{equation}
+\label{eq:cls1}
+2 (\bK' \bbeta - \bz) = 0
+\end{equation}
+Taking a derivative with respect to $\bbeta$ we have:
+$$
+-2 \bX' \by + 2 \bX' \bX \bbeta + 2 \bK \blambda   = 0
+$$
+which has a solution in $\bbeta$ as
+\begin{equation}
+\label{eq:cls2}
+\bbeta = \xtxinv (\bX' \by  -   \bK \blambda) = \hat \bbeta - \xtxinv \bK \blambda,
+\end{equation}
+where $\hat \bbeta$ is the OLS (unconstrained) estimate.
+Multiplying by $\bK'$ and using \eqref{eq:cls1} we have that
+$$
+\bz = \bK' \hat \bbeta - \bK' \xtxinv \bK \blambda
+$$
+yielding a solution for $\blambda$ as
+$$
+\blambda = \{\bK' \xtxinv \bK\}^{-1} (\bK' \hat \bbeta - \bz). 
+$$
+Plugging this back into \eqref{eq:cls2} yields the solution:
+$$
+\bbeta = \hat \bbeta -  \xtxinv \bK \{\bK' \xtxinv \bK\}^{-1} (\bK' \hat \bbeta - \bz).
+$$
+Thus, one can fit constrained least squares estimates without actually refitting the model.
+Notice, in particular, that if one where to multiply this estimate by $\bK'$, the result would be
+$\bz$.
+
+\subsection{Likelihood ratio tests}
+One can use this result to derive likelihood ratio tests of $H_0: \bK \bbeta = \bz$ versus
+the general alternative. From the previous section, under the null hypothesis, the
+estimate under the null hypothesis, 
+$$\hat \bbeta_{H_0} = \hat \bbeta -  \xtxinv \bK \{\bK' \xtxinv \bK\}^{-1} (\bK' \hat \bbeta - \bz).$$
+Of course, under the alternative, the estimate is $\hat \bbeta = \xtxinv \bX' \by$. In both
+cases, the maximum likelihood variance estimate is $\frac{1}{n}||\by - \bX \bbeta||^2$ with 
+$\bbeta$ as the estimate under either the null or alternative hypothesis. Let $\hat \sigma^2_{H_0}$
+and $\hat \sigma^2$ be the two estimates.
+
+The likelihood ratio statistic is
+$$
+\frac{{\cal L}(\hat \bbeta_{H_0}, \hat \sigma^2_{H_0})}{{\cal L}(\hat \bbeta,\hat \sigma^2)}
+= \left(\frac{\hat \sigma^2_{H_0}}{\hat \sigma^2} \right)^{-n/2}.
+$$
+This is monotonically equivalent to $n \hat \sigma^2 / n \hat \sigma^2_{H_0}$. However, we reject
+if the null is less supported than the alternative, i.e. this statistic is small,
+so we could equivalently reject if $n \hat \sigma^2_{H_0} / n \hat \sigma^2$ is large.
+Further note
+that 
+\begin{eqnarray*}
+n\hat \sigma^2_{H_0}
+& = &||\by - \bX \hat \bbeta_{H_0}||^2 \\
+& = & ||\by - \bX \hat \bbeta + \bX \hat \bbeta - \bX \hat \bbeta_{H_0}||^2 \\
+& = & ||\by - \bX \hat\bbeta||^2 + ||\bX \hat \bbeta - \bX \hat \bbeta_{H_0}||^2 \\
+& = & n \hat \sigma^2 + ||\bX \hat \bbeta - \bX \hat \bbeta_{H_0}||^2
+\end{eqnarray*}
+Notationally, let $$SS_{reg} = ||\bX \hat \bbeta - \bX \hat \bbeta_{H_0}||^2
+= ||\hat \by - \hat \by_{H_0}||^2$$ and
+$SS_{res} = n \hat \sigma^2$. 
+The note that the inverse of our likelihood ratio is monotonically equivalent to 
+$\frac{SS_{reg}}{SS_{res}}$
+
+However, $SS_{reg} / \sigma^2$ and $SS_{res} / \sigma^2$ are both independent 
+Chi-squared random variables with degrees of freedom $Rank(\bK)$ and $n - p$
+under the null. (Prove this for homework.) Thus, our likelihood ratio statistic can
+exactly be converted into the $F$ statistic of section \ref{sec:ftest}. We leave
+the demonstration that the two are identical as a homework exercise.
+
+This line of thinking can be extended. Consider the sequence of hypotheses:
+\begin{align*}
+ & H_1 :\bK_1 \bbeta = \bz \\
+ & H_2 :\bK_2 \bK_1 \bbeta = \bK_2 \bz \\
+ & H_3 :\bK_3 \bK_2 \bK_1 \bbeta = \bK_3 \bK_2 \bz \\
+ & \vdots 
+\end{align*}
+Each $\bK_i$ is assumed full row rank and of fewer rows than $\bK_{i-1}$. 
+These hypotheses are nested with $H_1$ being the most restrictive, $H_2$ being the
+second most, and so on. (Note, if $H_1$ holds then $H_2$ holds but not vice versa.)
+Consider
+testing $H_{1}$ (null) versus $H_{2}$ (alternative). Note that under our
+general specification, discussing this problem will apply to testing $H_i$ versus $H_j$. 
+Under the arguments
+above, our likelihood ratio statistic will work out to be inversely equivalent to
+the statistic: $n\hat \sigma^2_{H_1} / n\hat \sigma^2_{H_2}$. 
+
+
+Further note that
+\begin{eqnarray*}
+n\hat \sigma^2_{H_1}
+& = &||\by - \hat \by_{H_1}|| \\
+& = & ||\by - \hat \by_{H_2}||^2  + ||\hat \by_{H_2} - \hat \by_{H_1}||^2
++ 2 (\by - \hat \by_{H_2})' (\hat \by_{H_2} - \hat \by_{H_1}) \\
+& = & ||\by - \hat \by_{H_2}||^2  + ||\hat \by_{H_2} - \hat \by_{H_1}||^2 \\
+& = & SS_{RES}(H_2) + SS_{REG}(H_1 ~|~ H_2)
+\end{eqnarray*}
+Here the cross product term in the second line is zero by (tedious yet straightforward) algebra
+and the facts that:
+$\bK_2 \bK_1 \hat \bbeta_{H_1} = \bK_2 \bK_1 \hat \bbeta_{H_2} = \bK_2 \bz$ and $\be' \bX = \bzero$. 
+
+Thus, our likelihood ratio statistic is monotically equivalent to
+$$SS_{REG}(H_1 ~|~ H_2) / SS_{RES}(H2).$$
+Furthermore,
+Using the developed methods in the class the numerator is Chi-Squared with
+$Rank(\bK_1)$ degrees of freedom, while the denominator has $n - \{Rank(\bK_1) - Rank(\bK_2)\}$ 
+degrees of freedom, and they are independent. Thus we can construct an F test for nested
+linear hypotheses.
+
+This process can be iterated, decomposing $SS_{RES}(H_2)$, so that:
+$$
+n\hat \sigma^2_{H_1}
+= SS_{REG}(H_1 ~|~ H_2) + SS_{REG}(H_2 ~|~ H_3) + SS_{RES}(H_3)
+$$
+And it could be iterated again so that:
+$$
+n\hat \sigma^2_{H_1}
+= SS_{REG}(H_1 ~|~ H_2) + SS_{REG}(H_2 ~|~ H_3) + \ldots SS_{RES}(H_p)
+$$
+where $SS_{RES}(H_p)$ is the residual sums of squares under the most elaborate model considered.
+The sums of squares add so that, for example,
+$$
+SS_{REG}(H_1 ~|~ H_3) = SS_{REG}(H_1 ~|~ H_2) + SS_{REG}(H_2 ~|~ H_3)
+$$
+and
+$$
+SS_{RES}(H_3) = SS_{REG}(H_3 ~|~ H_4) + \ldots + SS_{RES}(H_4).
+$$
+Thus, one could test any subset of the nested hypotheses by appropriately adding the sums of
+squares.
+
+\subsection{Example use}
+The most popular use of the general linear hypothesis is to consider nested hypotheses. 
+That is, consider a linear model where $\bbeta' = [\beta_0 ~ \beta_1 ~ \ldots ~\beta_p]$
+so that the $\beta_i$ are ordered in decreasing scientific importance.
+\begin{align*}
+ & H_1 : \beta_1  = \beta_2  = \beta_3 = \ldots = \beta_p = 0 \\
+ & H_2 :            \beta_2  = \beta_3 = \ldots = \beta_p = 0 \\
+ & H_3 :                       \beta_3 = \ldots = \beta_p = 0 \\
+ & \vdots \\
+ & H_p : \beta_p = 0
+\end{align*}
+Then testing $H_1$ versus $H_2$ tests whether $\beta_1$ is zero under the assumption
+that all of the remaining coefficients (excepting the intercept) are zero. 
+Testing $H_2$ versus $H_5$ tests whether $\beta_2 = \beta_3 = \beta_4 = 0$
+under the assumption that $\beta_5$ through $\beta_p$ are 0. 
+
+\subsection{Coding examples}
+Let's go through an example of fitting multiple models. We'll look
+at the \texttt{swiss} dataset.  The following code fits three models
+for the dataset. First, we model the outcome, regional fertility,
+as a function of various aspects of the region. Imagine if we
+are particularly interested in agriculture as a variable. We
+fit three models: one a linear regression with just agriculture,
+then one including educational level variables (examination and education) and
+then one including all of the previous variables plus information on religion (percent Catholic)
+and infant mortality rates.
+
+\begin{verbatim}
+data(swiss)
+fit1 = lm(Fertility ~ Agriculture, data = swiss)
+fit2 = update(fit1, Fertility ~ Agriculture + Examination + Education)
+fit3 = update(fit1, Fertility ~ Agriculture + Examination + Education + Catholic + Infant.Mortality)
+anova(fit1, fit2, fit3)
+\end{verbatim}
+
+The \texttt{anova} comand gets the relevant sums of squares for each of the models, resulting in the
+output
+
+\begin{verbatim}
+Analysis of Variance Table
+
+Model 1: Fertility ~ Agriculture
+Model 2: Fertility ~ Agriculture + Examination + Education
+Model 3: Fertility ~ Agriculture + Examination + Education + Catholic + 
+    Infant.Mortality
+  Res.Df    RSS Df Sum of Sq      F    Pr(>F)    
+1     45 6283.1                                  
+2     43 3180.9  2    3102.2 30.211 8.638e-09 ***
+3     41 2105.0  2    1075.9 10.477 0.0002111 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+\end{verbatim}
+
+Here, it would appear that inclusion of the other variables is necessary.
+However, let's see if we can create these sums of squares manually using our
+approach.
+
+\begin{verbatim}
+> xtilde = as.matrix(swiss);
+> y = xtilde[,1]
+> x1 = cbind(1, xtilde[,2])
+> x2 = cbind(1, xtilde[,2:4])
+> x3 = cbind(1, xtilde[,-1])
+> makeH = function(x) x %*% solve(t(x) %*% x) %*% t(x)
+> n = length(y); I = diag(n)
+> h1 = makeH(x1)
+> h2 = makeH(x2)
+> h3 = makeH(x3)
+> ssres1 = t(y) %*% (I - h1) %*% y
+> ssres2 = t(y) %*% (I - h2) %*% y
+> ssres3 = t(y) %*% (I - h3) %*% y
+> ssreg2g1 = t(y) %*% (h2 - h1) %*% y
+>ssreg3g2 = t(y) %*% (h3 - h2) %*% y
+> out = rbind( c(n - ncol(x1), ssres1,                NA,     NA),
+               c(n - ncol(x2), ssres2, ncol(x2) - ncol(x1), ssreg2g1),
+               c(n - ncol(x3), ssres3, ncol(x3) - ncol(x2), ssreg3g2)
+  )
+> out
+     [,1]     [,2] [,3]     [,4]
+[1,]   45 6283.116   NA       NA
+[2,]   43 3180.925    2 3102.191
+[3,]   41 2105.043    2 1075.882
+\end{verbatim}
+It is interesting to note that the F test comapring Model 1 to Model 2 from the \texttt{anova} command
+is obtained by dividing \texttt{3102.191 / 2} (a chi-squared divided by its 2 degrees of freedom)
+by \texttt{2105.043 / 41} (an independent chi-squared divided by its 3 degrees of freedom). The
+denominator of the F statistic is then the residual sum of squares from Model 3, not from Model 2.
+
+This is why the following give two different answers for the F statistic:
+
+\begin{verbatim}
+> anova(fit1, fit2)
+Analysis of Variance Table
+
+Model 1: Fertility ~ Agriculture
+Model 2: Fertility ~ Agriculture + Examination + Education
+  Res.Df    RSS Df Sum of Sq      F    Pr(>F)    
+1     45 6283.1                                  
+2     43 3180.9  2    3102.2 20.968 4.407e-07 ***
+---
+> anova(fit1, fit2, fit3)
+Analysis of Variance Table
+
+Model 1: Fertility ~ Agriculture
+Model 2: Fertility ~ Agriculture + Examination + Education
+Model 3: Fertility ~ Agriculture + Examination + Education + Catholic + 
+    Infant.Mortality
+  Res.Df    RSS Df Sum of Sq      F    Pr(>F)    
+1     45 6283.1                                  
+2     43 3180.9  2    3102.2 30.211 8.638e-09 ***
+3     41 2105.0  2    1075.9 10.477 0.0002111 ***
+\end{verbatim}
+In the first case, the denominator of the F statistic is 
+\texttt{3180.9 / 43}, the residual mean squared error for Model 2,
+as opposed to the latter case where it is dividing by the residual
+mean squared error for Model 3. Of course, under the null hypothesis,
+either approach yields an independent chi squared statistic in the denominator.
+However, using the Model 3 residual mean squared error reduces the
+denominator degrees of freedom, though also necessarily reduces the
+residual sum of squared errors (since extra terms in the regression
+model always do that). 
+
+
+
+

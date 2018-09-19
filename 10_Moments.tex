@@ -1,0 +1,348 @@
+\section{Random Vectors and Matrices}
+Up to this point, our exploration of linear models only relied on least squares
+and projections. We now begin now discussing the statistical properties of our
+estimators. We start by defining expected values. We assume that the reader
+has basic univariate mathematical statistics.
+
+
+\subsection{Random Vectors and Matrices}
+
+A random vector is defined as a vector of random variables, i.e. $$\ \bX =
+\left(\begin{array}{c}X_1\\ \vdots\\X_n\end{array}\right).$$  Similarly, a random matrix is a matrix of random variables $\bfZ=(Z_{ij})$.
+%Though random variables are often represented using capital letters, here we use lowercase to denote random vectors in keeping with the previous linear algebra notation. In contrast, random matrices are represented using capital letters.
+
+
+
+\subsection{Expected values}
+
+%\href{https://www.youtube.com/watch?v=6WKTzqZQgJE&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=38}{Watch this video before beginning.}
+
+If $X$ is a random variable having density funciton $f$, 
+the $k^{th}$ moment is defined as 
+$$
+E[X] = \int_{-\infty}^{\infty} x^k f(x) dx.
+$$
+In the multivariate case where $\bX$ is a random vector
+then the $k^{th}$ moment of element $i$ of the vector is 
+given by 
+$$
+E[X_i^k] = \int_{-\infty}^{\infty} \ldots \int_{-\infty}^{\infty} x_i^k f(x_1, \ldots, x_n) dx_1, \ldots, dx_n.
+$$
+It is worth asking if this definition is consistent with all
+of the subdistributions defined by the subvectors of $\bX$. 
+Let $i_1, \ldots, i_p$ is any subset of indices of $1,\ldots, n$ and
+$i_{p+1}, \ldots, i_{n}$ are the remaining, then the 
+joint distribution of $(X_{i_1},\ldots, X_{i_p})^t$ is 
+$$
+g(x_{i_1}, \ldots, x_{i_p}) = \int_{-\infty}^{\infty} \ldots \int_{-\infty}^{\infty}
+f(x_1, \ldots, x_n) dx_{i_{p+1}}, \ldots, dx_{i_{n}}.
+$$
+The $k^{th}$ moment of $X_{i_j}$ for $j \in \{1,\ldots, p\}$ is equivalently:
+\begin{eqnarray*}
+E[X_{i_j}] & = & \int_{-\infty}^{\infty} \ldots \int_{-\infty}^{\infty}
+x_{i_j}^k g(x_{i_1}, \ldots, x_{i_p}) dx_{i_1}, \ldots, d_{x_{ip}} \\
+& = & \int_{-\infty}^{\infty} \ldots \int_{-\infty}^{\infty}
+x_{i_j}^k f(x_1, \ldots, x_n) dx_1, \ldots, dx_n.
+\end{eqnarray*}
+(HW, prove this.) Thus, if we know only the marginal distribution 
+of $X_{i_j}$ or any level of joint information, the expected value is the same.
+
+The mean or expectation of a random vector $\bX$ is defined as $$\ E[\bX] =
+\left(\begin{array}{c}E[X_1]\\ \vdots\\E[X_n]\end{array}\right).$$ Similarly, the mean  or expectation of a random vector $\bfZ$ is defined as $E[\bfZ]=(E[Z_{ij}])$.
+Thus, if $\bX$ is any random vector or matrix, then $E[\bX]$  is 
+simply the elementwise expected value defined above. Often
+we will write $E[\bX] = \bmu$, or some other Greek letter,
+adopting the notation that population parameters are Greek.
+%Standard notation is hindered somewhat in that uppercase letters are typically used for random values, though are also used for matrices. We hope that the context will eliminate confusion.
+
+%\href{https://www.youtube.com/watch?v=GgNUixhQ6oI&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=39}{Watch this video before beginning.}
+
+The rules of expected values in the univariate setting translate well to the multivariate settings. For example:
+\begin{itemize}
+\item A constant vector $\bfa$ (i.e., a vector of constants) and a constant matrix
+$\bfA$ (i.e., a matrix of constants) satisfy $E[\bfa]=\bfa\ $ and
+$\ E[\bfA]=\bfA$.
+
+\item $E[\bfX+\bfY]=E[\bfX]+E[\bfY]$
+
+\item$E[\bfA\bfX]=\bfA E[\bfX]\ $ if  $\bfA$ is a constant matrix.
+
+\item $E[\bfA\bfZ\bfB+\bfC]=\bfA E[\bfZ]\bfB + \bfC\ $ if  $\bfA,\bfB,\bfC$ are constant matrices. 
+
+\item $E[{\bfX}'] = E[{\bfX}]'$
+
+\item $E[\mbox{tr}({\bfX})] = \mbox{tr}(E[{\bfX}])$
+\end{itemize}
+
+
+
+\subsection{Variance}
+
+%\href{https://www.youtube.com/watch?v=Z5L0dU6Chmc&index=40&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
+The multivariate variance of random vector $\bX$ is defined as 
+$$
+\var(\bX) = \bSigma = E[(\bX - \bmu)(\bX - \bmu)^t].
+$$
+
+Alternatively, we can write it as follows:
+defined as
+\begin{eqnarray*}
+\var(\bfX)\equiv[\cov(X_i,X_j)]
+\equiv
+\left(\begin{array}{cccc}
+	\var(X_1)&\cov(X_1,X_2)&\cdots&\cov(X_1,X_n)\\
+	\cov(X_2,X_1)&\var(X_2)&\cdots&\cov(X_2,X_n)\\
+	\vdots&\vdots&\ddots&\vdots\\
+	\cov(X_n,X_1)&\cov(X_n,X_2)&\cdots&\var(X_n)\\
+\end{array}\right).
+\end{eqnarray*}
+Note that this term is alternatively, written as the variance, covariance matrix, or variance-covariance matrix.
+
+
+\bexa
+If $X_1,\ldots,X_n$ are independent, then the covariances are 0 and
+the covariance matrix is equal to $\
+\diag(\sigma_1^2,\ldots,\sigma_n^2)\ $, or $\ \sigma^2 \bfI_n\ $ if
+the $X_i$ have common variance $\sigma^2$.
+\eexa
+
+
+
+Properties of variance-covariance matrices:
+\begin{itemize}
+\item  $\var(\bfX)=[\var(\bfX)]'$.
+
+\item $\var(\bfX+\bfa)=\var(\bfX)$ if $\bfa$ is a constant vector.
+
+\item $\var(\bfA\bfX)=\bfA\var(\bfX)\bfA'$ if $\bfA$ is a constant matrix.
+
+\item $\var(\bfX)$ is positive semidefinite.
+
+\item $\var(\bfX)$ is positive definite provided no linear combination of the $X_i$ is a
+constant.
+
+\item $\var(\bfX)=E[\bfX\bfX'] - E[\bfX](E[\bfX])'$
+\end{itemize}
+
+
+
+%Direct use of our matrix rules for expected values gives us the
+%analog of the univariate shortcut formula
+%$$
+%\bSigma = E[\bX\bX^t] - \bmu \bmu^t.
+%$$
+%Variance satisfy the properties 
+%$$
+%\var(\bA \bX + \bB) = \bA \var(\bX) \bA^t.
+%$$
+%
+
+
+\subsection{Multivariate covariances}
+
+%\href{https://www.youtube.com/watch?v=mddVO0zW64U&index=41&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y}{Watch this video before beginning.}
+
+The multivariate covariance is given by 
+$$
+\cov(\bX, \bY) = E[(\bX - \bmu_x)(\bY - \bmu_y)']
+= E[\bX \bY'] - \bmu_x \bmu_y'.
+$$
+Alternatively, we can write
+\begin{eqnarray*}
+\cov(\bX,\bY)=[\cov(X_i,Y_j)]
+\equiv
+\left(\begin{array}{cccc}
+	\cov(X_1,Y_1)&\cov(X_1,Y_2)&\cdots&\cov(X_1,Y_n)\\
+	\cov(X_2,Y_1)&\cov(X_2,Y_2)&\cdots&\cov(X_2,Y_n)\\
+	\vdots&\vdots&\ddots&\vdots\\
+	\cov(X_m,Y_1)&\cov(X_m,Y_2)&\cdots&\cov(X_m,Y_n)\\
+\end{array}\right).
+\end{eqnarray*}
+Note that this definition applies even if $\bx$ and $\by$ are of different length.
+Further notice the multivariate covariance is not symmetric in its arguments. 
+Moreover, 
+$$
+\cov(\bX, \bX) = \var(\bX).
+$$
+
+
+If $\bfA$ and $\bfB$ are constant matrices, then
+$\ \cov(\bfA\bfX,\bfB\bfY) = \bfA\ \cov(\bfX,\bfY)\ \bfB'.$
+In addition, it further holds that $\cov(\bfX + \bfY, \bfZ) = \cov(\bfX, \bfZ) + \cov(\bfY, \bfZ)$.
+
+
+\btheo
+Let $\ \bfZ=\left(\begin{array}{c}\bfX\\ \bfY\\\end{array}\right).\ $
+Then
+$\ \cov(\bfZ)=
+\left(\begin{array}{cc}
+	\var(\bfX)&\cov(\bfX,\bfY)\\
+	\cov(\bfY,\bfX)&\var(\bfY)\\
+\end{array}\right).$
+\etheo
+
+
+\bexa
+If $X_1,\ldots,X_n$ are exchangeable, they have a constant variance
+$\sigma^2$ and a constant correlation $\rho$ between any pair of
+variables.  Thus
+$$\cov(\bfX)=\sigma^2
+\left(\begin{array}{cccc}
+	1&\rho&\cdots&\rho\\
+	\rho&1&\cdots&\rho\\
+	\vdots&\vdots&\ddots&\vdots\\
+	\rho&\rho&\cdots&1\\
+\end{array}\right).  $$
+This is sometimes called an exchangeable covariance matrix.
+\eexa
+
+
+
+Multivariate covariances are useful for sums of random vectors. 
+$$
+\var(\bfX + \bfY) = \var(\bfX) + \var(\bfY) + \cov(\bfX, \bfY) + \cov(\bfY, \bfX).
+$$
+
+A nifty fact from covariances is that the covariance of $\bA \bX$ and
+$\bB \bX$ is $\bA \bSigma \bB'$. Thus $\bA \bX$ and $\bB \bX$ 
+are uncorrelated iff $\bA \bSigma \bB' = \bzero.$
+
+
+\subsection{Correlation matrix}
+
+The correlation matrix of $\bfx$ is defined as
+\begin{eqnarray*}
+\corr(\bfX)=[\corr(X_i,X_j)]
+\equiv
+\left(\begin{array}{cccc}
+	1&\corr(X_1,X_2)&\cdots&\corr(X_1,X_n)\\
+	\corr(X_2,X_1)&1&\cdots&\corr(X_2,X_n)\\
+	\vdots&\vdots&\ddots&\vdots\\
+	\corr(X_n,X_1)&\corr(X_n,X_2)&\cdots&1\\
+\end{array}\right).
+\end{eqnarray*}
+
+If we denote $\cov(\bfX)$ by $\bfSigma=(\sigma_{ij})$, then the correlation
+matrix and covariance matrix are related by
+$$ \cov(\bfX)=
+\diag(\sqrt{\sigma_{11}},\ldots,\sqrt{\sigma_{nn}} )
+\times \corr(\bfX) \times
+\diag(\sqrt{\sigma_{11}},\ldots,\sqrt{\sigma_{nn}} ).
+$$
+This is easily seen using $\corr(X_i,X_j) =
+\cov(X_i,X_j)/\sqrt{\sigma_{ii}\sigma_{jj}}$.
+
+
+
+\subsection{Quadratic form moments}
+
+
+%\href{https://www.youtube.com/watch?v=gdyG8FSxlqc&list=PLpl-gQkQivXhdgUCdaUQcdb31CRe8Mm2y&index=42}{Watch this video before beginning.}
+
+%\label{sec:qfm}
+%
+%Let $\bX$ be from a distribution with mean $\bmu$ and variance
+%$\bSigma$. Then 
+%$$
+%E[\bX^t \bA \bX] = \bmu^t \bA \bmu + \mbox{tr}(\bA \bSigma).
+%$$
+%Proof
+%\begin{eqnarray*}
+%E[\bX^t \bA \bX] & = & E[\mbox{tr}(\bX^t \bA \bX)]\\
+%& = & E[\mbox{tr}(\bA \bX \bX^t )]\\
+%& = &  \mbox{tr}(E[\bA  \bX \bX^t])\\
+%& = & \mbox{tr}(\bA E[\bX \bX^t])\\
+%& = & \mbox{tr}\{\bA [\var(\bX) + \bmu \bmu^t]\}\\
+%& = & \mbox{tr}\{\bA\bSigma + \bA \bmu \bmu^t\}\\
+%& = & \mbox{tr}(\bA\bSigma) + \mbox{tr}(\bA \bmu \bmu^t)\\
+%& = & \mbox{tr}(\bA\bSigma) + \mbox{tr}(\bmu^t \bA \bmu )\\
+%& = & \mbox{tr}(\bA\bSigma) + \bmu^t \bA \bmu \\
+%\end{eqnarray*}
+%
+
+
+\btheo
+Let $E[\bfX]=\bfmu$ and $\cov(\bfX)=\bfSigma$ and $\bfA$ be a constant
+matrix. Then
+$$E[(\bfX-\bfmu)'\bfA(\bfX-\bfmu)]=\tr(\bfA\bfSigma).$$
+\estheo
+
+\bstheo
+$E[\bfX'\bfA\bfX]=\tr(\bfA\bfSigma) + \bfmu'\bfA\bfmu.$
+\etheo
+
+\bsexa
+Let $X_1,\ldots,X_n$ be independent random variables with common mean
+$\mu$ and variance $\sigma^2$.  Then the sample variance $S^2=\sum_i
+(X_i-\bar{X})^2/(n-1)$ is an unbiased estimate of $\sigma^2$.
+\eexa
+
+
+%\bsexa
+%Let $X_1,\ldots,X_n$ be independent normal random variables with
+%common mean $\mu$ and variance $\sigma^2$.  Then the sample mean
+%$\bar{X} = \sum_{i=1}^n X_i/n$ and the sample variance $S^2$ are
+%independently distributed.
+%\eexa
+
+
+%\subsection{BLUE} 
+%
+%
+%Now that we have moments, we can discuss mean and variance properties of the 
+%least squares estimators. Particularly, note that if $Y$ satisfies
+%$E[\bY] = \bX \bbeta$ and $\var(Y) = \sigma^2 \bI$ then, $\hat \bbeta$ 
+%satisfies: 
+%$$E[\hat \bbeta] = \xtxinv \bX^t E[\bY] = \xtxinv \xtx \bbeta = \bbeta.$$
+%Thus, under these conditions $\hat \bbeta$ is unbiased. In addition, we have
+%that 
+%$$
+%\var(\hat \bbeta) = \var\{\xtxinv \bX^t \bY\} = \xtxinv \bX^t \var(\bY) \bX \xtxinv
+%= \xtxinv \sigma^2. 
+%$$
+%
+%We can extend these results to linear contrasts of $\bbeta$ 
+%to say that $\bq^t \hat \bbeta$ is the {\it best}
+%estimator of $\bq^t \bbeta$ in the sense of minimizing the variance among
+%linear (in $\bY$) unbiased estimators. It is important to consider
+%unbiased estimators, since we could always minimize the variance
+%by defining an estimator to be constant (hence variance 0). If one
+%removes the restriction of unbiasedness, then minimum variance cannot
+%be the definition of ``best''. Often one then looks to mean squared
+%error, the squared bias plust the variance, instead. In what follows
+%we only consider linear unbiased estimators.
+%
+%We give Best Linear Unbiased Estimators the acronym
+%BLUE. It is remarkable easy to prove the result. 
+%
+%Consider estimating $\bq^t \bbeta$.
+%Clearly, $\bq^t \hat \bbeta$ is both unbiased and linear in $\bY$. 
+%Also note that $\var(\bq^t \hat \bbeta) = \bq^t \xtxinv \bq \sigma^2$. 
+%Let $\bk^t \bY$ be another linear unbiased estimator, so that
+%$E[\bk^t \bY] = \bq^t \bbeta$. But, $E[\bk^t \bY] = \bk^t \bX \bbeta$. 
+%It follows that since  $\bq^t \bbeta = \bk^t \bX \bbeta$ must hold for all possible $\bbeta$, we have that
+%$\bk^t \bX = \bq^t$. Finally note that
+%$$
+%\cov(\bq^t \hat \bbeta, \bk^t \bY)
+%= \bq^t \xtxinv \bX^t \bk^t \sigma^2.
+%$$
+%Since $\bk^t \bX = \bq^t$, we have that
+%$$
+%\cov(\bq^t \hat \bbeta, \bk^t \bY) = \var(\bq^t \bbeta).
+%$$
+%Now we can execute the proof easily. 
+%\begin{eqnarray*}
+%\var(\bq^t \hat \bbeta - \bk^t \bY) & = & 
+%\var(\bq^t \hat \bbeta) + \var(\bk^t \bY) - 2 \cov(\bq^t \hat \bbeta, \bk^t \bY) \\
+%& = & \var(\bk^t \bY) - \var(\bq^t \hat \bbeta) \\ 
+%& \geq & 0.
+%\end{eqnarray*}
+%Here the final inequality arises as variances have to be non-negative. Then we have
+%that $\var(\bk^t \bY) \geq \var(\bq^t \hat \bbeta)$ proving the result.
+%
+%Notice, normality was not required at any point in the proof, only restrictions
+%on the first two moments. In what follows, we'll see the consequences of
+%assuming normality.
+
+

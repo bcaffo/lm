@@ -1,0 +1,343 @@
+\section{Simultaneous Inference}
+
+Often we are interested in constructing a collection, or family, of confidence intervals each with a specific confidence level. We need to determine our level of confidence that all intervals simultaneously contain the true parameter value.
+Similarly, in many situations we have seek to perform multiple tests at the same time, rather than a single joint test. Here we focus on confidence intervals, but the methods described carry over to hypothesis testing as well.
+
+
+Simultaneously making a large number of comparisons compounds the statistical uncertainty and introduces the need to adjust the individual confidence levels for multiple comparisons.
+%In the context of hypothesis tests we differentiate between $\alpha$-levels: the overall or family-wise $\alpha$-level; or the individual or comparison-wise $\alpha$-level.
+In the context of confidence intervals, we need to distinguish between an individual confidence level and family confidence level. The individual confidence level is the confidence we have that any particular confidence interval contains the true parameter value.
+The familywise confidence level is the confidence we have that all the confidence intervals in a family of intervals simultaneously contain the true parameter value.
+
+\subsection{Multiple Comparisons: The Bonferroni Method}
+
+The Bonferroni procedure controls for multiple comparisons by adjusting the width of the margin of error. 
+This makes the confidence interval wider for each individual contrast, but keeps the overall family confidence level at the desired level.
+
+To illustrate, let us assume we are creating $k$ confidence intervals for $\beta_1, \beta_2, \ldots \beta_k$. 
+Suppose the $j^{th}$ confidence interval has coverage probability $1-\alpha$ and we want the familywise confidence level to be $1-\alpha$.
+Let $E_j$ be the event that the $j^{th}$ includes $\beta_j$, and $E_j^c$ be the complement. Then by definition,
+\begin{eqnarray*}
+1- \alpha_f &=& P(E_1 \cap E_2 \cap \ldots \cap E_k) \\
+&=& 1 - P(E_1^c \cup E_2^c \cup \ldots \cup E_k^c) \\
+& \geq & 1 -  \sum_{j=1}^k P(E_j^c) \\
+&=&  1 - k \alpha.
+\end{eqnarray*}
+ 
+Thus, if the individual confidence level for two intervals is $1-\alpha = 0.95$, then we have a family confidence level of at least $1-2\alpha = 0.90$. 
+In order to guarantee a family confidence level of at least $0.95$ we instead need the individual confidence level to be $(1-0.05/2)=0.975$.
+ 
+We can ensure appropriate control if we set $\alpha=\alpha_f/k$. 
+Using this approach, Bonferroni confidence intervals for  $\beta_1, \beta_2, \ldots \beta_k$ are given by 
+\begin{eqnarray*}
+{\hat \beta}_j  \pm t_{n-p, 1-\alpha_f/{2k}} {s \sqrt{g_{jj}} } \,\, \mbox{      for     } j=1,2,\ldots k 
+\end{eqnarray*}
+where $g_{jj}$ is the $j^{th}$ diagonal element of $(\bfX' \bfX)^{-1}$. 
+
+
+The main features of the Bonferroni method are that it is simple to
+use, and that it is conservative. The latter implies that the actual coverage
+probability is greater than claimed and the confidence intervals are
+wider than required.
+
+\bexa
+One-way ANOVA $\ Y_{ij}=\mu+\tau_i+\varepsilon_{ij},\ (i=1,\ldots,k).$\\
+
+\vb
+If we want confidence intervals for all pairwise comparisons $\
+\{\tau_i - \tau_j, i \neq j\},\ $ there are $\ n_k = k\times (k-1)/2\
+$ such comparisons.  The Bonferroni method uses $\ \alpha_j = \alpha /
+n_k$. Hence with $\alpha=.05$ we have:
+\begin{center}
+\begin{tabular}{crc}
+$k$ & $n_k$ & \rule{10mm}{0mm} $\alpha_j$\\
+\hline
+2 &  1 & \rule{10mm}{0mm} 0.0500\\
+3 &  3 & \rule{10mm}{0mm} 0.0167\\
+4 &  6 & \rule{10mm}{0mm} 0.0083\\
+5 & 10 & \rule{10mm}{0mm} 0.0050\\
+6 & \rule{10mm}{0mm} 15 & \rule{10mm}{0mm} 0.0033 
+\end{tabular}
+\end{center}
+\eexa
+
+%\bsnote
+%A better method for this situation is Tukey's studentized range method
+%which we will see later when we take up ANOVA in more detail.
+%\enote
+%
+%
+%\subsection{Multiple Comparisons: Maximum Modulus Method}
+%
+%What if $\{\bfa'_j\hat{\bfbet}, j=1,\ldots,k\}$ are independent?  In
+%this case, the $t$ statistics
+%$$
+%T_j=
+%{\bfa'_j\hat{\bfbet}-\bfa'_j\bfbet\over
+%[S^2\bfa'_j(\bfX'\bfX)^-\bfa_j]^{1/2}}
+%$$
+%are conditionally independent given $S^2$. The $t$ statistics are
+%marginally uncorrelated:
+%$$
+%\cov(T_i,T_j)
+%= E[T_i T_j] 
+%= E\{E[T_i T_j|S^2]\}
+%= E\{E[T_i|S^2] E[T_j|S^2]\} 
+%= 0,
+%$$ 
+%because $\ E[T_i|S^2] = E[\bfa'_i\hat{\bfbet} - \bfa'_i\bfbet|S^2]/
+%[S^2\bfa'_i(\bfX'\bfX)^ - \bfa_i]^{1/2} = 0,\ $ by the independence of
+%$\bfa'\hat{\bfbet}$ and $S^2$.
+%
+%\bdefi
+%Let $T_1,\ldots,T_k$ be a set of pairwise uncorrelated random
+%variables with the distribution $t_\nu$.  Define $\ U\equiv
+%\max\{|T_j|, j=1,\ldots,k\}.\ $ Then $U$ has the Studentized Maximum
+%Modulus Distribution, denoted by $u_{k,\nu}$.
+%\esdefi
+%
+%\bsnote
+%Let the $100(1-\alpha)$-percentile of the distribution be denoted
+%$u_{k,\nu}^{\alpha}$.  Then
+%$$
+%P(|T_j|\leq u_{k,n-r}^{\alpha},\forall j=1,\ldots,k) = 
+%P(\max\{|T_j|, j=1,\ldots,k\}\leq u_{k,n-r}^{\alpha}) = 
+%1-\alpha,
+%$$
+%and a set of simultaneous confidence intervals is
+%$$
+%I_j =
+%[\ \bfa'_j\hat{\bfbet}-u_{k,n-r}^{\alpha}\se(\bfa'_j\hat{\bfbet})\ ,\
+%\bfa'_j\hat{\bfbet}+u_{k,n-r}^{\alpha}\se(\bfa'_j\hat{\bfbet})\ ]
+%$$
+%and hence
+%$$
+%P(\bfa'_j\bfbet\in I_j,\forall j=1,\ldots,k)=1-\alpha.
+%$$
+%\enote
+%
+%\bexa
+%Comparison with the Bonferroni method for 1-way ANOVA.\\
+%Suppose we want simultaneous confidence intervals for the group means
+%$\ \bfa'_j\bfbet=\mu+\tau_j.\ $ Then $\ \bfa'_j\hat{\bfbet}=\bar{Y}_j\
+%$ is the sample mean for the $j$th group. Thus the $\ \bfa'_j
+%\hat{\bfbet}\ $ are independent and we can apply the maximum modulus
+%method.  It can be shown that the confidence intervals for this method
+%are narrower than the Bonferroni confidence intervals, i.e.
+%$t_{n-r}^{\alpha/(2k)}\geq u_{k,n-r}^{\alpha}.$
+%\eexa
+%
+
+\subsection{Multiple Comparisons: Scheff\'e Method}
+
+%Hence, we were able to define a $100(1-\alpha)\%$ joint confidence region for $\bfbet$ as follows:
+%\begin{eqnarray*}
+%(\hat \bfbet - \bfbet)'  \bfX' \bfX (\hat \bfbet - \bfbet) \le ps^2 F_{p,n-p, 1-\alpha}.
+%\end{eqnarray*}
+%This is is a region enclosed by an ellipsoid centered at $\hat{\bfbet}$.
+%The interpretation is that this ellipsoidal confidence region contains
+%the true value $\bfbet$ with probability $1-\alpha$.
+
+
+%Suppose the goal is to obtain simultaneous confidence intervals for estimable
+%functions $\bfc'_1\bfbet, \ldots, \bfc'_k\bfbet$.
+%
+%\vb
+%Rearrange the vectors $\ \bfa_1, \ldots, \bfa_k\ $ so that $\ \bfa_1,
+%\ldots, \bfa_d\ $ are linearly independent, and $\ \bfa_{d+1}, \ldots,
+%\bfa_k\ $ are linear combinations of $\ \bfa_1, \ldots, \bfa_d \
+%(0\leq d\leq k).\ $ Then a set of simultaneous confidence intervals
+%for $\ \bfa_1, \ldots, \bfa_d\ $ automatically produce confidence
+%intervals for the remaining ones $\ \bfa_{d+1}, \ldots, \bfa_k.\ $ So
+%we work only with the $d$ linearly independent vectors. Let
+%$$
+%\bfA=\left(\begin{array}{c}\bfa'_1\\\vdots\\\bfa'_d\end{array}\right)
+%$$
+%be a $d\times p$ matrix of rank $d$ (like $\bfA$ in
+%$H:\bfA\bfbet=\zero$). Then we have
+%$$
+%{(\bfA\hat{\bfbet}-\bfA\bfbet)'
+%[\bfA(\bfX'\bfX)^-\bfA']^{-1}
+%(\bfA\hat{\bfbet}-\bfA\bfbet)\over d S^2}
+%\sim F_{d,n-r}.
+%$$
+%Now define $\bfphi=\bfA\bfbet$ and $\hat{\bfphi}=\bfA\hat{\bfbet}$,
+%so that
+%$$
+%P\left(
+%{(\hat{\bfphi}-\bfphi)'[\bfA(\bfX'\bfX)^-\bfA']^{-1}(\hat{\bfphi}-\bfphi)
+%\over d S^2}
+%\leq F_{d,n-r}^\alpha\right)=1-\alpha.
+%$$
+%This defines the following confidence region for $\bfphi$:
+%$$
+%\left\{\bfu:
+%{(\hat{\bfphi}-\bfu)'[\bfA(\bfX'\bfX)^-\bfA']^{-1}(\hat{\bfphi}-\bfu)
+%\over d S^2}
+%\leq F_{d,n-r}^\alpha\right\},
+%$$
+%which is a region enclosed by an ellipsoid centered at $\hat{\bfphi}$.
+%The interpretation is that this ellipsoidal confidence region contains
+%the true value $\bfphi$ with probability $1-\alpha$.
+
+Scheff\'e's method is based on the following theorem.
+
+\btheo
+\label{theo.sci}
+If $\bfL$ is positive definite, then 
+$$\ \max_{\bfh\neq\zero}\ 
+\left( {(\bfh'\bfb)^2\over\bfh'\bfL\bfh} \right) = \bfb'\bfL^{-1}\bfb.$$
+\estheo
+
+
+\vb
+Recall from our discussion of confidence ellipsoids that we can write:
+\begin{eqnarray*}
+\frac{(\hat \bfbet - \bfbet)'  \bfX' \bfX (\hat \bfbet - \bfbet)}{ps^2} \sim F_{p,n-p}.
+\end{eqnarray*}
+
+Applying Theorem \ref{theo.sci} with $\bfb = \hat \bfbet - \bfbet$ and $\bL = (\bfX' \bfX)^{-1}$, we find that
+\begin{eqnarray*}
+(\hat \bfbet - \bfbet)'  \bfX' \bfX (\hat \bfbet - \bfbet) = \max_{\bfh\neq\zero}\ 
+\left( {(\bfh'(\hat \bfbet - \bfbet))^2\over\bfh' (\bfX' \bfX)^{-1}\bfh} \right).
+\end{eqnarray*}
+
+
+Therefore, 
+\begin{eqnarray*}
+P \left( \frac{1}{ps^2}  \max_{\bfh\neq\zero}\ 
+\left( {(\bfh'(\hat \bfbet - \bfbet))^2\over\bfh' (\bfX' \bfX)^{-1}\bfh} \right)  \le F_{p,n-p,1-\alpha} \right) = 1-\alpha.
+\end{eqnarray*}
+Equivalently,
+\begin{eqnarray*}
+P \left( \frac{( |\bfh'\hat \bfbet -  \bfh' \bfbet| }{\sqrt{\bfh' (\bfX' \bfX)^{-1}\bfh}}  \le \sqrt{ps^2 F_{p,n-p,1-\alpha}}  \,\,\, \forall \, \bfh \in \R^p \right) = 1-\alpha.
+\end{eqnarray*}
+
+As a special case, we can write:
+\begin{eqnarray*}
+P \left( \frac{|\hat \beta_j -  \beta_j|}{\sqrt{g_{jj}}}  \le \sqrt{ps^2 F_{p,n-p,1-\alpha}}  \,\,\, \forall \,1 \le j \le p \right) \ge 1-\alpha.
+\end{eqnarray*}
+Hence, simultaneous confidence intervals for  $\beta_1, \beta_2, \ldots \beta_k$ are given by 
+\begin{eqnarray*}
+{\hat \beta}_j  \pm \sqrt{ps^2 g_{jj} F_{p,n-p,1-\alpha}} \,\, \mbox{      for     } \, j=1,2,\ldots k 
+\end{eqnarray*}
+
+
+
+More generally, we can express simultaneous confidence intervals for linear combinations of $\bfbet$ as follows:
+$$
+\bfh'\hat{\bfbet} \pm \sqrt{pF_{p,n-p, 1-\alpha} s^2 \bfh'(\bfX'\bfX)^{-1}\bfh}  \,\,\,\,\,\, \forall \bfh.
+$$
+
+
+\bexa
+(Confidence bands for a regression surface).
+
+Suppose we want simultaneous confidence intervals for the mean of the
+response variable $y$ at a given set of predictor variables $\bfx' =
+(x_{i0},x_{i1}, \ldots,x_{i,p-1})$, i.e.  $E[y] = \bfx'\bfbet$.
+Set $\bfh =\bfx$ and we obtain:
+$$
+\bfx'\hat{\bfbet} \pm \sqrt{pF_{p,n-p, 1-\alpha} s^2 \bfx'(\bfX'\bfX)^{-1}\bfx}  \,\,\,\,\,\, \forall \bfx.
+$$
+This gives us simultaneous confidence intervals for the mean of $y$ at
+all values of the predictors.  Plotted against the predictors, this
+yields a confidence band around the fitted model.
+\eexa
+
+\bexa
+(Simple linear regression).
+
+If $p=2$ we get the following confidence region for $\bfbet =
+(\beta_0, \beta_1)':$
+$$
+\{\bfbet:
+(\hat{\bfbet}-\bfbet)'\bfX'\bfX(\hat{\bfbet}-\bfbet)
+\leq 2F_{2,n-2}^\alpha s^2\}.
+$$
+The simultaneous confidence intervals for $\beta_0$ and
+$\beta_1$ are given by 
+\begin{eqnarray*}
+\hat{\beta}_0 &\pm& \sqrt{2F_{2,n-2,1-\alpha} s^2
+	\sum x_i^2/n\over\sum(x_i-\bar{x})^2}\\
+\hat{\beta}_1 &\pm& \sqrt{2F_{2,n-2,1-\alpha} s^2\over
+	\sum(x_i-\bar{x})^2}\\
+%\beta_0
+%& \in &
+%\left[
+%	\hat{\beta}_0-\sqrt{2F_{2,n-2}^\alpha s^2
+%	\sum x_i^2/n\over\sum(x_i-\bar{x})^2},
+%	\hat{\beta}_0+\sqrt{2F_{2,n-2}^\alpha s^2
+%	\sum x_i^2/n\over\sum(x_i-\bar{x})^2}
+%\right],\\
+%\beta_1
+%& \in & 
+%\left[
+%	\hat{\beta}_1-\sqrt{2F_{2,n-2}^\alpha s^2\over
+%	\sum(x_i-\bar{x})^2},
+%	\hat{\beta}_1+\sqrt{2F_{2,n-2}^\alpha s^2\over
+%	\sum(x_i-\bar{x})^2}
+%\right],
+\end{eqnarray*}
+where we have
+$$
+(\bfX'\bfX)^{-1}=
+{1\over \sum(x_i-\bar{x})^2}
+\left(\begin{array}{cc}
+	\sum x_i^2/n&-\bar{x}\\
+	-\bar{x}&1
+\end{array}\right).
+$$
+
+The confidence band for the regression line $\beta_0+\beta_1 x$ is given by
+$$
+\hat{\beta}_0+\hat{\beta}_1 x \pm \sqrt{2F_{2,n-2}^\alpha s^2
+	{\sum(x_i-x)^2\over\sum(x_i-\bar{x})^2}}.
+%\beta_0+\beta_1 x
+%\in \left[\hat{\beta}_0+\hat{\beta}_1 x-\left\{2F_{2,n-2}^\alpha s^2
+%	{\sum(x_i-x)^2\over\sum(x_i-\bar{x})^2}\right\}^{1/2},\right.
+% \ \left.\hat{\beta}_0+\hat{\beta}_1 x+\left\{2F_{2,n-2}^\alpha s^2
+%	{\sum(x_i-x)^2\over\sum(x_i-\bar{x})^2}\right\}^{1/2}\right].
+$$
+
+Verify that $\bfx'(\bfX'\bfX)^{-1}\bfx=
+\sum(x_i-x)^2/\sum(x_i-\bar{x})^2$.  Note that the width of the
+confidence band depends on $\sum(x_i-x)^2/\sum(x_i-\bar{x})^2$,
+i.e. how far $x$ is from $\bar{x}$.
+\eexa
+%
+%\bnote
+%The confidence region for $\bfphi=\bfA\bfbet$ contains all points
+%$\bfu$ which would not be rejected by the $F$ test of $H:\bfphi=\bfu$.
+%This is the set of $\bfu$'s which satisfy
+%$$
+%{(\hat{\bfphi}-\bfu)'[\bfA(\bfX'\bfX)^-\bfA']^{-1}
+%(\hat{\bfphi}-\bfu)\over d ^2} \leq F_{d,n-r}^\alpha.
+%$$
+%\enote
+%
+%
+%\subsection{Comparison of Methods}
+%
+%Bonferroni, Maximum Modulus and Scheff\'e confidence intervals for a
+%set of estimable functions $\phi_j = \bfa'_j\bfbet,\ j=1,\ldots,k$ all
+%have the form:
+%$$
+%[\hat{\phi}_j-c\,\se(\hat{\phi}_j),\hat{\phi}_j+c\,\se(\hat{\phi}_j)],
+%$$
+%where $\ c=t_{n-r}^{\alpha/(2k)}\ $ (Bonferroni), $\ c =
+%u_{k,n-r}^{\alpha}\ $ (Maximum Modulus), or $\ c =
+%(dF_{d,n-r}^{\alpha})^{1/2},\ $ where $d$ is the number of linearly
+%independent $\bfa_j$ (Scheff\'e).  Hence the relative widths of the
+%intervals depend on the relative sizes of the values of $c$.  Some
+%general rules are:
+%\begin{itemize}
+%\item[(a)] 
+%$u_{k,n-r}^{\alpha}\leq t_{n-r}^{\alpha/(2k)}$.
+%\item[(b)] 
+%If $k\approx d$, $u_{k,n-r}^{\alpha}<(dF_{d,n-r}^{\alpha})^{1/2}$.
+%\item[(c)] 
+%If $k>>d$, $(dF_{d,n-r}^{\alpha})^{1/2}<u_{k,n-r}^{\alpha}$.
+%\end{itemize}
+%
+%
